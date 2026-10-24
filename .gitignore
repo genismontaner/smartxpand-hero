@@ -1,0 +1,14 @@
+# Dades brutes descarregades (pesades, es poden tornar a baixar)
+preparacio/dades_brutes/
+
+# Fitxers temporals de QGIS
+*.qgz~
+*.qgs~
+*_attachments.zip
+*.aux.xml
+
+# Fitxers del sistema macOS
+.DS_Store
+
+# Configuració local de l'editor
+.vscode/
