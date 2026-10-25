@@ -112,8 +112,11 @@ smartxpand-hero/
 ├── js/panell.js         → dashboard y nota de decisión
 ├── data/                → GeoJSON procesados que lee la web
 ├── config/scoring.json  → criterios, pesos, umbrales, radio, fuentes
-├── preparacio/          → protocolo reutilizable (QGIS, PROTOCOL.md)
+├── preparacio/          → protocolo reutilizable (PROTOCOL.md)
+│   ├── scripts/         → scripts Python numerados por paso
+│   ├── dades_intermedies/ → resultados intermedios (CSV, GeoPackage)
 │   └── dades_brutes/    → descargas originales (fuera de git)
+├── smartxpand-hero.qgz  → proyecto QGIS (EPSG:25831)
 ├── CLAUDE.md
 └── README.md
 ```
