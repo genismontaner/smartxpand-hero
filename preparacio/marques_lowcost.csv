@@ -1,0 +1,17 @@
+marca,format,compta_competencia,preu_eur,periode_preu,preu_mensual_equivalent,tipus_font,font_url,data_consulta,notes
+VivaGym,propia,no,,,,oficial,https://www.vivagym.com/es-es/cuotas/,2026-10-25,Cadena propia del cas il·lustratiu. Preus variables per club i no publicats a la web.
+Basic-Fit,low cost,si,24.99,4 setmanes,27.07,oficial,https://www.basic-fit.com/es-es/home/home.html,2026-10-25,Pla Comfort sense promoció.
+Fitness Park,low cost,si,27.00,4 setmanes,29.25,oficial,https://www.fitnesspark.es/barcelona/,2026-10-25,Preu després de la promoció de les primeres 4 setmanes. Només compten clubs oberts.
+Synergym,low cost,si,29.99,mes,29.99,secundaria,https://www.timeout.es/barcelona/es/deportes/synergym-arenas,2026-10-25,"Font secundària sense data (""des de 29,99 €/mes""). Pendent de confirmar a la web oficial."
+McFit,low cost,si,,,,secundaria,https://www.basic-fit.com/en-es/mcfit,2026-10-25,Sense preu actual. Classificada com a low cost per font secundària (https://cuantomecuesta.com/es/gimnasio/); en procés d'integració a Basic-Fit. Cal comprovar si els clubs de Barcelona han canviat de marca.
+CEM (centres esportius municipals),municipal,si,,,,decisio,,2026-10-25,Compten com a competència per decisió del projecte (preu moderat i molts socis). Font de les ubicacions pendent.
+Dreamfit,mid-market,no,42.90,mes,42.90,secundaria,https://www.ehu.eus/documents/d/ehukirola/dreamfit-barakaldo,2026-10-25,Únic preu trobat: oferta universitària a Barakaldo. Supera el llindar de 35 €/mes. Presència a Barcelona no confirmada.
+FitUp,sense classificar,no,,,,cap,,2026-10-25,Únic preu trobat és de 2014: no vàlid. Revisar si apareix una font actual.
+Anytime Fitness,sense classificar,no,,,,cap,,2026-10-25,Sense preu oficial ni font secundària actual.
+Duet Fit,sense classificar,no,,,,cap,,2026-10-25,Sense preu oficial ni font secundària actual.
+Fit-Plus Gym,sense classificar,no,,,,cap,,2026-10-25,Sense preu oficial ni font secundària actual.
+Énergie Fitness,sense classificar,no,,,,cap,,2026-10-25,Sense preu oficial ni font secundària actual.
+DiR,mid-market/premium,no,,,,cap,,2026-10-25,Fora del format low cost (judici del projecte; sense font de preu verificada). Pendent de documentar preu si cal.
+Metropolitan,premium,no,,,,cap,,2026-10-25,Fora del format low cost (judici del projecte; sense font de preu verificada).
+Holmes Place,premium,no,,,,cap,,2026-10-25,Fora del format low cost (judici del projecte; sense font de preu verificada).
+Àccura,premium,no,,,,cap,,2026-10-25,Fora del format low cost (judici del projecte; sense font de preu verificada).
