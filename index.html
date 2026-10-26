@@ -13,12 +13,18 @@
   <link rel="stylesheet" href="css/estils.css">
 </head>
 <body>
-  <!-- Contenidor on Leaflet dibuixarà el mapa -->
-  <div id="mapa"></div>
+  <main class="app">
+    <!-- Contenidor on Leaflet dibuixarà el mapa -->
+    <div id="mapa"></div>
+
+    <!-- Panell de decisió: el contingut l'omple js/panell.js -->
+    <aside id="panell"></aside>
+  </main>
 
   <!-- Primer Leaflet, després el nostre codi (que el fa servir) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="js/puntuacio.js"></script>
+  <script src="js/panell.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

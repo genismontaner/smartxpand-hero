@@ -98,8 +98,11 @@ Umbral de ESPERAR subido de 50 a 60 en el paso 5.3: con 50, el ámbar
 cubría el 60 % de los candidatos y el mapa no se leía en 10 segundos.
 Configuración en `config/scoring.json`.
 
-Nota de decisión: plantilla fija (clase + criterio más fuerte +
-criterio más débil). Sin texto inventado.
+Nota de decisión: plantilla fija sin texto inventado (paso 6). Clase +
+"A favor" (criterios con nota ≥ 60, máx. 2, ordenados por puntos que
+aportan) + "En contra" (nota < 40, máx. 2, por puntos que hacen perder).
+Los criterios intermedios no se mencionan. Se cambió de "más fuerte /
+más débil" porque afirmaba "alto solapamiento" con un 7,5 %.
 
 Aviso urbanístico: si el suelo es parcial, se muestra siempre con
 "Requiere confirmación profesional".

@@ -9,6 +9,8 @@
   "criteris": [
     {
       "id": "poblacio",
+      "frase_fort": "mucha población objetivo",
+      "frase_feble": "poca población objetivo",
       "camp": "pob_objectiu",
       "etiqueta": "Población objetivo",
       "descripcio": "Personas de 18 a 64 años a 800 m",
@@ -17,6 +19,8 @@
     },
     {
       "id": "competencia",
+      "frase_fort": "poca competencia cercana",
+      "frase_feble": "mucha competencia cercana",
       "camp": "n_competidors",
       "etiqueta": "Competencia",
       "descripcio": "Clubes low cost y centros deportivos municipales a 800 m",
@@ -25,6 +29,8 @@
     },
     {
       "id": "solapament",
+      "frase_fort": "bajo solapamiento con clubes propios",
+      "frase_feble": "alto solapamiento con clubes propios",
       "camp": "solapament_pct",
       "etiqueta": "Solapamiento",
       "descripcio": "% del área de 800 m compartida con clubes propios",
@@ -33,6 +39,8 @@
     },
     {
       "id": "renda",
+      "frase_fort": "renta en la franja media de la ciudad",
+      "frase_feble": "renta alejada de la franja media",
       "camp": "renda",
       "etiqueta": "Renta",
       "descripcio": "Renta neta media por persona a 800 m",
@@ -64,6 +72,17 @@
       "motiu": "Población objetivo insuficiente (menos de 5.000 personas de 18 a 64 años a 800 m)."
     }
   ],
+
+  "nota_decisio": {
+    "nota_a_favor": 60,
+    "nota_en_contra": 40,
+    "maxim_per_banda": 2,
+    "classe": { "investigar": "Investigar.", "esperar": "Esperar.", "descartar": "Descartar." },
+    "a_favor": "A favor: {llista}.",
+    "en_contra": "En contra: {llista}.",
+    "sense_a_favor": "Ningún criterio destaca por encima de la media.",
+    "sense_en_contra": "Ningún criterio por debajo de la media."
+  },
 
   "avisos": {
     "sol_parcial": "Parte del área está clasificada como suelo no urbanizable según el MUC. Requiere confirmación profesional."

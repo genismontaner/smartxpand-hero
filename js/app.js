@@ -18,7 +18,10 @@ L.tileLayer(
   }
 ).addTo(mapa);
 
-// Colors provisionals (al pas 5 els hexàgons es pintaran per classe)
+// Panell (capa de dibuix) per sobre dels hexàgons: clubs i cercle de 800 m
+mapa.createPane("superior");
+mapa.getPane("superior").style.zIndex = 450;
+
 const NAVY = "#051C2C";
 const GRIS_COMPETENCIA = "#868e96";
 
@@ -65,6 +68,41 @@ function resumeixClasses(hexagons) {
   console.table(recompte);
 }
 
+// --- Selecció d'un hexàgon ---
+let seleccionat = null; // capa de l'hexàgon seleccionat
+let cercle = null; // cercle de 800 m dibuixat al mapa
+
+function selecciona(capa, capaHexagons, config) {
+  desselecciona(capaHexagons, config);
+  seleccionat = capa;
+
+  // Ressalta l'hexàgon amb una vora navy gruixuda
+  capa.setStyle({ color: NAVY, weight: 3 });
+  capa.bringToFront();
+
+  // Cercle de 800 m des del centre de l'hexàgon
+  const centre = capa.getBounds().getCenter();
+  cercle = L.circle(centre, {
+    radius: config.radi_m,
+    pane: "superior",
+    color: NAVY,
+    weight: 1.5,
+    dashArray: "6 6",
+    fill: false,
+    interactive: false, // no captura clics: es pot clicar l'hexàgon de sota
+  }).addTo(mapa);
+
+  mostraPanellHexagon(capa.feature.properties, config, () => desselecciona(capaHexagons, config));
+}
+
+function desselecciona(capaHexagons, config) {
+  if (seleccionat) capaHexagons.resetStyle(seleccionat);
+  if (cercle) cercle.remove();
+  seleccionat = null;
+  cercle = null;
+  mostraPanellInicial(config);
+}
+
 // 3. Carrega les dades i les afegeix al mapa
 async function inicia() {
   const hexagons = await carregaGeoJSON("data/hexagons.geojson");
@@ -80,19 +118,27 @@ async function inicia() {
   const colors = {};
   for (const c of config.classes) colors[c.id] = c.color;
 
-  L.geoJSON(hexagons, {
+  const capaHexagons = L.geoJSON(hexagons, {
     // 'style' també pot ser una funció: Leaflet la crida per a cada hexàgon
     style: (hex) => estilHexagon(hex, colors),
+    // 'onEachFeature' s'executa per a cada hexàgon: hi afegim l'esdeveniment de clic
+    onEachFeature: (hex, capa) => {
+      capa.on("click", () => selecciona(capa, capaHexagons, config));
+    },
   }).addTo(mapa);
+
+  // Panell inicial (sense cap hexàgon seleccionat)
+  mostraPanellInicial(config);
 
   // Límit municipal: només la línia, sense farciment
   const capaLimit = L.geoJSON(limit, {
     style: { color: NAVY, weight: 2, fill: false },
   }).addTo(mapa);
 
-  // Clubs: cada punt es dibuixa com un cercle
+  // Clubs: cada punt es dibuixa com un cercle, al panell superior
   L.geoJSON(clubs, {
-    pointToLayer: (club, posicio) => L.circleMarker(posicio, estilClub(club)),
+    pointToLayer: (club, posicio) =>
+      L.circleMarker(posicio, { ...estilClub(club), pane: "superior" }),
   }).addTo(mapa);
 
   // Ajusta la vista perquè es vegi tota la ciutat
