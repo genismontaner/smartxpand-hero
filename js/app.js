@@ -4,7 +4,8 @@
 // =============================================================
 
 // 1. Crea el mapa dins del <div id="mapa">, centrat a Barcelona
-const mapa = L.map("mapa").setView([41.39, 2.16], 12);
+// zoomSnap 0.25: permet zooms intermedis perquè la ciutat ompli millor la pantalla
+const mapa = L.map("mapa", { zoomSnap: 0.25 }).setView([41.39, 2.16], 12);
 
 // 2. Mapa base gris de l'IGN (Instituto Geográfico Nacional, llicència CC BY 4.0)
 //    Servei WMTS: el mapa es demana en "rajoles" (imatges petites) per zoom, columna i fila
@@ -78,6 +79,8 @@ function afegeixLlegenda(config) {
       .map((c) => `<div><span class="mostra" style="background:${c.color}"></span>${c.etiqueta[0] + c.etiqueta.slice(1).toLowerCase()}</div>`)
       .join("");
     div.innerHTML = `
+      <button class="boto-llegenda">Leyenda</button>
+      <div class="contingut">
       <strong>Clasificación</strong>
       ${classes}
       <div><span class="mostra" style="background:${config.classes.at(-1).color};opacity:0.3"></span>Descartado por regla previa</div>
@@ -86,11 +89,30 @@ function afegeixLlegenda(config) {
       <div><span class="punt" style="background:${GRIS_COMPETENCIA}"></span>Competencia</div>
       <div><span class="punt" style="background:${GRIS_COMPETENCIA};opacity:0.4"></span>Apertura prevista</div>
       <div><span class="cercle"></span>Radio de ${config.radi_m} m</div>
+      </div>
     `;
+    // Al mòbil, el botó obre i tanca la llegenda
+    div.querySelector(".boto-llegenda").addEventListener("click", () => div.classList.toggle("oberta"));
+    // Els clics a la llegenda no han d'arribar al mapa
+    L.DomEvent.disableClickPropagation(div);
     return div;
   };
   llegenda.addTo(mapa);
 }
+
+// --- Mòbil: fitxa inferior ---
+const lateral = document.querySelector(".lateral");
+const ALCADA_FITXA = 190; // ha de coincidir amb --alcada-fitxa del CSS
+
+// Cert si la pantalla és de mòbil (mateixa condició que el CSS)
+function esMobil() {
+  return window.matchMedia("(max-width: 767px)").matches;
+}
+
+// La nansa plega i desplega la fitxa
+document.querySelector(".nansa").addEventListener("click", () => {
+  lateral.classList.toggle("desplegada");
+});
 
 // --- Selecció d'un hexàgon ---
 let seleccionat = null; // capa de l'hexàgon seleccionat
@@ -117,6 +139,12 @@ function selecciona(capa, capaHexagons, config) {
   }).addTo(mapa);
 
   mostraPanellHexagon(capa.feature.properties, config, () => desselecciona(capaHexagons, config));
+
+  // Al mòbil: fitxa plegada (es veu la puntuació) i hexàgon visible per sobre de la fitxa
+  if (esMobil()) {
+    lateral.classList.remove("desplegada");
+    mapa.panInside(centre, { paddingBottomRight: [0, ALCADA_FITXA + 40] });
+  }
 }
 
 function desselecciona(capaHexagons, config) {
@@ -167,7 +195,10 @@ async function inicia() {
   }).addTo(mapa);
 
   // Ajusta la vista perquè es vegi tota la ciutat
-  mapa.fitBounds(capaLimit.getBounds());
+  // (al mòbil, deixant lloc a baix per a la fitxa)
+  mapa.fitBounds(capaLimit.getBounds(), {
+    paddingBottomRight: [0, esMobil() ? ALCADA_FITXA : 0],
+  });
 }
 
 inicia();

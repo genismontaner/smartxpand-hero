@@ -86,23 +86,114 @@ body {
   color: var(--gris-text);
 }
 
-/* Mòbil: mapa a dalt i columna a sota (es refinarà al pas 8.3) */
+/* La nansa i el botó de llegenda només es fan servir al mòbil */
+.nansa,
+.boto-llegenda {
+  display: none;
+}
+
+/* --- Mòbil: mapa a pantalla completa i panell com a fitxa inferior --- */
 @media (max-width: 767px) {
-  .titol span {
+  :root {
+    --alcada-fitxa: 190px; /* alçada de la fitxa plegada */
+  }
+  .capcalera {
+    gap: 10px;
+    padding: 0 12px;
+    font-size: 0.85rem;
+  }
+  .marca {
+    padding-right: 10px;
+  }
+  /* Al mòbil el títol ja surt al panell: la capçalera només porta marca i etiqueta */
+  .titol {
     display: none;
   }
+  .etiqueta-cas {
+    margin-left: auto; /* empeny l'etiqueta cap a la dreta */
+  }
+
   .app {
-    flex-direction: column;
+    position: relative; /* la fitxa es col·loca respecte d'aquest contenidor */
+    display: block;
   }
   #mapa {
-    flex: 1 1 55%;
+    height: 100%;
   }
+
+  /* Fitxa inferior */
   .lateral {
-    width: 100%;
-    flex: 1 1 45%;
-    min-height: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000; /* per sobre del mapa */
+    width: auto;
+    height: var(--alcada-fitxa);
     border-left: none;
-    border-top: 1px solid var(--gris-linia);
+    border-radius: 14px 14px 0 0;
+    background: #ffffff;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+    transition: height 0.25s ease;
+  }
+  .lateral.desplegada {
+    height: 75%;
+  }
+  #panell {
+    overflow-y: hidden; /* plegada: només es veu la part de dalt */
+    padding: 4px 16px 12px;
+  }
+  .lateral.desplegada #panell {
+    overflow-y: auto;
+  }
+
+  /* Nansa: barreta per plegar/desplegar */
+  .nansa {
+    display: block;
+    flex: none;
+    width: 100%;
+    height: 22px;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+  .nansa::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 0 auto;
+    border-radius: 2px;
+    background: var(--gris-linia);
+  }
+
+  .avis-cas {
+    padding: 6px 16px;
+    font-size: 0.62rem;
+  }
+
+  /* Controls de baix del mapa (llegenda, atribució) per sobre de la fitxa */
+  .leaflet-bottom {
+    bottom: var(--alcada-fitxa);
+  }
+
+  /* Llegenda plegable */
+  .boto-llegenda {
+    display: block;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+  }
+  .llegenda .contingut {
+    display: none;
+  }
+  .llegenda.oberta .contingut {
+    display: block;
+    margin-top: 6px;
   }
 }
 
