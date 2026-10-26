@@ -1,7 +1,7 @@
 /* Colors de marca: es defineixen un cop i es fan servir a tot arreu */
 :root {
   --navy: #051c2c;
-  --accent: #2bb3c0; /* únic color d'accent (pendent de confirmar) */
+  --accent: #2bb3c0; /* únic color d'accent (turquesa) */
   --gris-text: #6c757d;
   --gris-linia: #dee2e6;
   --gris-fons: #f1f3f5;
@@ -192,4 +192,80 @@ body {
   font-size: 1.4rem;
   cursor: pointer;
   color: var(--gris-text);
+}
+
+/* --- Llegenda del mapa --- */
+.llegenda {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  font-family: "Poppins", system-ui, sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.7;
+  color: var(--navy);
+}
+.llegenda strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gris-text);
+}
+.llegenda strong:first-child {
+  margin-top: 0;
+}
+.llegenda .mostra,
+.llegenda .punt,
+.llegenda .cercle {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.llegenda .mostra {
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+}
+.llegenda .punt {
+  width: 9px;
+  height: 9px;
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+}
+.llegenda .cercle {
+  width: 12px;
+  height: 12px;
+  border: 1.5px dashed var(--navy);
+  border-radius: 50%;
+}
+
+/* --- Fonts i mètode --- */
+.fonts {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--gris-text);
+}
+.fonts li {
+  margin-bottom: 4px;
+}
+.fonts a,
+.enllac {
+  color: var(--navy);
+  text-decoration-color: var(--accent);
+  text-underline-offset: 2px;
+}
+.enllac {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
 }

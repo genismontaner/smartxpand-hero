@@ -180,7 +180,7 @@ En cada paso:
 
 - Tipografía Poppins.
 - Fondo y elementos principales en navy (#051C2C), un solo color de
-  acento.
+  acento: turquesa #2BB3C0.
 - Colores de clasificación: verde (investigar), ámbar (esperar), gris
   (descartar).
 - Estética sobria, sin adornos.

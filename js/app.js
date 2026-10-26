@@ -68,6 +68,30 @@ function resumeixClasses(hexagons) {
   console.table(recompte);
 }
 
+// --- Llegenda ---
+// Un "control" de Leaflet és un element HTML col·locat damunt del mapa, en una cantonada
+function afegeixLlegenda(config) {
+  const llegenda = L.control({ position: "bottomleft" });
+  llegenda.onAdd = () => {
+    const div = L.DomUtil.create("div", "llegenda");
+    const classes = config.classes
+      .map((c) => `<div><span class="mostra" style="background:${c.color}"></span>${c.etiqueta[0] + c.etiqueta.slice(1).toLowerCase()}</div>`)
+      .join("");
+    div.innerHTML = `
+      <strong>Clasificación</strong>
+      ${classes}
+      <div><span class="mostra" style="background:${config.classes.at(-1).color};opacity:0.3"></span>Descartado por regla previa</div>
+      <strong>Clubes</strong>
+      <div><span class="punt" style="background:${NAVY};width:12px;height:12px"></span>${config.marca_propia}</div>
+      <div><span class="punt" style="background:${GRIS_COMPETENCIA}"></span>Competencia</div>
+      <div><span class="punt" style="background:${GRIS_COMPETENCIA};opacity:0.4"></span>Apertura prevista</div>
+      <div><span class="cercle"></span>Radio de ${config.radi_m} m</div>
+    `;
+    return div;
+  };
+  llegenda.addTo(mapa);
+}
+
 // --- Selecció d'un hexàgon ---
 let seleccionat = null; // capa de l'hexàgon seleccionat
 let cercle = null; // cercle de 800 m dibuixat al mapa
@@ -127,8 +151,9 @@ async function inicia() {
     },
   }).addTo(mapa);
 
-  // Panell inicial (sense cap hexàgon seleccionat)
+  // Panell inicial (sense cap hexàgon seleccionat) i llegenda
   mostraPanellInicial(config);
+  afegeixLlegenda(config);
 
   // Límit municipal: només la línia, sense farciment
   const capaLimit = L.geoJSON(limit, {

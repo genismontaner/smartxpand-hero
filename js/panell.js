@@ -64,6 +64,21 @@ function mostraPanellInicial(config) {
     <ul class="dades" style="list-style:none;padding:0">${classes}</ul>
     <h3>Pesos de la puntuación</h3>
     <ul class="dades">${pesos}</ul>
+    ${seccioFontsIMetode(config)}
+  `;
+}
+
+// "Fuentes y método": limitacions del mètode i fonts amb data (de scoring.json)
+function seccioFontsIMetode(config) {
+  const limitacions = config.limitacions.map((l) => `<li>${l}</li>`).join("");
+  const fonts = config.fonts
+    .map((f) => `<li>${f.dada}: <a href="${f.url}" target="_blank" rel="noopener">${f.font}</a> (${f.any})</li>`)
+    .join("");
+  return `
+    <h3 id="fonts-i-metode">Método: qué hay que saber</h3>
+    <ul class="fonts">${limitacions}</ul>
+    <h3>Fuentes</h3>
+    <ul class="fonts">${fonts}</ul>
   `;
 }
 
@@ -136,6 +151,14 @@ function mostraPanellHexagon(props, config, enTancar) {
     </p>
   `;
 
+  // Enllaç a les fonts i el mètode (tanca la selecció i baixa fins a la secció)
+  html += `<button class="enllac">Ver fuentes y método</button>`;
+
   panell.innerHTML = html;
+  panell.scrollTop = 0;
   panell.querySelector(".tanca").addEventListener("click", enTancar);
+  panell.querySelector(".enllac").addEventListener("click", () => {
+    enTancar();
+    document.getElementById("fonts-i-metode").scrollIntoView({ behavior: "smooth" });
+  });
 }
