@@ -9,16 +9,37 @@
 
   <!-- Estils de Leaflet (llibreria de mapes), des d'un CDN públic -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <!-- Tipografia Poppins (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
   <!-- Els nostres estils -->
   <link rel="stylesheet" href="css/estils.css">
 </head>
 <body>
+  <!-- Capçalera -->
+  <header class="capcalera">
+    <div class="marca">SmartXpand</div>
+    <div class="titol">
+      Mapa de oportunidad <span>· Gimnasio low cost · Barcelona</span>
+    </div>
+    <div class="etiqueta-cas">Caso ilustrativo</div>
+  </header>
+
   <main class="app">
     <!-- Contenidor on Leaflet dibuixarà el mapa -->
     <div id="mapa"></div>
 
-    <!-- Panell de decisió: el contingut l'omple js/panell.js -->
-    <aside id="panell"></aside>
+    <aside class="lateral">
+      <!-- Panell de decisió: el contingut l'omple js/panell.js -->
+      <div id="panell"></div>
+
+      <!-- Avís fix (principis d'honestedat): sempre visible -->
+      <footer class="avis-cas">
+        Caso ilustrativo elaborado con datos públicos. VivaGym no es cliente de
+        SmartXpand ni ha participado en este análisis.
+      </footer>
+    </aside>
   </main>
 
   <!-- Primer Leaflet, després el nostre codi (que el fa servir) -->
