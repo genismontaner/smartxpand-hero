@@ -85,7 +85,11 @@
   },
 
   "avisos": {
-    "sol_parcial": "Parte del área está clasificada como suelo no urbanizable según el MUC. Requiere confirmación profesional."
+    "urba": "El hexágono es suelo urbano o urbanizable según el MUC. No se ha verificado si el uso deportivo está admitido.",
+    "parcial": "Parte del hexágono es suelo no urbanizable según el MUC. No se ha verificado si el uso deportivo está admitido en el resto.",
+    "no_urbanitzable": "Más de la mitad del hexágono es suelo no urbanizable según el MUC.",
+    "sempre": "Requiere confirmación profesional.",
+    "font": "Fuente: Mapa urbanístic de Catalunya, enero 2023."
   },
 
   "fonts": [

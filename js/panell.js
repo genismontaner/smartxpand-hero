@@ -126,10 +126,15 @@ function mostraPanellHexagon(props, config, enTancar) {
     </ul>
   `;
 
-  // Avís urbanístic preliminar
-  if (props.sol === "parcial") {
-    html += `<h3>Aviso urbanístico</h3><p class="avis">${config.avisos.sol_parcial}</p>`;
-  }
+  // Avís urbanístic preliminar: SEMPRE, amb "Requiere confirmación profesional"
+  const avisos = config.avisos;
+  html += `
+    <h3>Aviso urbanístico preliminar</h3>
+    <p class="avis">
+      ${avisos[props.sol]} <strong>${avisos.sempre}</strong><br>
+      <small>${avisos.font}</small>
+    </p>
+  `;
 
   panell.innerHTML = html;
   panell.querySelector(".tanca").addEventListener("click", enTancar);

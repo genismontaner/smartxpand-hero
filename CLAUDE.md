@@ -104,8 +104,9 @@ aportan) + "En contra" (nota < 40, máx. 2, por puntos que hacen perder).
 Los criterios intermedios no se mencionan. Se cambió de "más fuerte /
 más débil" porque afirmaba "alto solapamiento" con un 7,5 %.
 
-Aviso urbanístico: si el suelo es parcial, se muestra siempre con
-"Requiere confirmación profesional".
+Aviso urbanístico preliminar: se muestra en TODOS los hexágonos (urbano,
+parcial o no urbanizable), siempre con "Requiere confirmación
+profesional" y la fuente (MUC, enero 2023). Textos en `config/scoring.json`.
 
 ## Estructura de carpetas
 
