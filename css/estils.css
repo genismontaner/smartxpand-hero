@@ -1,0 +1,11 @@
+/* Pàgina sense marges i a tota l'alçada de la pantalla */
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+/* El mapa ocupa tota la pantalla (de moment) */
+#mapa {
+  height: 100%;
+}

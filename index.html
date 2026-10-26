@@ -6,10 +6,18 @@
   <!-- Fa que la pàgina s'adapti a l'amplada del mòbil -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartXpand · Mapa de oportunidad</title>
+
+  <!-- Estils de Leaflet (llibreria de mapes), des d'un CDN públic -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <!-- Els nostres estils -->
+  <link rel="stylesheet" href="css/estils.css">
 </head>
 <body>
-  <!-- Pàgina provisional per comprovar que GitHub Pages funciona -->
-  <h1>SmartXpand · Mapa de oportunidad</h1>
-  <p>En construcción.</p>
+  <!-- Contenidor on Leaflet dibuixarà el mapa -->
+  <div id="mapa"></div>
+
+  <!-- Primer Leaflet, després el nostre codi (que el fa servir) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@ S'executa DINS de QGIS, després de 06_muc.py.
 import re
 from qgis.core import (QgsVectorLayer, QgsVectorFileWriter, QgsCoordinateTransformContext,
                        QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject,
-                       QgsField, QgsFeature, QgsSpatialIndex)
+                       QgsField, QgsFeature, QgsSpatialIndex, QgsWkbTypes)
 from qgis.PyQt.QtCore import QVariant
 
 # Paràmetres
@@ -114,4 +114,13 @@ clubs_web.dataProvider().addFeatures(noves)
 exporta(clubs_web, "clubs.geojson")
 
 # --- Límit municipal ---
-exporta(QgsVectorLayer(f"{GPKG}|layername=limit_barcelona", "limit", "ogr"), "limit_municipal.geojson")
+# La fusió de seccions (pas 1) va deixar una col·lecció amb un polígon i una línia sobrant:
+# ens quedem només amb la part de polígon, que és la que Leaflet necessita
+limit = QgsVectorLayer(f"{GPKG}|layername=limit_barcelona", "limit", "ogr")
+limit_web = capa_memoria("MultiPolygon", "EPSG:25831", [QgsField("municipi", QVariant.String)])
+f_limit = next(limit.getFeatures())
+nou = QgsFeature(limit_web.fields())
+nou.setGeometry(f_limit.geometry().convertToType(QgsWkbTypes.PolygonGeometry, True))
+nou.setAttributes([f_limit["NMUN"]])
+limit_web.dataProvider().addFeatures([nou])
+exporta(limit_web, "limit_municipal.geojson")
