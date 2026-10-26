@@ -44,7 +44,7 @@
 
   "classes": [
     { "id": "investigar", "etiqueta": "INVESTIGAR", "minim": 70, "color": "#2f9e44" },
-    { "id": "esperar", "etiqueta": "ESPERAR", "minim": 50, "color": "#f08c00" },
+    { "id": "esperar", "etiqueta": "ESPERAR", "minim": 60, "color": "#f08c00" },
     { "id": "descartar", "etiqueta": "DESCARTAR", "minim": 0, "color": "#adb5bd" }
   ],
 

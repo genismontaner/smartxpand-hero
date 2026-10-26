@@ -41,6 +41,19 @@ function estilClub(club) {
   };
 }
 
+// Estil de cada hexàgon segons la seva classe.
+// Els descartats per regla prèvia (Collserola, port...) gairebé transparents perquè no distreguin.
+function estilHexagon(hex, colors) {
+  const p = hex.properties;
+  const perRegla = p.motiu !== null;
+  return {
+    color: "#ffffff",
+    weight: 0.5,
+    fillColor: colors[p.classe],
+    fillOpacity: perRegla ? 0.15 : 0.7,
+  };
+}
+
 // Escriu a la consola del navegador quants hexàgons hi ha de cada classe (per revisar)
 function resumeixClasses(hexagons) {
   const recompte = {};
@@ -63,9 +76,13 @@ async function inicia() {
   calculaPuntuacions(hexagons, config);
   resumeixClasses(hexagons);
 
-  // Hexàgons (de moment, tots del mateix color)
+  // Hexàgons pintats segons la classe (colors de scoring.json)
+  const colors = {};
+  for (const c of config.classes) colors[c.id] = c.color;
+
   L.geoJSON(hexagons, {
-    style: { color: NAVY, weight: 0.3, fillColor: NAVY, fillOpacity: 0.08 },
+    // 'style' també pot ser una funció: Leaflet la crida per a cada hexàgon
+    style: (hex) => estilHexagon(hex, colors),
   }).addTo(mapa);
 
   // Límit municipal: només la línia, sense farciment

@@ -88,12 +88,15 @@ de la ciudad (escala relativa).
 
 Clases:
 - ≥ 70 → INVESTIGAR (verde)
-- 50–69 → ESPERAR (ámbar)
-- < 50 → DESCARTAR (gris)
-- Regla previa: si más de la mitad del hexágono es suelo no
-  urbanizable → DESCARTAR, con el motivo indicado.
+- 60–69 → ESPERAR (ámbar)
+- < 60 → DESCARTAR (gris)
+- Reglas previas (→ DESCARTAR, con el motivo indicado):
+  · más de la mitad del hexágono es suelo no urbanizable;
+  · menos de 5.000 personas de 18 a 64 años a 800 m.
 
-Los umbrales se revisarán al ver la distribución real (paso 5).
+Umbral de ESPERAR subido de 50 a 60 en el paso 5.3: con 50, el ámbar
+cubría el 60 % de los candidatos y el mapa no se leía en 10 segundos.
+Configuración en `config/scoring.json`.
 
 Nota de decisión: plantilla fija (clase + criterio más fuerte +
 criterio más débil). Sin texto inventado.
