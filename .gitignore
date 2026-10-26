@@ -1,6 +1,10 @@
 # Dades brutes descarregades (pesades, es poden tornar a baixar)
 preparacio/dades_brutes/
 
+# Fitxers temporals de GeoPackage mentre QGIS el té obert
+*.gpkg-shm
+*.gpkg-wal
+
 # Fitxers temporals de QGIS
 *.qgz~
 *.qgs~
