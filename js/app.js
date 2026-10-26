@@ -41,11 +41,27 @@ function estilClub(club) {
   };
 }
 
+// Escriu a la consola del navegador quants hexàgons hi ha de cada classe (per revisar)
+function resumeixClasses(hexagons) {
+  const recompte = {};
+  for (const hex of hexagons.features) {
+    const p = hex.properties;
+    const clau = p.motiu ? `${p.classe} (regla prèvia)` : p.classe;
+    recompte[clau] = (recompte[clau] || 0) + 1;
+  }
+  console.table(recompte);
+}
+
 // 3. Carrega les dades i les afegeix al mapa
 async function inicia() {
   const hexagons = await carregaGeoJSON("data/hexagons.geojson");
   const limit = await carregaGeoJSON("data/limit_municipal.geojson");
   const clubs = await carregaGeoJSON("data/clubs.geojson");
+  const config = await carregaGeoJSON("config/scoring.json");
+
+  // Puntuació i classe de cada hexàgon (js/puntuacio.js)
+  calculaPuntuacions(hexagons, config);
+  resumeixClasses(hexagons);
 
   // Hexàgons (de moment, tots del mateix color)
   L.geoJSON(hexagons, {
