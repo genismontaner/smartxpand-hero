@@ -6,11 +6,27 @@
   <!-- Fa que la pàgina s'adapti a l'amplada del mòbil -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartXpand · Mapa de oportunidad</title>
+  <meta name="description" content="Cribado de zonas para abrir un gimnasio low cost en Barcelona: puntuación sobre 100 por hexágono, con criterios, pesos y fuentes visibles. Caso ilustrativo con datos públicos.">
+
+  <!-- Targeta en compartir l'enllaç (LinkedIn, WhatsApp, correu...): Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://genismontaner.github.io/smartxpand-hero/">
+  <meta property="og:title" content="SmartXpand · Mapa de oportunidad para gimnasios low cost">
+  <meta property="og:description" content="Qué zonas de Barcelona investigar, esperar o descartar, y por qué. Caso ilustrativo elaborado con datos públicos.">
+  <meta property="og:image" content="https://genismontaner.github.io/smartxpand-hero/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Mapa de Barcelona con hexágonos clasificados en investigar, esperar y descartar, y panel de decisión de una zona.">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Icona de la pestanya -->
+  <link rel="icon" href="assets/icona.svg" type="image/svg+xml">
 
   <!-- Estils de Leaflet (llibreria de mapes), des d'un CDN públic -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <!-- Els nostres estils -->
-  <link rel="stylesheet" href="css/estils.css">
+  <!-- Els nostres estils. "?v=..." és la versió: canviar-la en cada publicació
+       obliga el navegador a descarregar els fitxers nous (en lloc de la còpia guardada) -->
+  <link rel="stylesheet" href="css/estils.css?v=9.3">
 </head>
 <body>
   <!-- Capçalera -->
@@ -49,8 +65,8 @@
 
   <!-- Primer Leaflet, després el nostre codi (que el fa servir) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script src="js/puntuacio.js"></script>
-  <script src="js/panell.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/puntuacio.js?v=9.3"></script>
+  <script src="js/panell.js?v=9.3"></script>
+  <script src="js/app.js?v=9.3"></script>
 </body>
 </html>

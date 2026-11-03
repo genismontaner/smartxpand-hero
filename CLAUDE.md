@@ -132,6 +132,10 @@ smartxpand-hero/
 Preparación espacial en QGIS (modelo reutilizable). Puntuación y clase
 calculadas en el navegador a partir de `scoring.json`.
 
+Publicación: en cada cambio de CSS o JS, subir la versión `?v=...` de los
+enlaces en `index.html` (evita que el navegador use copias antiguas). Los
+JSON/GeoJSON se piden con `cache: "no-cache"`.
+
 ## Plan de trabajo
 
 0. Entorno: carpeta, git, GitHub, página mínima en GitHub Pages.

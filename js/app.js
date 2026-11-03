@@ -123,8 +123,9 @@ document.querySelector(".nansa").addEventListener("click", () => {
 // Posa la classe "mode-captura" a tota la pàgina: el CSS amaga els controls
 const avisToast = document.querySelector(".avis-toast");
 
-function activaCaptura() {
+function activaCaptura(ambMissatge = true) {
   document.body.classList.add("mode-captura");
+  if (!ambMissatge) return;
   // Missatge breu que desapareix sol (perquè no surti a la captura)
   avisToast.classList.add("visible");
   setTimeout(() => avisToast.classList.remove("visible"), 2500);
@@ -232,6 +233,18 @@ async function inicia() {
   const ajustaVista = () => mapa.fitBounds(capaLimit.getBounds(), margesMapa());
   if (mapa.getSize().x > 0) ajustaVista();
   else mapa.once("resize", ajustaVista);
+
+  // Paràmetres de l'adreça (el que va després del "?"):
+  //   ?zona=H0913  → obre amb aquesta zona seleccionada (enllaç directe a una zona)
+  //   &captura=1   → obre directament en mode captura
+  const parametres = new URLSearchParams(window.location.search);
+  const zona = parametres.get("zona");
+  if (zona) {
+    capaHexagons.eachLayer((capa) => {
+      if (capa.feature.properties.hex_id === zona) selecciona(capa, capaHexagons, config);
+    });
+  }
+  if (parametres.get("captura") === "1") activaCaptura(false);
 }
 
 inicia();

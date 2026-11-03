@@ -84,6 +84,20 @@ fonts/                  Poppins (licencia OFL)
 preparacio/             Protocolo de preparación de datos (QGIS + Python)
 ```
 
+## Enlace directo a una zona
+
+- `?zona=H0913` abre la aplicación con esa zona seleccionada (útil para enviar
+  una zona concreta en una llamada).
+- `&captura=1` la abre directamente en modo captura (controles ocultos, leyenda
+  y fuentes visibles).
+
+La imagen de previsualización para compartir (`assets/og-image.png`, 1200 × 630)
+se genera así, con el servidor local en marcha:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars --window-size=1200,630 --virtual-time-budget=15000 --screenshot="$PWD/assets/og-image.png" "http://localhost:8000/?zona=H0913&captura=1"
+```
+
 ## Ejecutar en local
 
 Los navegadores bloquean la lectura de ficheros locales con `fetch`, así que hace
