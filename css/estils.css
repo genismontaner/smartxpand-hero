@@ -453,3 +453,69 @@ body {
   }
 
 }
+
+/* --- Mode captura --- */
+.boto-captura {
+  padding: 6px 14px;
+  border: 1px solid var(--gris-linia);
+  border-radius: 999px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--navy);
+  cursor: pointer;
+}
+.boto-captura:hover {
+  border-color: var(--accent);
+}
+.fonts-captura {
+  display: none;
+  margin-top: 4px;
+}
+
+/* Missatge breu: apareix en entrar al mode captura i s'esvaeix */
+.avis-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 2000;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #ffffff;
+  font-size: 0.85rem;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.avis-toast.visible {
+  opacity: 1;
+}
+
+/* Tot el que comença per .mode-captura només s'aplica amb el mode actiu */
+.mode-captura .boto-captura,
+.mode-captura .leaflet-control-zoom,
+.mode-captura .boto-llegenda,
+.mode-captura .nansa,
+.mode-captura .tanca,
+.mode-captura .enllac {
+  display: none;
+}
+.mode-captura .llegenda .contingut {
+  display: block; /* llegenda sempre oberta */
+  margin-top: 0;
+}
+.mode-captura .fonts-captura {
+  display: block;
+}
+.mode-captura .capcalera {
+  cursor: pointer; /* al mòbil, tocar la capçalera surt del mode */
+}
+@media (max-width: 767px) {
+  .boto-captura {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+}

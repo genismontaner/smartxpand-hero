@@ -23,8 +23,12 @@
     <div class="titol">
       Mapa de oportunidad <span>· Gimnasio low cost · Barcelona</span>
     </div>
+    <button class="boto-captura" title="Oculta los controles para hacer una captura de pantalla">Modo captura</button>
     <div class="etiqueta-cas">Caso ilustrativo</div>
   </header>
+
+  <!-- Missatge breu en entrar al mode captura (desapareix sol) -->
+  <div class="avis-toast">Modo captura · pulsa Esc (o toca la cabecera) para salir</div>
 
   <main class="app">
     <!-- Contenidor on Leaflet dibuixarà el mapa -->
@@ -41,6 +45,8 @@
       <footer class="avis-cas">
         Caso ilustrativo elaborado con datos públicos. VivaGym no es cliente de
         SmartXpand ni ha participado en este análisis.
+        <!-- Fonts resumides: només es veuen en mode captura (les omple app.js) -->
+        <div class="fonts-captura"></div>
       </footer>
     </aside>
   </main>

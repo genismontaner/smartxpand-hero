@@ -29,9 +29,11 @@ mapa.getPane("superior").style.zIndex = 450;
 const NAVY = "#051C2C";
 const GRIS_COMPETENCIA = "#868e96";
 
-// Llegeix un fitxer GeoJSON i el retorna com a objecte de JavaScript
+// Llegeix un fitxer GeoJSON (o JSON) i el retorna com a objecte de JavaScript.
+// cache "no-cache": el navegador comprova amb el servidor si el fitxer ha canviat
+// abans de fer servir la còpia guardada (evita dades velles després de publicar).
 async function carregaGeoJSON(ruta) {
-  const resposta = await fetch(ruta);
+  const resposta = await fetch(ruta, { cache: "no-cache" });
   return resposta.json();
 }
 
@@ -128,6 +130,34 @@ document.querySelector(".nansa").addEventListener("click", () => {
   lateral.classList.toggle("desplegada");
 });
 
+// --- Mode captura ---
+// Posa la classe "mode-captura" a tota la pàgina: el CSS amaga els controls
+const avisToast = document.querySelector(".avis-toast");
+
+function activaCaptura() {
+  document.body.classList.add("mode-captura");
+  // Missatge breu que desapareix sol (perquè no surti a la captura)
+  avisToast.classList.add("visible");
+  setTimeout(() => avisToast.classList.remove("visible"), 2500);
+}
+
+function surtCaptura() {
+  document.body.classList.remove("mode-captura");
+}
+
+document.querySelector(".boto-captura").addEventListener("click", (esdeveniment) => {
+  // Evita que el mateix clic arribi a la capçalera i en surti de seguida
+  esdeveniment.stopPropagation();
+  activaCaptura();
+});
+// Sortir: tecla Esc (ordinador) o tocar la capçalera (mòbil)
+document.addEventListener("keydown", (esdeveniment) => {
+  if (esdeveniment.key === "Escape") surtCaptura();
+});
+document.querySelector(".capcalera").addEventListener("click", () => {
+  if (document.body.classList.contains("mode-captura")) surtCaptura();
+});
+
 // --- Selecció d'un hexàgon ---
 let seleccionat = null; // capa de l'hexàgon seleccionat
 let cercle = null; // cercle de 800 m dibuixat al mapa
@@ -192,9 +222,10 @@ async function inicia() {
     },
   }).addTo(mapa);
 
-  // Panell inicial (sense cap hexàgon seleccionat) i llegenda
+  // Panell inicial (sense cap hexàgon seleccionat), llegenda i fonts del mode captura
   mostraPanellInicial(config);
   afegeixLlegenda(config);
+  document.querySelector(".fonts-captura").textContent = config.fonts_resum;
 
   // Límit municipal: només la línia, sense farciment
   const capaLimit = L.geoJSON(limit, {
@@ -207,8 +238,12 @@ async function inicia() {
       L.circleMarker(posicio, { ...estilClub(club), pane: "superior" }),
   }).addTo(mapa);
 
-  // Ajusta la vista perquè es vegi tota la ciutat dins de la zona no tapada
-  mapa.fitBounds(capaLimit.getBounds(), margesMapa());
+  // Ajusta la vista perquè es vegi tota la ciutat dins de la zona no tapada.
+  // Si la pàgina s'ha obert en una pestanya en segon pla, el mapa encara fa 0 px:
+  // llavors esperem el primer canvi de mida (quan la pestanya es fa visible).
+  const ajustaVista = () => mapa.fitBounds(capaLimit.getBounds(), margesMapa());
+  if (mapa.getSize().x > 0) ajustaVista();
+  else mapa.once("resize", ajustaVista);
 }
 
 inicia();

@@ -100,6 +100,8 @@
     "El mapa señala zonas donde buscar locales; no evalúa locales concretos."
   ],
 
+  "fonts_resum": "Fuentes: INE (ADRH 2024) · Mapa urbanístic de Catalunya (enero 2023) · webs oficiales de las marcas, Time Out y Open Data BCN (consulta oct. 2026) · Mapa base: IGN.",
+
   "fonts": [
     { "dada": "Población y renta por sección censal", "font": "INE, Atlas de Distribución de Renta de los Hogares", "any": "2024", "url": "https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177088&menu=resultados&idp=1254735976608" },
     { "dada": "Secciones censales", "font": "INE, cartografía digitalizada de secciones censales", "any": "2024", "url": "https://www.ine.es/prodyser/cartografia/seccionado_2024.zip" },
