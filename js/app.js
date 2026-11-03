@@ -1,11 +1,14 @@
 // =============================================================
 // SmartXpand · Mapa de oportunidad
-// Pas 4.2: mapa base amb hexàgons, límit municipal i clubs
+// Mapa a pantalla completa amb capçalera i panell flotants
 // =============================================================
 
 // 1. Crea el mapa dins del <div id="mapa">, centrat a Barcelona
 // zoomSnap 0.25: permet zooms intermedis perquè la ciutat ompli millor la pantalla
-const mapa = L.map("mapa", { zoomSnap: 0.25 }).setView([41.39, 2.16], 12);
+const mapa = L.map("mapa", { zoomSnap: 0.25, zoomControl: false }).setView([41.39, 2.16], 12);
+
+// Botons de zoom a baix a l'esquerra (la llegenda s'hi col·locarà a sobre)
+L.control.zoom({ position: "bottomleft" }).addTo(mapa);
 
 // 2. Mapa base gris de l'IGN (Instituto Geográfico Nacional, llicència CC BY 4.0)
 //    Servei WMTS: el mapa es demana en "rajoles" (imatges petites) per zoom, columna i fila
@@ -91,7 +94,9 @@ function afegeixLlegenda(config) {
       <div><span class="cercle"></span>Radio de ${config.radi_m} m</div>
       </div>
     `;
-    // Al mòbil, el botó obre i tanca la llegenda
+    // Oberta d'entrada només en pantalles amples (on no tapa la ciutat)
+    if (window.innerWidth >= 1280) div.classList.add("oberta");
+    // El botó obre i tanca la llegenda
     div.querySelector(".boto-llegenda").addEventListener("click", () => div.classList.toggle("oberta"));
     // Els clics a la llegenda no han d'arribar al mapa
     L.DomEvent.disableClickPropagation(div);
@@ -107,6 +112,15 @@ const ALCADA_FITXA = 190; // ha de coincidir amb --alcada-fitxa del CSS
 // Cert si la pantalla és de mòbil (mateixa condició que el CSS)
 function esMobil() {
   return window.matchMedia("(max-width: 767px)").matches;
+}
+
+// Marges (en píxels) que tapen les targetes flotants: el mapa s'ajusta dins de la zona visible.
+// Escriptori: capçalera a dalt i panell a la dreta. Mòbil: capçalera a dalt i fitxa a baix.
+function margesMapa() {
+  if (esMobil()) {
+    return { paddingTopLeft: [10, 68], paddingBottomRight: [10, ALCADA_FITXA + 10] };
+  }
+  return { paddingTopLeft: [16, 92], paddingBottomRight: [400 + 32 + 16, 16] };
 }
 
 // La nansa plega i desplega la fitxa
@@ -140,11 +154,10 @@ function selecciona(capa, capaHexagons, config) {
 
   mostraPanellHexagon(capa.feature.properties, config, () => desselecciona(capaHexagons, config));
 
-  // Al mòbil: fitxa plegada (es veu la puntuació) i hexàgon visible per sobre de la fitxa
-  if (esMobil()) {
-    lateral.classList.remove("desplegada");
-    mapa.panInside(centre, { paddingBottomRight: [0, ALCADA_FITXA + 40] });
-  }
+  // L'hexàgon ha de quedar visible, no tapat per les targetes
+  // (al mòbil, a més, la fitxa es plega perquè es vegi la puntuació)
+  if (esMobil()) lateral.classList.remove("desplegada");
+  mapa.panInside(centre, margesMapa());
 }
 
 function desselecciona(capaHexagons, config) {
@@ -194,11 +207,8 @@ async function inicia() {
       L.circleMarker(posicio, { ...estilClub(club), pane: "superior" }),
   }).addTo(mapa);
 
-  // Ajusta la vista perquè es vegi tota la ciutat
-  // (al mòbil, deixant lloc a baix per a la fitxa)
-  mapa.fitBounds(capaLimit.getBounds(), {
-    paddingBottomRight: [0, esMobil() ? ALCADA_FITXA : 0],
-  });
+  // Ajusta la vista perquè es vegi tota la ciutat dins de la zona no tapada
+  mapa.fitBounds(capaLimit.getBounds(), margesMapa());
 }
 
 inicia();

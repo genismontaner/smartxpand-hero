@@ -1,11 +1,16 @@
-/* Colors de marca: es defineixen un cop i es fan servir a tot arreu */
+/* Colors i mides de marca: es defineixen un cop i es fan servir a tot arreu */
 :root {
   --navy: #051c2c;
   --accent: #2bb3c0; /* únic color d'accent (turquesa) */
+  --accent-suau: rgba(43, 179, 192, 0.12);
   --gris-text: #6c757d;
-  --gris-linia: #dee2e6;
-  --gris-fons: #f1f3f5;
-  --alcada-capcalera: 56px;
+  --gris-linia: #e9ecef;
+  --gris-fons: #f5f6f7;
+  --marge: 16px; /* separació de les targetes respecte de la vora */
+  --radi: 16px; /* cantonades arrodonides de les targetes */
+  --ombra: 0 4px 24px rgba(5, 28, 44, 0.12);
+  --alcada-capcalera: 60px;
+  --amplada-panell: 400px;
 }
 
 /* Pàgina sense marges i a tota l'alçada de la pantalla */
@@ -18,21 +23,38 @@ body {
   background: #ffffff;
 }
 
-/* --- Capçalera --- */
+/* --- Mapa a pantalla completa, per darrere de tot --- */
+.app {
+  position: relative;
+  height: 100%;
+}
+#mapa {
+  position: absolute;
+  inset: 0; /* top, right, bottom i left a 0: ocupa tota la pantalla */
+}
+
+/* --- Capçalera flotant --- */
 .capcalera {
+  position: absolute;
+  top: var(--marge);
+  left: var(--marge);
+  right: var(--marge);
+  z-index: 1000; /* per sobre del mapa */
   display: flex;
   align-items: center;
   gap: 16px;
   height: var(--alcada-capcalera);
-  padding: 0 20px;
-  background: var(--navy);
-  color: #ffffff;
+  padding: 0 24px;
+  border-radius: var(--radi);
+  background: #ffffff;
+  box-shadow: var(--ombra);
 }
 .marca {
-  font-weight: 700;
-  font-size: 1.1rem;
   padding-right: 16px;
   border-right: 2px solid var(--accent);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
 }
 .titol {
   flex: 1;
@@ -40,13 +62,13 @@ body {
 }
 .titol span {
   font-weight: 400;
-  opacity: 0.75;
+  color: var(--gris-text);
 }
 .etiqueta-cas {
-  padding: 4px 10px;
+  padding: 6px 14px;
   border: 1px solid var(--accent);
-  border-radius: 4px;
-  color: var(--accent);
+  border-radius: 999px; /* forma de píndola */
+  background: var(--accent-suau);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -54,31 +76,28 @@ body {
   white-space: nowrap;
 }
 
-/* --- Disposició: mapa a l'esquerra, columna lateral a la dreta --- */
-.app {
-  display: flex;
-  height: calc(100% - var(--alcada-capcalera));
-}
-
-#mapa {
-  flex: 1; /* ocupa tot l'espai que deixa la columna lateral */
-}
-
+/* --- Panell lateral flotant --- */
 .lateral {
+  position: absolute;
+  top: calc(var(--marge) * 2 + var(--alcada-capcalera));
+  right: var(--marge);
+  bottom: var(--marge);
+  z-index: 1000;
   display: flex;
   flex-direction: column;
-  width: 380px;
-  border-left: 1px solid var(--gris-linia);
+  width: var(--amplada-panell);
+  overflow: hidden; /* respecta les cantonades arrodonides */
+  border-radius: var(--radi);
+  background: #ffffff;
+  box-shadow: var(--ombra);
 }
-
 #panell {
   flex: 1; /* el panell fa scroll; l'avís de sota queda fix */
   overflow-y: auto;
-  padding: 20px;
+  padding: 24px;
 }
-
 .avis-cas {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-top: 1px solid var(--gris-linia);
   background: var(--gris-fons);
   font-size: 0.72rem;
@@ -86,24 +105,286 @@ body {
   color: var(--gris-text);
 }
 
-/* La nansa i el botó de llegenda només es fan servir al mòbil */
-.nansa,
-.boto-llegenda {
+/* Controls de dalt del mapa per sota de la capçalera */
+.leaflet-top {
+  top: calc(var(--marge) + var(--alcada-capcalera));
+}
+/* Controls de baix a l'esquerra amb el mateix marge que les targetes */
+.leaflet-bottom.leaflet-left .leaflet-control {
+  margin-left: var(--marge);
+  margin-bottom: var(--marge);
+}
+/* Atribució a l'esquerra del panell perquè no quedi tapada */
+.leaflet-bottom.leaflet-right {
+  right: calc(var(--amplada-panell) + var(--marge) * 2);
+}
+.leaflet-control-zoom {
+  overflow: hidden;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: var(--ombra) !important;
+}
+
+/* La nansa només es fa servir al mòbil */
+.nansa {
   display: none;
 }
 
-/* --- Mòbil: mapa a pantalla completa i panell com a fitxa inferior --- */
+/* Llegenda plegable: el botó obre i tanca el contingut */
+.boto-llegenda {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+}
+.boto-llegenda::after {
+  content: " ▾";
+  color: var(--accent);
+}
+.llegenda.oberta .boto-llegenda::after {
+  content: " ▴";
+}
+.llegenda .contingut {
+  display: none;
+}
+.llegenda.oberta .contingut {
+  display: block;
+  margin-top: 8px;
+}
+
+/* --- Contingut del panell --- */
+#panell h2 {
+  margin: 0 0 4px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.subtitol {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--gris-text);
+}
+.intro {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Títol de secció amb número en un cercle turquesa */
+.seccio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 28px 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.seccio .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.puntuacio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.puntuacio .xifra {
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.puntuacio .xifra small {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--gris-text);
+}
+
+/* Classe en forma de píndola */
+.etiqueta-classe {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+}
+.llista-classes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+/* Barres del desglossament */
+.criteri {
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+}
+.criteri .linia {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.criteri small {
+  color: var(--gris-text);
+}
+.barra {
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: var(--gris-linia);
+}
+.barra div {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--navy);
+}
+
+.dades {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+.nota-decisio {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--gris-fons);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.avis {
+  margin: 0;
+  padding: 14px 16px;
+  border-left: 4px solid #f08c00;
+  border-radius: 0 12px 12px 0;
+  background: #fff4e6;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.tanca {
+  float: right;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--gris-linia);
+  border-radius: 50%;
+  background: #ffffff;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--gris-text);
+}
+
+/* --- Llegenda del mapa (targeta flotant) --- */
+.llegenda {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: var(--ombra);
+  font-family: "Poppins", system-ui, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.8;
+  color: var(--navy);
+}
+.llegenda strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gris-text);
+}
+.llegenda strong:first-child {
+  margin-top: 0;
+}
+.llegenda .mostra,
+.llegenda .punt,
+.llegenda .cercle {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+.llegenda .mostra {
+  width: 14px;
+  height: 10px;
+  border-radius: 3px;
+}
+.llegenda .punt {
+  width: 9px;
+  height: 9px;
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+}
+.llegenda .cercle {
+  width: 12px;
+  height: 12px;
+  border: 1.5px dashed var(--navy);
+  border-radius: 50%;
+}
+
+/* --- Fonts i mètode --- */
+.fonts {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--gris-text);
+}
+.fonts li {
+  margin-bottom: 6px;
+}
+.fonts a,
+.enllac {
+  color: var(--navy);
+  text-decoration-color: var(--accent);
+  text-underline-offset: 2px;
+}
+.enllac {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* --- Mòbil: capçalera compacta i panell com a fitxa inferior --- */
 @media (max-width: 767px) {
   :root {
+    --marge: 10px;
+    --alcada-capcalera: 48px;
     --alcada-fitxa: 190px; /* alçada de la fitxa plegada */
   }
   .capcalera {
     gap: 10px;
-    padding: 0 12px;
-    font-size: 0.85rem;
+    padding: 0 14px;
+    border-radius: 12px;
   }
   .marca {
     padding-right: 10px;
+    font-size: 1rem;
   }
   /* Al mòbil el títol ja surt al panell: la capçalera només porta marca i etiqueta */
   .titol {
@@ -111,29 +392,20 @@ body {
   }
   .etiqueta-cas {
     margin-left: auto; /* empeny l'etiqueta cap a la dreta */
-  }
-
-  .app {
-    position: relative; /* la fitxa es col·loca respecte d'aquest contenidor */
-    display: block;
-  }
-  #mapa {
-    height: 100%;
+    padding: 4px 10px;
+    font-size: 0.68rem;
   }
 
   /* Fitxa inferior */
   .lateral {
-    position: absolute;
+    top: auto;
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 1000; /* per sobre del mapa */
     width: auto;
     height: var(--alcada-fitxa);
-    border-left: none;
-    border-radius: 14px 14px 0 0;
-    background: #ffffff;
-    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+    border-radius: var(--radi) var(--radi) 0 0;
+    box-shadow: 0 -4px 20px rgba(5, 28, 44, 0.18);
     transition: height 0.25s ease;
   }
   .lateral.desplegada {
@@ -141,7 +413,7 @@ body {
   }
   #panell {
     overflow-y: hidden; /* plegada: només es veu la part de dalt */
-    padding: 4px 16px 12px;
+    padding: 4px 18px 12px;
   }
   .lateral.desplegada #panell {
     overflow-y: auto;
@@ -168,7 +440,7 @@ body {
   }
 
   .avis-cas {
-    padding: 6px 16px;
+    padding: 6px 18px;
     font-size: 0.62rem;
   }
 
@@ -176,187 +448,8 @@ body {
   .leaflet-bottom {
     bottom: var(--alcada-fitxa);
   }
-
-  /* Llegenda plegable */
-  .boto-llegenda {
-    display: block;
-    padding: 0;
-    border: none;
-    background: none;
-    font: inherit;
-    font-weight: 600;
-    color: var(--navy);
-    cursor: pointer;
+  .leaflet-bottom.leaflet-right {
+    right: 0;
   }
-  .llegenda .contingut {
-    display: none;
-  }
-  .llegenda.oberta .contingut {
-    display: block;
-    margin-top: 6px;
-  }
-}
 
-/* --- Contingut del panell --- */
-#panell h2 {
-  margin: 0 0 4px;
-  font-size: 1.15rem;
-}
-#panell h3 {
-  margin: 20px 0 8px;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--gris-text);
-}
-.subtitol {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--gris-text);
-}
-.puntuacio {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
-}
-.puntuacio .xifra {
-  font-size: 2.2rem;
-  font-weight: 700;
-}
-.puntuacio .xifra small {
-  font-size: 1rem;
-  font-weight: 400;
-  color: var(--gris-text);
-}
-.etiqueta-classe {
-  padding: 4px 10px;
-  border-radius: 4px;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-/* Barres del desglossament */
-.criteri {
-  margin-bottom: 10px;
-  font-size: 0.85rem;
-}
-.criteri .linia {
-  display: flex;
-  justify-content: space-between;
-}
-.barra {
-  height: 8px;
-  margin-top: 4px;
-  background: #e9ecef;
-  border-radius: 4px;
-}
-.barra div {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--navy);
-}
-
-.dades {
-  margin: 0;
-  padding-left: 18px;
-  font-size: 0.85rem;
-  line-height: 1.6;
-}
-.nota-decisio {
-  padding: 12px;
-  background: var(--gris-fons);
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-.avis {
-  padding: 12px;
-  border-left: 4px solid #f08c00;
-  background: #fff4e6;
-  font-size: 0.85rem;
-}
-.tanca {
-  float: right;
-  border: none;
-  background: none;
-  font-size: 1.4rem;
-  cursor: pointer;
-  color: var(--gris-text);
-}
-
-/* --- Llegenda del mapa --- */
-.llegenda {
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  font-family: "Poppins", system-ui, sans-serif;
-  font-size: 0.72rem;
-  line-height: 1.7;
-  color: var(--navy);
-}
-.llegenda strong {
-  display: block;
-  margin-top: 4px;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--gris-text);
-}
-.llegenda strong:first-child {
-  margin-top: 0;
-}
-.llegenda .mostra,
-.llegenda .punt,
-.llegenda .cercle {
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 6px;
-}
-.llegenda .mostra {
-  width: 14px;
-  height: 10px;
-  border-radius: 2px;
-}
-.llegenda .punt {
-  width: 9px;
-  height: 9px;
-  border: 1px solid #ffffff;
-  border-radius: 50%;
-}
-.llegenda .cercle {
-  width: 12px;
-  height: 12px;
-  border: 1.5px dashed var(--navy);
-  border-radius: 50%;
-}
-
-/* --- Fonts i mètode --- */
-.fonts {
-  margin: 0;
-  padding-left: 18px;
-  font-size: 0.75rem;
-  line-height: 1.5;
-  color: var(--gris-text);
-}
-.fonts li {
-  margin-bottom: 4px;
-}
-.fonts a,
-.enllac {
-  color: var(--navy);
-  text-decoration-color: var(--accent);
-  text-underline-offset: 2px;
-}
-.enllac {
-  display: inline-block;
-  margin-top: 16px;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: 0.8rem;
-  text-decoration: underline;
-  cursor: pointer;
 }

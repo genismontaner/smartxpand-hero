@@ -46,6 +46,11 @@ function notaDecisio(props, config) {
   return parts.join(" ");
 }
 
+// Títol de secció amb el número dins d'un cercle turquesa
+function titolSeccio(numero, text, id = "") {
+  return `<h3 class="seccio"${id ? ` id="${id}"` : ""}><span class="num">${numero}</span>${text}</h3>`;
+}
+
 // Panell inicial: com es llegeix el mapa i quins pesos té la puntuació
 function mostraPanellInicial(config) {
   const pesos = config.criteris
@@ -58,11 +63,11 @@ function mostraPanellInicial(config) {
   panell.innerHTML = `
     <h2>Mapa de oportunidad</h2>
     <p class="subtitol">Gimnasio ${config.format} · ${config.ciutat}</p>
-    <p>Cada hexágono es una zona de ${config.mida_hexagon_m} m puntuada sobre 100
+    <p class="intro">Cada hexágono es una zona de ${config.mida_hexagon_m} m puntuada sobre 100
        según su entorno a ${config.radi_m} m. Haz clic en un hexágono para ver por qué.</p>
-    <h3>Clasificación</h3>
-    <ul class="dades" style="list-style:none;padding:0">${classes}</ul>
-    <h3>Pesos de la puntuación</h3>
+    ${titolSeccio(1, "Clasificación")}
+    <ul class="llista-classes">${classes}</ul>
+    ${titolSeccio(2, "Pesos de la puntuación")}
     <ul class="dades">${pesos}</ul>
     ${seccioFontsIMetode(config)}
   `;
@@ -75,9 +80,9 @@ function seccioFontsIMetode(config) {
     .map((f) => `<li>${f.dada}: <a href="${f.url}" target="_blank" rel="noopener">${f.font}</a> (${f.any})</li>`)
     .join("");
   return `
-    <h3 id="fonts-i-metode">Método: qué hay que saber</h3>
+    ${titolSeccio(3, "Método: qué hay que saber", "fonts-i-metode")}
     <ul class="fonts">${limitacions}</ul>
-    <h3>Fuentes</h3>
+    ${titolSeccio(4, "Fuentes")}
     <ul class="fonts">${fonts}</ul>
   `;
 }
@@ -85,6 +90,7 @@ function seccioFontsIMetode(config) {
 // Panell d'un hexàgon seleccionat. 'enTancar' és la funció que s'executa en clicar ✕
 function mostraPanellHexagon(props, config, enTancar) {
   const classe = infoClasse(props.classe, config);
+  let n = 0; // comptador de seccions: ++n suma 1 i retorna el valor nou
   let html = `
     <button class="tanca" aria-label="Cerrar">✕</button>
     <h2>${props.barri}</h2>
@@ -97,7 +103,7 @@ function mostraPanellHexagon(props, config, enTancar) {
       <div class="puntuacio">
         <span class="etiqueta-classe" style="background:${classe.color}">${classe.etiqueta}</span>
       </div>
-      <h3>Motivo</h3>
+      ${titolSeccio(++n, "Motivo")}
       <p class="nota-decisio">${props.motiu}</p>
     `;
   } else {
@@ -122,16 +128,16 @@ function mostraPanellHexagon(props, config, enTancar) {
         <span class="xifra">${props.puntuacio}<small> / 100</small></span>
         <span class="etiqueta-classe" style="background:${classe.color}">${classe.etiqueta}</span>
       </div>
-      <h3>Nota de decisión</h3>
+      ${titolSeccio(++n, "Nota de decisión")}
       <p class="nota-decisio">${notaDecisio(props, config)}</p>
-      <h3>Desglose de la puntuación</h3>
+      ${titolSeccio(++n, "Desglose de la puntuación")}
       ${desglossament}
     `;
   }
 
   // Dades a 800 m (també per als descartats, per transparència)
   html += `
-    <h3>Datos a ${config.radi_m} m</h3>
+    ${titolSeccio(++n, `Datos a ${config.radi_m} m`)}
     <ul class="dades">
       <li>Población de 18 a 64 años: ${numero(props.pob_objectiu)}</li>
       <li>Renta neta media por persona: ${numero(props.renda)} €</li>
@@ -144,7 +150,7 @@ function mostraPanellHexagon(props, config, enTancar) {
   // Avís urbanístic preliminar: SEMPRE, amb "Requiere confirmación profesional"
   const avisos = config.avisos;
   html += `
-    <h3>Aviso urbanístico preliminar</h3>
+    ${titolSeccio(++n, "Aviso urbanístico preliminar")}
     <p class="avis">
       ${avisos[props.sol]} <strong>${avisos.sempre}</strong><br>
       <small>${avisos.font}</small>
