@@ -33,7 +33,18 @@ al cliente.
 
 - Fase 1 (preguntas): completada.
 - Fase 2 (propuesta de estructura): aprobada.
-- Fase 3 (construcción): en curso. Ver "Plan de trabajo".
+- Fase 3 (construcción): MVP completado y publicado (pasos 0–9, noviembre 2026)
+  en https://genismontaner.github.io/smartxpand-hero/
+
+Pendiente tras el MVP:
+- Automatizar los pasos manuales de QGIS (área de estudio y capa de clubes;
+  ver `preparacio/PROTOCOL.md`).
+- Confirmar los clubes y la cuota de Synergym en su web oficial (hoy: fuente
+  secundaria).
+- Comprobar la tarjeta de LinkedIn con el Post Inspector.
+- Probar el criterio de los 10 segundos con un director de expansión real.
+- Decidir la licencia del código del repositorio (hoy: sin licencia).
+- Versión 2: isócronas a pie; posible ranking por barrios.
 
 ## Qué construimos (MVP aprobado)
 

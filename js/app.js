@@ -111,7 +111,8 @@ function margesMapa() {
   if (esMobil()) {
     return { paddingTopLeft: [10, 68], paddingBottomRight: [10, ALCADA_FITXA + 10] };
   }
-  return { paddingTopLeft: [16, 92], paddingBottomRight: [400 + 32 + 16, 16] };
+  // Amplada real del panell (canvia segons la pantalla) + marges
+  return { paddingTopLeft: [16, 92], paddingBottomRight: [lateral.offsetWidth + 32 + 16, 16] };
 }
 
 // La nansa plega i desplega la fitxa

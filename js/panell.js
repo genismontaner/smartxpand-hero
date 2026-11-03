@@ -124,7 +124,7 @@ function mostraPanellHexagon(props, config, enTancar) {
           <div class="criteri">
             <div class="linia">
               <span>${c.etiqueta} <small>(${c.pes} %)</small></span>
-              <span>${nota}/100 · aporta ${decimal(punts)} pts</span>
+              <span class="valor">${nota}/100 · +${decimal(punts)} pts</span>
             </div>
             <div class="barra"><div style="width:${nota}%"></div></div>
           </div>`;
