@@ -119,6 +119,7 @@ smartxpand-hero/
 ├── js/panell.js         → dashboard y nota de decisión
 ├── data/                → GeoJSON procesados que lee la web
 ├── config/scoring.json  → criterios, pesos, umbrales, radio, fuentes
+├── fonts/               → Poppins alojada en local (licencia OFL)
 ├── preparacio/          → protocolo reutilizable (PROTOCOL.md)
 │   ├── scripts/         → scripts Python numerados por paso
 │   ├── dades_intermedies/ → resultados intermedios (CSV, GeoPackage)
