@@ -1,3 +1,34 @@
+/* Tipografia Poppins allotjada al projecte (llicència OFL a fonts/OFL-Poppins.txt).
+   Així no es carrega des de Google i no s'envia la IP dels visitants a tercers. */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/poppins-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/poppins-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/poppins-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/poppins-latin-700-normal.woff2") format("woff2");
+}
+
 /* Colors i mides de marca: es defineixen un cop i es fan servir a tot arreu */
 :root {
   --navy: #051c2c;
@@ -210,6 +241,17 @@ body {
 .puntuacio .xifra small {
   font-size: 1rem;
   font-weight: 400;
+  color: var(--gris-text);
+}
+
+.nota-relativa {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--gris-text);
+}
+.seccio small {
+  font-weight: 400;
+  font-size: 0.8rem;
   color: var(--gris-text);
 }
 

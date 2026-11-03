@@ -80,8 +80,8 @@
     "classe": { "investigar": "Investigar.", "esperar": "Esperar.", "descartar": "Descartar." },
     "a_favor": "A favor: {llista}.",
     "en_contra": "En contra: {llista}.",
-    "sense_a_favor": "Ningún criterio destaca por encima de la media.",
-    "sense_en_contra": "Ningún criterio por debajo de la media."
+    "sense_a_favor": "Ningún criterio con nota alta ({nota_a_favor} o más).",
+    "sense_en_contra": "Ningún criterio con nota baja (menos de {nota_en_contra})."
   },
 
   "avisos": {
@@ -99,6 +99,8 @@
     "Los centros deportivos municipales solo incluyen los de Barcelona; en los bordes del municipio la competencia puede estar subestimada.",
     "El mapa señala zonas donde buscar locales; no evalúa locales concretos."
   ],
+
+  "nota_relativa": "Puntuación relativa entre zonas de {ciutat}; no mide la viabilidad de un club.",
 
   "fonts_resum": "Fuentes: INE (ADRH 2024) · Mapa urbanístic de Catalunya (enero 2023) · webs oficiales de las marcas, Time Out y Open Data BCN (consulta oct. 2026) · Mapa base: IGN.",
 

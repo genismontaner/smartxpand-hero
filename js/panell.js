@@ -11,6 +11,11 @@ function numero(valor) {
   return Math.round(valor).toLocaleString("es-ES");
 }
 
+// Número amb un decimal en castellà: 29.1 → "29,1"
+function decimal(valor) {
+  return valor.toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+}
+
 // Busca la classe (etiqueta i color) a partir del seu id
 function infoClasse(id, config) {
   return config.classes.find((c) => c.id === id);
@@ -41,8 +46,11 @@ function notaDecisio(props, config) {
     .map((c) => c.frase_feble);
 
   const parts = [nd.classe[props.classe]];
-  parts.push(aFavor.length ? nd.a_favor.replace("{llista}", llistaFrases(aFavor)) : nd.sense_a_favor);
-  parts.push(enContra.length ? nd.en_contra.replace("{llista}", llistaFrases(enContra)) : nd.sense_en_contra);
+  // Els textos "sense..." porten els llindars reals ({nota_a_favor}, {nota_en_contra})
+  const senseAFavor = nd.sense_a_favor.replace("{nota_a_favor}", nd.nota_a_favor);
+  const senseEnContra = nd.sense_en_contra.replace("{nota_en_contra}", nd.nota_en_contra);
+  parts.push(aFavor.length ? nd.a_favor.replace("{llista}", llistaFrases(aFavor)) : senseAFavor);
+  parts.push(enContra.length ? nd.en_contra.replace("{llista}", llistaFrases(enContra)) : senseEnContra);
   return parts.join(" ");
 }
 
@@ -116,7 +124,7 @@ function mostraPanellHexagon(props, config, enTancar) {
           <div class="criteri">
             <div class="linia">
               <span>${c.etiqueta} <small>(${c.pes} %)</small></span>
-              <span>${nota}/100 · aporta ${punts.toFixed(1)} pts</span>
+              <span>${nota}/100 · aporta ${decimal(punts)} pts</span>
             </div>
             <div class="barra"><div style="width:${nota}%"></div></div>
           </div>`;
@@ -128,6 +136,7 @@ function mostraPanellHexagon(props, config, enTancar) {
         <span class="xifra">${props.puntuacio}<small> / 100</small></span>
         <span class="etiqueta-classe" style="background:${classe.color}">${classe.etiqueta}</span>
       </div>
+      <p class="nota-relativa">${config.nota_relativa.replace("{ciutat}", config.ciutat)}</p>
       ${titolSeccio(++n, "Nota de decisión")}
       <p class="nota-decisio">${notaDecisio(props, config)}</p>
       ${titolSeccio(++n, "Desglose de la puntuación")}
@@ -137,7 +146,7 @@ function mostraPanellHexagon(props, config, enTancar) {
 
   // Dades a 800 m (també per als descartats, per transparència)
   html += `
-    ${titolSeccio(++n, `Datos a ${config.radi_m} m`)}
+    ${titolSeccio(++n, `Datos a ${config.radi_m} m <small>(en línea recta)</small>`)}
     <ul class="dades">
       <li>Población de 18 a 64 años: ${numero(props.pob_objectiu)}</li>
       <li>Renta neta media por persona: ${numero(props.renda)} €</li>

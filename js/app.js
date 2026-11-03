@@ -63,17 +63,6 @@ function estilHexagon(hex, colors) {
   };
 }
 
-// Escriu a la consola del navegador quants hexàgons hi ha de cada classe (per revisar)
-function resumeixClasses(hexagons) {
-  const recompte = {};
-  for (const hex of hexagons.features) {
-    const p = hex.properties;
-    const clau = p.motiu ? `${p.classe} (regla prèvia)` : p.classe;
-    recompte[clau] = (recompte[clau] || 0) + 1;
-  }
-  console.table(recompte);
-}
-
 // --- Llegenda ---
 // Un "control" de Leaflet és un element HTML col·locat damunt del mapa, en una cantonada
 function afegeixLlegenda(config) {
@@ -207,7 +196,6 @@ async function inicia() {
 
   // Puntuació i classe de cada hexàgon (js/puntuacio.js)
   calculaPuntuacions(hexagons, config);
-  resumeixClasses(hexagons);
 
   // Hexàgons pintats segons la classe (colors de scoring.json)
   const colors = {};
