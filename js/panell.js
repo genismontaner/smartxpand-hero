@@ -8,7 +8,8 @@ const panell = document.getElementById("panell");
 
 // Format de números en castellà: 21400 → "21.400"
 function numero(valor) {
-  return Math.round(valor).toLocaleString("es-ES");
+  // useGrouping "always": també posa el punt a les xifres de 4 dígits (5.000, 1.762)
+  return Math.round(valor).toLocaleString("es-ES", { useGrouping: "always" });
 }
 
 // Número amb un decimal en castellà: 29.1 → "29,1"
@@ -62,7 +63,7 @@ function titolSeccio(numero, text, id = "") {
 // Panell inicial: com es llegeix el mapa i quins pesos té la puntuació
 function mostraPanellInicial(config) {
   const pesos = config.criteris
-    .map((c) => `<li><strong>${c.etiqueta}</strong> (${c.pes} %): ${c.descripcio.toLowerCase()}</li>`)
+    .map((c) => `<li><strong>${c.etiqueta}</strong> (${Math.round(c.pes)} %): ${c.descripcio.toLowerCase()}</li>`)
     .join("");
   const classes = config.classes
     .map((c) => `<li><span class="etiqueta-classe" style="background:${c.color}">${c.etiqueta}</span> ${c.minim > 0 ? "≥ " + c.minim : "< " + config.classes[1].minim} puntos</li>`)
@@ -123,7 +124,7 @@ function mostraPanellHexagon(props, config, enTancar) {
         return `
           <div class="criteri">
             <div class="linia">
-              <span>${c.etiqueta} <small>(${c.pes} %)</small></span>
+              <span>${c.etiqueta} <small>(${Math.round(c.pes)} %)</small></span>
               <span class="valor">${nota}/100 · +${decimal(punts)} pts</span>
             </div>
             <div class="barra"><div style="width:${nota}%"></div></div>

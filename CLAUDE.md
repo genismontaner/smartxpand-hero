@@ -44,7 +44,11 @@ Pendiente tras el MVP:
 - Comprobar la tarjeta de LinkedIn con el Post Inspector.
 - Probar el criterio de los 10 segundos con un director de expansión real.
 - Decidir la licencia del código del repositorio (hoy: sin licencia).
-- Versión 2: isócronas a pie; posible ranking por barrios.
+- Fase B del panel de ajustes: franjas de edad (confirmar la fuente por sección
+  censal para los municipios vecinos).
+- Fase C: modo (a pie, VMP, coche) y minutos con red de calles real precalculada.
+  OpenRouteService no sirve para 1.306 hexágonos (500 isócronas/día).
+- Posible ranking por barrios.
 
 ## Qué construimos (MVP aprobado)
 
@@ -109,6 +113,12 @@ Umbral de ESPERAR subido de 50 a 60 en el paso 5.3: con 50, el ámbar
 cubría el 60 % de los candidatos y el mapa no se leía en 10 segundos.
 Configuración en `config/scoring.json`.
 
+Pestaña "Ajustes" (fase A, noviembre 2026): pesos (normalizados a 100 %), renta
+objetivo, contar centros municipales y aperturas previstas, y población mínima.
+La web abre con los valores por defecto (66 / 170 / 576 zonas), que deben
+mantenerse al tocar el código. Las capturas muestran los parámetros usados.
+Radio y edad siguen fijos: no mostrar selectores que aún no funcionen.
+
 Nota de decisión: plantilla fija sin texto inventado (paso 6). Clase +
 "A favor" (criterios con nota ≥ 60, máx. 2, ordenados por puntos que
 aportan) + "En contra" (nota < 40, máx. 2, por puntos que hacen perder).
@@ -128,6 +138,7 @@ smartxpand-hero/
 ├── js/app.js            → mapa, carga de datos, clics
 ├── js/puntuacio.js      → puntuación y clase
 ├── js/panell.js         → dashboard y nota de decisión
+├── js/ajustos.js        → pestaña "Ajustes" (controles y recálculo)
 ├── data/                → GeoJSON procesados que lee la web
 ├── config/scoring.json  → criterios, pesos, umbrales, radio, fuentes
 ├── fonts/               → Poppins alojada en local (licencia OFL)

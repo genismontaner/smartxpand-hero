@@ -39,8 +39,8 @@
     },
     {
       "id": "renda",
-      "frase_fort": "renta en la franja media de la ciudad",
-      "frase_feble": "renta alejada de la franja media",
+      "frase_fort": "renta en la franja objetivo",
+      "frase_feble": "renta alejada de la franja objetivo",
       "camp": "renda",
       "etiqueta": "Renta",
       "descripcio": "Renta neta media por persona a 800 m",
@@ -56,6 +56,13 @@
     { "id": "descartar", "etiqueta": "DESCARTAR", "minim": 0, "color": "#adb5bd" }
   ],
 
+  "franges_renda": [
+    { "id": "baja", "etiqueta": "Baja", "percentils": [0, 33] },
+    { "id": "media", "etiqueta": "Media", "percentils": [25, 75] },
+    { "id": "alta", "etiqueta": "Alta", "percentils": [67, 100] }
+  ],
+  "franja_renda_defecte": "media",
+
   "regles_previes": [
     {
       "id": "sol_no_urbanitzable",
@@ -69,7 +76,7 @@
       "camp": "pob_objectiu",
       "minim": 5000,
       "classe": "descartar",
-      "motiu": "Población objetivo insuficiente (menos de 5.000 personas de 18 a 64 años a 800 m)."
+      "motiu": "Población objetivo insuficiente (menos de {minim} personas de 18 a 64 años a 800 m)."
     }
   ],
 

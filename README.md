@@ -37,7 +37,12 @@ zonas candidatas de la ciudad. La puntuación es la suma ponderada.
 **Reglas previas** (pasan directamente a DESCARTAR): más de la mitad del
 hexágono es suelo no urbanizable, o menos de 5.000 personas de 18 a 64 años a 800 m.
 
-Todos los pesos, umbrales, textos y fuentes están en
+La pestaña **Ajustes** permite cambiar los pesos, la renta objetivo (baja, media
+o alta), si cuentan los centros municipales y las aperturas previstas, y la
+población mínima. El mapa se recalcula en el navegador. El radio y la franja de
+edad son fijos en esta versión.
+
+Los valores por defecto, los pesos, umbrales, textos y fuentes están en
 [`config/scoring.json`](config/scoring.json): nada está escondido en el código.
 
 ## Limitaciones
@@ -78,6 +83,7 @@ css/estils.css          Estilos (Poppins, navy #051C2C, turquesa #2BB3C0)
 js/app.js               Mapa Leaflet, capas, selección, móvil y modo captura
 js/puntuacio.js         Puntuación sobre 100 y clase
 js/panell.js            Panel de decisión
+js/ajustos.js           Pestaña de ajustes y recálculo
 config/scoring.json     Criterios, pesos, umbrales, textos y fuentes
 data/                   GeoJSON que lee la web
 fonts/                  Poppins (licencia OFL)

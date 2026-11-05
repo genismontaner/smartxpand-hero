@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <!-- Els nostres estils. "?v=..." és la versió: canviar-la en cada publicació
        obliga el navegador a descarregar els fitxers nous (en lloc de la còpia guardada) -->
-  <link rel="stylesheet" href="css/estils.css?v=9.4b">
+  <link rel="stylesheet" href="css/estils.css?v=10b">
 </head>
 <body>
   <!-- Capçalera -->
@@ -50,8 +50,17 @@
       <!-- Nansa per plegar/desplegar la fitxa (només es veu al mòbil) -->
       <button class="nansa" aria-label="Ver más detalle"></button>
 
+      <!-- Pestanyes: la zona seleccionada i els controls -->
+      <nav class="pestanyes">
+        <button class="pestanya activa" data-vista="panell">Zona</button>
+        <button class="pestanya" data-vista="ajustes">Ajustes</button>
+      </nav>
+
       <!-- Panell de decisió: el contingut l'omple js/panell.js -->
-      <div id="panell"></div>
+      <div id="panell" class="vista"></div>
+
+      <!-- Controls: el contingut l'omple js/ajustos.js -->
+      <div id="ajustes" class="vista" hidden></div>
 
       <!-- Avís fix (principis d'honestedat): sempre visible -->
       <footer class="avis-cas">
@@ -59,14 +68,16 @@
         SmartXpand ni ha participado en este análisis.
         <!-- Fonts resumides: només es veuen en mode captura (les omple app.js) -->
         <div class="fonts-captura"></div>
+        <div class="parametres-captura fonts-captura"></div>
       </footer>
     </aside>
   </main>
 
   <!-- Primer Leaflet, després el nostre codi (que el fa servir) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script src="js/puntuacio.js?v=9.4b"></script>
-  <script src="js/panell.js?v=9.4b"></script>
-  <script src="js/app.js?v=9.4b"></script>
+  <script src="js/puntuacio.js?v=10b"></script>
+  <script src="js/panell.js?v=10b"></script>
+  <script src="js/ajustos.js?v=10b"></script>
+  <script src="js/app.js?v=10b"></script>
 </body>
 </html>

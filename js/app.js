@@ -38,15 +38,18 @@ async function carregaGeoJSON(ruta) {
 }
 
 // Estil de cada club: VivaGym en navy i més gran; la competència en gris
-function estilClub(club) {
+function estilClub(club, ajustos) {
   const esPropi = club.properties.marca === "VivaGym";
   const esPrevist = club.properties.estat === "previst";
+  // Els centres municipals desapareixen del mapa si l'usuari no els compta
+  const amagat = !ajustos.comptarCem && club.properties.marca.startsWith("CEM");
   return {
     radius: esPropi ? 6 : 4,
     color: "#ffffff",
     weight: 1,
+    opacity: amagat ? 0 : 1,
     fillColor: esPropi ? NAVY : GRIS_COMPETENCIA,
-    fillOpacity: esPrevist ? 0.4 : 1,
+    fillOpacity: amagat ? 0 : esPrevist ? 0.4 : 1,
   };
 }
 
@@ -98,7 +101,7 @@ function afegeixLlegenda(config) {
 
 // --- Mòbil: fitxa inferior ---
 const lateral = document.querySelector(".lateral");
-const ALCADA_FITXA = 190; // ha de coincidir amb --alcada-fitxa del CSS
+const ALCADA_FITXA = 230; // ha de coincidir amb --alcada-fitxa del CSS
 
 // Cert si la pantalla és de mòbil (mateixa condició que el CSS)
 function esMobil() {
@@ -126,6 +129,7 @@ const avisToast = document.querySelector(".avis-toast");
 
 function activaCaptura(ambMissatge = true) {
   document.body.classList.add("mode-captura");
+  mostraVista("panell"); // a la captura es veu la zona, no els controls
   if (!ambMissatge) return;
   // Missatge breu que desapareix sol (perquè no surti a la captura)
   avisToast.classList.add("visible");
@@ -149,6 +153,24 @@ document.querySelector(".capcalera").addEventListener("click", () => {
   if (document.body.classList.contains("mode-captura")) surtCaptura();
 });
 
+// --- Pestanyes del panell ---
+function mostraVista(id) {
+  document.querySelectorAll(".vista").forEach((vista) => {
+    vista.hidden = vista.id !== id;
+  });
+  document.querySelectorAll(".pestanya").forEach((boto) => {
+    boto.classList.toggle("activa", boto.dataset.vista === id);
+  });
+}
+
+document.querySelectorAll(".pestanya").forEach((boto) => {
+  boto.addEventListener("click", () => {
+    mostraVista(boto.dataset.vista);
+    // Al mòbil, els controls necessiten la fitxa oberta
+    if (esMobil() && boto.dataset.vista === "ajustes") lateral.classList.add("desplegada");
+  });
+});
+
 // --- Selecció d'un hexàgon ---
 let seleccionat = null; // capa de l'hexàgon seleccionat
 let cercle = null; // cercle de 800 m dibuixat al mapa
@@ -156,6 +178,7 @@ let cercle = null; // cercle de 800 m dibuixat al mapa
 function selecciona(capa, capaHexagons, config) {
   desselecciona(capaHexagons, config);
   seleccionat = capa;
+  mostraVista("panell");
 
   // Ressalta l'hexàgon amb una vora navy gruixuda
   capa.setStyle({ color: NAVY, weight: 3 });
@@ -196,8 +219,13 @@ async function inicia() {
   const clubs = await carregaGeoJSON("data/clubs.geojson");
   const config = await carregaGeoJSON("config/scoring.json");
 
+  // Ajustos de l'usuari (js/ajustos.js). Comencen amb els valors de scoring.json
+  const ajustos = ajustosPerDefecte(config);
+  let configActual = configEfectiva(config, ajustos);
+
   // Puntuació i classe de cada hexàgon (js/puntuacio.js)
-  calculaPuntuacions(hexagons, config);
+  aplicaCompetencia(hexagons, clubs, configActual, ajustos);
+  calculaPuntuacions(hexagons, configActual);
 
   // Hexàgons pintats segons la classe (colors de scoring.json)
   const colors = {};
@@ -208,14 +236,15 @@ async function inicia() {
     style: (hex) => estilHexagon(hex, colors),
     // 'onEachFeature' s'executa per a cada hexàgon: hi afegim l'esdeveniment de clic
     onEachFeature: (hex, capa) => {
-      capa.on("click", () => selecciona(capa, capaHexagons, config));
+      capa.on("click", () => selecciona(capa, capaHexagons, configActual));
     },
   }).addTo(mapa);
 
   // Panell inicial (sense cap hexàgon seleccionat), llegenda i fonts del mode captura
-  mostraPanellInicial(config);
+  mostraPanellInicial(configActual);
   afegeixLlegenda(config);
   document.querySelector(".fonts-captura").textContent = config.fonts_resum;
+  document.querySelector(".parametres-captura").textContent = resumAjustos(config, ajustos);
 
   // Límit municipal: només la línia, sense farciment
   const capaLimit = L.geoJSON(limit, {
@@ -223,10 +252,33 @@ async function inicia() {
   }).addTo(mapa);
 
   // Clubs: cada punt es dibuixa com un cercle, al panell superior
-  L.geoJSON(clubs, {
+  // (interactive: false → els clics hi passen a través i arriben a l'hexàgon de sota)
+  const capaClubs = L.geoJSON(clubs, {
     pointToLayer: (club, posicio) =>
-      L.circleMarker(posicio, { ...estilClub(club), pane: "superior" }),
+      L.circleMarker(posicio, { ...estilClub(club, ajustos), pane: "superior", interactive: false }),
   }).addTo(mapa);
+
+  // Es crida cada vegada que l'usuari canvia un ajust: recalcula i repinta
+  function recalcula() {
+    configActual = configEfectiva(config, ajustos);
+    aplicaCompetencia(hexagons, clubs, configActual, ajustos);
+    calculaPuntuacions(hexagons, configActual);
+    capaHexagons.setStyle((hex) => estilHexagon(hex, colors));
+    capaClubs.setStyle((club) => estilClub(club, ajustos));
+    actualitzaResumClasses(hexagons, config);
+    document.querySelector(".parametres-captura").textContent = resumAjustos(config, ajustos);
+
+    // Si hi ha una zona seleccionada, en manté el ressalt i n'actualitza el panell
+    if (seleccionat) {
+      seleccionat.setStyle({ color: NAVY, weight: 3 });
+      mostraPanellHexagon(seleccionat.feature.properties, configActual, () => desselecciona(capaHexagons, configActual));
+    } else {
+      mostraPanellInicial(configActual);
+    }
+  }
+
+  mostraAjustes(config, ajustos, recalcula);
+  actualitzaResumClasses(hexagons, config);
 
   // Ajusta la vista perquè es vegi tota la ciutat dins de la zona no tapada.
   // Si la pàgina s'ha obert en una pestanya en segon pla, el mapa encara fa 0 px:
@@ -242,7 +294,7 @@ async function inicia() {
   const zona = parametres.get("zona");
   if (zona) {
     capaHexagons.eachLayer((capa) => {
-      if (capa.feature.properties.hex_id === zona) selecciona(capa, capaHexagons, config);
+      if (capa.feature.properties.hex_id === zona) selecciona(capa, capaHexagons, configActual);
     });
   }
   if (parametres.get("captura") === "1") activaCaptura(false);
