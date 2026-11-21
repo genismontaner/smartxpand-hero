@@ -14,6 +14,17 @@ datos del entorno y aviso urbanístico.
 Es la demostración visual (*hero app*) del servicio de SmartXpand para
 directores de expansión de cadenas de fitness en España.
 
+## Dos puertas de entrada
+
+- **Descubrir zonas:** el mapa de hexágonos clasificados (ver abajo).
+- **Evaluar un local:** busca una dirección (geocodificador del ICGC) o haz clic
+  en el mapa. Para un radio de 0,5 a 3 km en línea recta se calcula la población
+  total y por tramos de edad de 5 años, los hogares, la renta por persona y por
+  hogar, la competencia por segmentos (low cost, centros municipales, gama media,
+  premium) y el público objetivo compartido con los centros propios. Cada cifra
+  muestra su fuente. Datos: rejilla de población de 100 m derivada de las
+  secciones censales (`data/poblacio_100m.json`, Barcelona + 3 km).
+
 ## Qué mide
 
 Para cada hexágono se analiza un círculo de **800 m en línea recta** desde su centro.
@@ -84,6 +95,7 @@ js/app.js               Mapa Leaflet, capas, selección, móvil y modo captura
 js/puntuacio.js         Puntuación sobre 100 y clase
 js/panell.js            Panel de decisión
 js/ajustos.js           Pestaña de ajustes y recálculo
+js/avaluacio.js         Modo «Evaluar un local»
 config/scoring.json     Criterios, pesos, umbrales, textos y fuentes
 data/                   GeoJSON que lee la web
 fonts/                  Poppins (licencia OFL)

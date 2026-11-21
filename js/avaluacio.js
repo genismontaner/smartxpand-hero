@@ -144,7 +144,12 @@ function dibuixaControlsAvaluacio() {
 
   vista.innerHTML = `
     <h2>Evaluar un local</h2>
-    <p class="subtitol">Haz clic en el mapa para situar un local candidato</p>
+    <p class="subtitol">Busca una dirección o haz clic en el mapa</p>
+    <form class="cercador" id="cercador-adreca">
+      <input type="search" id="text-adreca" placeholder="Calle, número y municipio" aria-label="Dirección del local">
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="resultats-cerca"></div>
     <div class="criteri">
       <div class="linia"><label for="radi-km">Radio de captación</label>
         <span class="valor" id="valor-radi"></span></div>
@@ -160,6 +165,12 @@ function dibuixaControlsAvaluacio() {
     </div>
     <div id="resultats-avaluacio"></div>
   `;
+
+  // Cerca d'adreces: el formulari no recarrega la pàgina (preventDefault)
+  vista.querySelector("#cercador-adreca").addEventListener("submit", (e) => {
+    e.preventDefault();
+    cercaAdreca(vista.querySelector("#text-adreca").value);
+  });
 
   const desSelect = vista.querySelector("#edat-des");
   const finsSelect = vista.querySelector("#edat-fins");
@@ -185,6 +196,48 @@ function dibuixaControlsAvaluacio() {
     }
     mostraResultatsAvaluacio();
   });
+}
+
+// Col·loca el punt candidat, el dibuixa i en calcula l'àrea
+function situaPunt(latlng, centrar = false) {
+  avaluacio.punt = L.latLng(latlng);
+  actualitzaMapaAvaluacio();
+  mostraResultatsAvaluacio();
+  if (centrar) {
+    mapa.setView(avaluacio.punt, 14);
+    mapa.panInside(avaluacio.punt, margesMapa());
+  }
+}
+
+// Busca una adreça amb el geocodificador de l'ICGC (només Catalunya) i en mostra fins a 5
+async function cercaAdreca(text) {
+  const caixa = document.getElementById("resultats-cerca");
+  if (!text.trim()) return;
+  caixa.innerHTML = `<p class="nota-relativa">Buscando…</p>`;
+  try {
+    const url = `https://eines.icgc.cat/geocodificador/cerca?text=${encodeURIComponent(text)}&size=5`;
+    const resposta = await fetch(url);
+    const dades = await resposta.json();
+    // Si hi ha adreces amb portal, només es mostren aquestes (no municipis ni llocs llunyans)
+    const adreces = dades.features.filter((f) => f.properties.layer === "address");
+    if (adreces.length) dades.features = adreces;
+    if (!dades.features.length) {
+      caixa.innerHTML = `<p class="nota-relativa">No se ha encontrado esa dirección.</p>`;
+      return;
+    }
+    caixa.innerHTML = `<ul class="llista-adreces">${dades.features
+      .map((f, i) => `<li><button data-i="${i}">${f.properties.etiqueta}</button></li>`)
+      .join("")}</ul>${font("Geocodificador del ICGC")}`;
+    caixa.querySelectorAll("button").forEach((boto) => {
+      boto.addEventListener("click", () => {
+        const [lon, lat] = dades.features[Number(boto.dataset.i)].geometry.coordinates;
+        caixa.innerHTML = "";
+        situaPunt([lat, lon], true);
+      });
+    });
+  } catch (error) {
+    caixa.innerHTML = `<p class="nota-relativa">El buscador de direcciones no responde. Puedes hacer clic en el mapa.</p>`;
+  }
 }
 
 // Resultats de l'àrea del punt candidat (es redibuixen a cada canvi)
@@ -306,9 +359,7 @@ async function preparaAvaluacio() {
   // Clic al mapa: nou punt candidat (només en aquest mode)
   mapa.on("click", (e) => {
     if (!document.body.classList.contains("mode-avaluar")) return;
-    avaluacio.punt = e.latlng;
-    actualitzaMapaAvaluacio();
-    mostraResultatsAvaluacio();
+    situaPunt(e.latlng);
     if (esMobil()) lateral.classList.remove("desplegada");
   });
 }

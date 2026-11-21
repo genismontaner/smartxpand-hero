@@ -733,3 +733,55 @@ input[type="range"] {
 .llista-competencia small {
   color: var(--gris-text);
 }
+
+/* --- Cercador d'adreces --- */
+.cercador {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 8px;
+}
+.cercador input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--gris-linia);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--navy);
+}
+.cercador input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.cercador button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--navy);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+}
+.llista-adreces {
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.llista-adreces button {
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 1px solid var(--gris-linia);
+  background: none;
+  font: inherit;
+  font-size: 0.82rem;
+  text-align: left;
+  color: var(--navy);
+  cursor: pointer;
+}
+.llista-adreces button:hover {
+  background: var(--accent-suau);
+}
