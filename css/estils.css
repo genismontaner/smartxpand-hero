@@ -813,3 +813,73 @@ input[type="range"] {
 .plegable[open] summary {
   margin-bottom: 8px;
 }
+
+/* --- Comparador de locals (pas 4) --- */
+.boto-guardar {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent-suau);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+}
+.taula-contenidor {
+  overflow-x: auto; /* si hi ha molts locals, la taula es desplaça de costat */
+}
+.taula-comparador {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+.taula-comparador th,
+.taula-comparador td {
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--gris-linia);
+  text-align: center;
+  white-space: nowrap;
+}
+.taula-comparador th[scope="row"] {
+  text-align: left;
+  font-weight: 500;
+  white-space: normal;
+}
+.taula-comparador td.millor {
+  font-weight: 700;
+  background: var(--accent-suau);
+}
+.lletra-local,
+.marcador-local {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: var(--navy);
+  font-family: "Poppins", system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: var(--ombra);
+}
+.lletra-local {
+  padding: 0;
+  cursor: pointer;
+}
+.treu-local {
+  border: none;
+  background: none;
+  font-size: 0.7rem;
+  color: var(--gris-text);
+  cursor: pointer;
+}
+.llegenda-locals {
+  margin-top: 8px;
+  font-size: 0.75rem;
+}

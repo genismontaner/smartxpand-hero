@@ -208,9 +208,11 @@ function dibuixaControlsAvaluacio() {
   });
 }
 
-// Col·loca el punt candidat, el dibuixa i en calcula l'àrea
-function situaPunt(latlng, centrar = false) {
+// Col·loca el punt candidat, el dibuixa i en calcula l'àrea.
+// 'nom': l'adreça trobada (si el punt ve del cercador)
+function situaPunt(latlng, centrar = false, nom = null) {
   avaluacio.punt = L.latLng(latlng);
+  avaluacio.nomPunt = nom || `Punto ${avaluacio.punt.lat.toFixed(4)}, ${avaluacio.punt.lng.toFixed(4)}`;
   actualitzaMapaAvaluacio();
   mostraResultatsAvaluacio();
   if (centrar) {
@@ -240,9 +242,10 @@ async function cercaAdreca(text) {
       .join("")}</ul>${font("Geocodificador del ICGC")}`;
     caixa.querySelectorAll("button").forEach((boto) => {
       boto.addEventListener("click", () => {
-        const [lon, lat] = dades.features[Number(boto.dataset.i)].geometry.coordinates;
+        const triat = dades.features[Number(boto.dataset.i)];
+        const [lon, lat] = triat.geometry.coordinates;
         caixa.innerHTML = "";
-        situaPunt([lat, lon], true);
+        situaPunt([lat, lon], true, triat.properties.etiqueta);
       });
     });
   } catch (error) {
@@ -280,16 +283,20 @@ function mostraResultatsAvaluacio() {
   const propis = (r.clubs.propia || []).map((c) => `${c.nom} (${numero(c.distancia)} m)`).join(", ");
   const pctCompartida = r.pobObjectiu ? (r.compartida / r.pobObjectiu) * 100 : 0;
   const fora = !dinsDelLimit(lat, lng);
+  // Numeració de seccions: 1 = desglossament; 2 = comparador (només si hi ha locals desats)
+  const n = comparador.locals.length ? 2 : 1;
 
   caixa.innerHTML = `
-    <p class="nota-relativa">Punto ${lat.toFixed(5)}, ${lng.toFixed(5)} · radio de
+    <p class="nota-relativa">${avaluacio.nomPunt} · radio de
       ${decimal(avaluacio.radiKm)} km en línea recta</p>
     ${fora ? `<p class="avis">El punto está fuera de Barcelona: la competencia low cost y municipal
       solo está recogida dentro de la ciudad y en una franja de 800 m.</p>` : ""}
 
     ${htmlMirroring(valorsCriteris(r))}
+    ${htmlBotoGuardar()}
+    ${htmlComparador(2)}
 
-    ${titolSeccio(2, "Población")}
+    ${titolSeccio(n + 1, "Población")}
     <ul class="dades">
       <li>Población total: <strong>${numero(r.pobTotal)}</strong></li>
       <li>Público objetivo (${textEdat()}): <strong>${numero(r.pobObjectiu)}</strong></li>
@@ -297,18 +304,18 @@ function mostraResultatsAvaluacio() {
     </ul>
     ${font(fontsPob)}
 
-    ${titolSeccio(3, "Renta")}
+    ${titolSeccio(n + 2, "Renta")}
     <ul class="dades">
       <li>Renta neta media por persona: <strong>${r.rendaPersona ? numero(r.rendaPersona) + " €" : "sin dato"}</strong></li>
       <li>Renta neta media por hogar: <strong>${r.rendaLlar ? numero(r.rendaLlar) + " €" : "sin dato"}</strong></li>
     </ul>
     ${font(fontsRenda)}
 
-    ${titolSeccio(4, "Competencia en el área")}
+    ${titolSeccio(n + 3, "Competencia en el área")}
     <ul class="dades llista-competencia">${files}</ul>
     ${font("Webs oficiales de las marcas, Open Data BCN y OpenStreetMap · consulta octubre–noviembre 2026")}
 
-    ${titolSeccio(5, `Centros propios (${marcaPropia})`)}
+    ${titolSeccio(n + 4, `Centros propios (${marcaPropia})`)}
     <ul class="dades">
       <li>Centros propios en el área: <strong>${(r.clubs.propia || []).length}</strong>${propis ? `<br><small>${propis}</small>` : ""}</li>
       <li>Centro propio más cercano: <strong>${numero(r.propiMesProper)} m</strong></li>
@@ -317,6 +324,7 @@ function mostraResultatsAvaluacio() {
     </ul>
     ${font("Personas del área que también viven dentro del mismo radio de algún centro propio")}
   `;
+  connectaComparador(); // js/comparador.js
 }
 
 // Dibuixa el punt, el cercle del candidat i els cercles dels centres propis que el toquen
@@ -381,6 +389,7 @@ async function activaAvaluacio() {
   await preparaAvaluacio();
   avaluacio.capa.addTo(mapa);
   avaluacio.capaClubs.addTo(mapa);
+  comparador.capa?.addTo(mapa);
   actualitzaMapaAvaluacio();
   dibuixaControlsAvaluacio();
   mostraResultatsAvaluacio();
@@ -390,4 +399,5 @@ function desactivaAvaluacio() {
   if (!avaluacio.capa) return;
   avaluacio.capa.remove();
   avaluacio.capaClubs.remove();
+  comparador.capa?.remove();
 }

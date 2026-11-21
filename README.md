@@ -24,6 +24,10 @@ directores de expansión de cadenas de fitness en España.
   premium) y el público objetivo compartido con los centros propios. Cada cifra
   muestra su fuente. Datos: rejilla de población de 100 m derivada de las
   secciones censales (`data/poblacio_100m.json`, Barcelona + 3 km).
+  Cada local se puntúa comparándolo con los centros propios con los mismos
+  parámetros ("mirroring": 50 = como la mediana de tus centros), con pesos
+  editables, desglose y un umbral sí/no fijado por el usuario. Se pueden guardar
+  hasta 5 locales y compararlos en una tabla, siempre con los mismos parámetros.
 
 ## Qué mide
 
@@ -96,6 +100,8 @@ js/puntuacio.js         Puntuación sobre 100 y clase
 js/panell.js            Panel de decisión
 js/ajustos.js           Pestaña de ajustes y recálculo
 js/avaluacio.js         Modo «Evaluar un local»
+js/mirroring.js         Puntuación contra los centros propios
+js/comparador.js        Comparador de locales
 config/scoring.json     Criterios, pesos, umbrales, textos y fuentes
 data/                   GeoJSON que lee la web
 fonts/                  Poppins (licencia OFL)
