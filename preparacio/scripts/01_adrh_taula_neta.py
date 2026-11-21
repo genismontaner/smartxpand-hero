@@ -24,6 +24,8 @@ SORTIDA = ARREL / f"preparacio/dades_intermedies/adrh_{ANY}_seccions_p{PROVINCIA
 # Indicadors que ens interessen i el nom curt que els donem
 INDICADORS = {
     "Renta neta media por persona": "renda_persona",
+    "Renta neta media por hogar": "renda_llar",
+    "Tamaño medio del hogar": "mida_llar",
     "Población": "poblacio",
     "Porcentaje de población menor de 18 años": "pct_menors18",
     "Porcentaje de población de 65 y más años": "pct_65mes",
@@ -61,8 +63,12 @@ llegeix(DEMO_CSV, seccions)
 for s in seccions.values():
     pob, m18, m65 = s.get("poblacio"), s.get("pct_menors18"), s.get("pct_65mes")
     s["pob_18_64"] = round(pob * (100 - m18 - m65) / 100) if None not in (pob, m18, m65) else None
+    # Nombre de llars = població / mida mitjana de la llar
+    mida = s.get("mida_llar")
+    s["llars"] = round(pob / mida) if pob and mida else None
 
-camps = ["cusec", "municipi", "renda_persona", "poblacio", "pct_menors18", "pct_65mes", "pob_18_64"]
+camps = ["cusec", "municipi", "renda_persona", "poblacio", "pct_menors18", "pct_65mes", "pob_18_64",
+         "renda_llar", "mida_llar", "llars"]
 SORTIDA.parent.mkdir(parents=True, exist_ok=True)
 with open(SORTIDA, "w", encoding="utf-8", newline="") as f:
     escriptor = csv.DictWriter(f, fieldnames=camps)
@@ -72,7 +78,8 @@ with open(SORTIDA, "w", encoding="utf-8", newline="") as f:
 
 # Fitxer .csvt: diu a QGIS el tipus de cada columna
 # (sense ell, el codi de secció es llegiria com a número i perdria el zero inicial)
-tipus = ['"String"', '"String"', '"Real"', '"Real"', '"Real"', '"Real"', '"Integer"']
+tipus = ['"String"', '"String"', '"Real"', '"Real"', '"Real"', '"Real"', '"Integer"',
+         '"Real"', '"Real"', '"Integer"']
 SORTIDA.with_suffix(".csvt").write_text(",".join(tipus) + "\n", encoding="utf-8")
 
 # Resum per comprovar que tot ha anat bé
