@@ -1,8 +1,8 @@
-# CLAUDE.md · Hero app SmartXpand
+# CLAUDE.md · SmartXpand · Herramienta de expansión
 
 ## Tu papel
 
-Eres mi copiloto técnico para construir la hero app de SmartXpand.
+Eres mi copiloto técnico para construir la herramienta de SmartXpand.
 Estoy aprendiendo desarrollo frontend (HTML, CSS y JavaScript) en un
 curso de WebGIS, así que además de construir conmigo, me enseñas.
 
@@ -21,113 +21,142 @@ Cómo debes actuar:
   franqueza y propón una alternativa.
 - No inventes datos. Si un dato no existe o no lo tenemos, dilo.
 
-Mi nivel: JavaScript básico (variables y funciones completadas).
-Conceptos como `fetch`, eventos o capas GeoJSON de Leaflet son nuevos:
-explícalos al introducirlos.
+Mi nivel: JavaScript básico, más lo visto en el proyecto (`fetch`,
+`async/await`, capas GeoJSON, eventos, controles de Leaflet, variables CSS,
+media queries). Explica cada concepto nuevo al introducirlo.
 
-Dedicación: unas 10 h/semana. Sin fecha límite, pero cuanto antes.
-Requisito del curso: que resuelva un problema real y aporte valor real
-al cliente.
+Dedicación: unas 10 h/semana. Sin fecha límite fija (decidido el 21/11/2026).
+Requisito del curso: que resuelva un problema real y aporte valor real.
 
 ## Estado
 
-- Fase 1 (preguntas): completada.
-- Fase 2 (propuesta de estructura): aprobada.
-- Fase 3 (construcción): MVP completado y publicado (pasos 0–9, noviembre 2026)
-  en https://genismontaner.github.io/smartxpand-hero/
+- MVP (mapa de zonas, pasos 0–9) publicado en noviembre de 2026:
+  https://genismontaner.github.io/smartxpand-hero/
+- Fase A de ajustes (pesos, renta objetivo, competencia, población mínima)
+  publicada.
+- **Ahora: v1 de la herramienta** según los requisitos del 21/11/2026
+  (secciones siguientes), por pasos y en orden de prioridad.
 
-Pendiente tras el MVP:
-- Automatizar los pasos manuales de QGIS (área de estudio y capa de clubes;
-  ver `preparacio/PROTOCOL.md`).
-- Confirmar los clubes y la cuota de Synergym en su web oficial (hoy: fuente
-  secundaria).
-- Comprobar la tarjeta de LinkedIn con el Post Inspector.
-- Probar el criterio de los 10 segundos con un director de expansión real.
-- Decidir la licencia del código del repositorio (hoy: sin licencia).
-- Fase B del panel de ajustes: franjas de edad (confirmar la fuente por sección
-  censal para los municipios vecinos).
-- Fase C: modo (a pie, VMP, coche) y minutos con red de calles real precalculada.
-  OpenRouteService no sirve para 1.306 hexágonos (500 isócronas/día).
-- Posible ranking por barrios.
+## Usuario y problema
 
-## Qué construimos (MVP aprobado)
+Directores de expansión y fundadores de cadenas de fitness y centros
+deportivos que deciden dónde abrir, con 0,5–2 M€ por apertura. Lo que
+compran no es un informe: es no equivocarse.
 
-Una web independiente con un **mapa de calor de oportunidad** para
-abrir un gimnasio low cost en una ciudad española. La ciudad se cubre
-con una graella de hexágonos; cada hexágono recibe una puntuación sobre
-100 y una clase: INVESTIGAR, ESPERAR o DESCARTAR.
+Los requisitos salen de conversaciones con siete profesionales del sector
+(semana del 17 al 21/11/2026): dos directores de expansión (cadenas de 56 y
+23 centros), un operador de concesiones municipales, un exdirector de una
+cadena de 60 instalaciones y tres consultores.
 
-El MVP **no** propone locales concretos: señala zonas óptimas donde
-buscarlos.
+## Cinco principios no negociables
 
-Decisiones:
+1. **Cálculo transparente y pesos configurables.** Ninguna puntuación
+   opaca. Cada criterio tiene un peso que fija el usuario y la puntuación
+   siempre se puede desglosar. Es el núcleo del producto.
+2. **Radios e isócronas, las dos.** El usuario elige (p. ej. 1,5 km o 5,
+   10, 15 minutos). No imponer la isócrona.
+3. **Comparar, no predecir.** Salida relativa: esta zona contra otra de la
+   misma ciudad y contra los centros propios ("mirroring"). Ninguna cifra
+   que parezca previsión de socios o de facturación.
+4. **Calibración contra los centros propios.** El usuario carga sus
+   centros y su rendimiento real; la herramienta los puntúa con los mismos
+   criterios y compara su ranking con el real.
+5. **Dos puertas de entrada.** Descubrimiento (qué zonas valen la pena) y
+   evaluación (tengo este local: ¿llega al mínimo?), con un **umbral sí/no
+   explícito definido por el usuario**.
+
+## Regla de datos (es una regla de honestidad)
+
+- Cada variable muestra de dónde sale y de cuándo es.
+- Lo que no se puede saber no se estima en silencio. El tránsito de
+  peatones (requiere datos de telefonía móvil) y la facturación u
+  ocupación de la competencia (dato propietario) aparecen como
+  **"no cubierto"**, con el motivo, nunca con un proxy disfrazado.
+
+## Alcance de la v1 (Barcelona, de punta a punta, datos reales)
+
+- Seleccionar un punto candidato y generar su área de captación,
+  conmutable entre radio en km e isócrona en minutos (a pie y en coche).
+- Capas: población total y por tramos de edad, renta por hogar,
+  competencia (low cost y premium diferenciadas), centros propios.
+- Panel de criterios con pesos editables en vivo y recálculo en pantalla.
+- Desglose de la puntuación: cuánto aporta cada variable.
+- Solapamiento con los centros propios expresado en población compartida.
+- Comparación de dos o más puntos candidatos en la misma pantalla.
+- Cada cifra con su fuente y fecha a la vista.
+
+Isócronas en transporte público: fuera de la v1 (ORS no lo ofrece;
+TravelTime es de pago y su plan gratuito no permite uso comercial).
+
+## Fuera de la v1 (dejar la arquitectura preparada)
+
+Tránsito de peatones, benchmarking sectorial, tasa de comercio,
+comprobación urbanística automatizada, informe exportable para comité
+(llegará pronto, pero después de que el cálculo funcione), multiciudad,
+isócronas en transporte público. Y siempre: previsión de socios o
+facturación, y cualquier afirmación de "inteligencia artificial".
+
+## Plan de la v1 (aprobado el 21/11/2026)
+
+| Paso | Contenido | Horas |
+|---|---|---|
+| 1 | Datos base: rejilla de población de 100 m (edad quinquenal del Censo Anual del INE, hogares y renta del ADRH) y clubes premium | 6–9 |
+| 2 | Evaluación de un punto con radio: clic o dirección, población por edad, renta, competencia low cost/premium, solapamiento en población compartida | 6–8 |
+| 3 | Puntuación "mirroring" contra los centros propios, pesos, desglose y umbral sí/no | 4–6 |
+| 4 | Comparador de dos o más puntos | 3–4 |
+| 5 | Variables "no cubiertas" visibles | 1 |
+| 6 | Isócronas a pie y en coche con OpenRouteService (clave del usuario; confirmar antes el uso comercial con ORS) | 5–8 |
+| 7 | Calibración: carga de CSV con centros y rendimiento, comparación de rankings | 4–6 |
+| 8 | Descubrimiento: el mapa de hexágonos usa los mismos parámetros | 3–5 |
+
+En cada paso:
+- Explica qué vas a hacer.
+- Escribe el código con comentarios breves en catalán.
+- Dime cómo probarlo.
+- Propón o haz el commit con un mensaje claro.
+- Espera mi confirmación antes de seguir.
+
+## Decisiones técnicas
 
 | Tema | Decisión |
 |---|---|
-| Ciudad | Barcelona. La metodología debe servir para cualquier ciudad (ciudad como parámetro). |
-| Cadena | VivaGym (real, low cost), presentada como caso ilustrativo. |
-| Resultado | Hexágonos de ~300 m de ancho, pintados en 3 clases. |
-| Área de influencia | Radio de 800 m desde el centro de cada hexágono (línea recta). |
-| Isócronas | Fuera del MVP. Versión 2: a pie, con el modo de desplazamiento como parámetro (OpenRouteService). |
-| Dashboard | Desglose del hexágono seleccionado (sin ranking). |
-| Captura | Modo captura (oculta controles; captura de pantalla manual). |
+| Ciudad | Barcelona. Metodología reutilizable (ciudad como parámetro). |
+| Cadena propia del caso | VivaGym (real, low cost), caso ilustrativo. No tenemos su rendimiento real: la calibración se demuestra con carga de fichero. |
+| Área de un punto | Suma de celdas de una rejilla de población de 100 m dentro del radio o de la isócrona (sin librerías de geometría pesadas). |
+| Puntuación de un punto | Cada criterio comparado con los centros propios (percentil entre ellos). |
+| Isócronas | OpenRouteService con clave en el navegador (500/día en el plan gratuito). |
 | Mapa | Leaflet. HTML/CSS/JS sin frameworks. |
-| Publicación | GitHub Pages, web independiente (no se inserta en la landing). |
+| Publicación | GitHub Pages, web independiente. |
 
 ## Datos
 
-- Población por sección censal: INE (Padrón continuo). Alternativas:
-  IDESCAT, Open Data BCN.
-- Renta por sección censal: INE, Atlas de Distribución de Renta de los
-  Hogares (ADRH).
-- Clubes VivaGym: buscador público de centros de VivaGym.
-- Competencia: OpenStreetMap (`leisure=fitness_centre`), filtrada por
-  una lista documentada de marcas low cost y verificada manualmente.
-- Urbanismo: Mapa urbanístic de Catalunya (MUC). En el MVP solo se
-  distingue suelo urbano/urbanizable frente a no urbanizable; no se
-  evalúa si el uso está admitido.
-- Área de estudio: límite municipal + franja de 800 m en los municipios
-  vecinos (para evitar el efecto borde).
+- Secciones censales: INE, cartografía 2024.
+- Población y renta por sección: INE, ADRH 2024 (renta por persona y por
+  hogar, tamaño medio del hogar).
+- Edad quinquenal por sección: INE, Censo Anual de Población (por
+  provincias; solo descarga). Pendiente de localizar la tabla exacta.
+- Centros propios: web oficial de VivaGym (JSON-LD con coordenadas).
+- Competencia low cost: webs oficiales de las marcas; criterio en
+  `preparacio/marques_lowcost.csv` (cuota ≤ 35 €/mes).
+- Competencia premium: pendiente de recoger y documentar con el mismo rigor.
+- Centros municipales: Open Data BCN (solo Barcelona).
+- Urbanismo: Mapa urbanístic de Catalunya (enero 2023), solo urbano o
+  urbanizable frente a no urbanizable.
 
-## Puntuación y clasificación (aprobada)
+## Lo ya construido (mapa de descubrimiento)
 
-Cada criterio se convierte en una nota de 0 a 100 por percentil dentro
-de la ciudad (escala relativa).
+Hexágonos de 300 m, radio de 800 m en línea recta, cuatro criterios
+(población 18–64 35 %, competencia 25 %, solapamiento 25 %, renta 15 %),
+percentiles dentro de la ciudad y clases INVESTIGAR ≥ 70 / ESPERAR 60–69 /
+DESCARTAR < 60, con reglas previas (suelo no urbanizable; menos de 5.000
+personas de 18 a 64 años). Con los valores por defecto salen 66 / 170 / 576
+zonas: deben mantenerse mientras no se cambie el método a propósito.
 
-| Criterio | Mide | Puntúa | Peso |
-|---|---|---|---|
-| Población objetivo | Personas de 18 a 64 años a 800 m | Más población, más puntos | 35 % |
-| Competencia low cost | Clubes low cost rivales a 800 m | Menos competidores, más puntos | 25 % |
-| Solapamiento VivaGym | % del círculo de 800 m compartido con círculos de clubes VivaGym | Menos solapamiento, más puntos | 25 % |
-| Renta | Renta media por persona a 800 m | Máximo en la franja media de la ciudad, menos en los extremos | 15 % |
-
-Clases:
-- ≥ 70 → INVESTIGAR (verde)
-- 60–69 → ESPERAR (ámbar)
-- < 60 → DESCARTAR (gris)
-- Reglas previas (→ DESCARTAR, con el motivo indicado):
-  · más de la mitad del hexágono es suelo no urbanizable;
-  · menos de 5.000 personas de 18 a 64 años a 800 m.
-
-Umbral de ESPERAR subido de 50 a 60 en el paso 5.3: con 50, el ámbar
-cubría el 60 % de los candidatos y el mapa no se leía en 10 segundos.
-Configuración en `config/scoring.json`.
-
-Pestaña "Ajustes" (fase A, noviembre 2026): pesos (normalizados a 100 %), renta
-objetivo, contar centros municipales y aperturas previstas, y población mínima.
-La web abre con los valores por defecto (66 / 170 / 576 zonas), que deben
-mantenerse al tocar el código. Las capturas muestran los parámetros usados.
-Radio y edad siguen fijos: no mostrar selectores que aún no funcionen.
-
-Nota de decisión: plantilla fija sin texto inventado (paso 6). Clase +
-"A favor" (criterios con nota ≥ 60, máx. 2, ordenados por puntos que
-aportan) + "En contra" (nota < 40, máx. 2, por puntos que hacen perder).
-Los criterios intermedios no se mencionan. Se cambió de "más fuerte /
-más débil" porque afirmaba "alto solapamiento" con un 7,5 %.
-
-Aviso urbanístico preliminar: se muestra en TODOS los hexágonos (urbano,
-parcial o no urbanizable), siempre con "Requiere confirmación
-profesional" y la fuente (MUC, enero 2023). Textos en `config/scoring.json`.
+Nota de decisión: plantilla fija sin texto inventado. "A favor" (nota ≥ 60)
+y "En contra" (nota < 40), máximo dos por banda; los intermedios no se
+mencionan. Aviso urbanístico preliminar en todos los hexágonos, siempre con
+"Requiere confirmación profesional". Textos y parámetros en
+`config/scoring.json`.
 
 ## Estructura de carpetas
 
@@ -137,13 +166,14 @@ smartxpand-hero/
 ├── css/estils.css
 ├── js/app.js            → mapa, carga de datos, clics
 ├── js/puntuacio.js      → puntuación y clase
-├── js/panell.js         → dashboard y nota de decisión
+├── js/panell.js         → panel de decisión
 ├── js/ajustos.js        → pestaña "Ajustes" (controles y recálculo)
 ├── data/                → GeoJSON procesados que lee la web
-├── config/scoring.json  → criterios, pesos, umbrales, radio, fuentes
+├── config/scoring.json  → criterios, pesos, umbrales, textos, fuentes
 ├── fonts/               → Poppins alojada en local (licencia OFL)
+├── assets/              → imagen para compartir e icono
 ├── preparacio/          → protocolo reutilizable (PROTOCOL.md)
-│   ├── scripts/         → scripts Python numerados por paso
+│   ├── scripts/         → scripts numerados por paso
 │   ├── dades_intermedies/ → resultados intermedios (CSV, GeoPackage)
 │   └── dades_brutes/    → descargas originales (fuera de git)
 ├── smartxpand-hero.qgz  → proyecto QGIS (EPSG:25831)
@@ -151,69 +181,41 @@ smartxpand-hero/
 └── README.md
 ```
 
-Preparación espacial en QGIS (modelo reutilizable). Puntuación y clase
-calculadas en el navegador a partir de `scoring.json`.
-
 Publicación: en cada cambio de CSS o JS, subir la versión `?v=...` de los
-enlaces en `index.html` (evita que el navegador use copias antiguas). Los
-JSON/GeoJSON se piden con `cache: "no-cache"`.
+enlaces en `index.html`. Los JSON/GeoJSON se piden con `cache: "no-cache"`.
+Antes de un commit con el GeoPackage abierto en QGIS:
+`PRAGMA wal_checkpoint(TRUNCATE)`.
 
-## Plan de trabajo
+## Pendientes fuera del plan
 
-0. Entorno: carpeta, git, GitHub, página mínima en GitHub Pages.
-1. Secciones censales + padrón + ADRH, unión y validación en QGIS.
-2. Clubes VivaGym y competencia (OSM + lista de marcas + verificación).
-3. Graella, radio de 800 m, indicadores, MUC, modelo reutilizable.
-4. Mapa base Leaflet con hexágonos y clubes.
-5. `scoring.json` + `puntuacio.js` + colores de clase.
-6. Clic en hexágono: círculo de 800 m, dashboard y nota de decisión.
-7. Avisos urbanísticos.
-8. Diseño, móvil, fuentes visibles, aviso de caso ilustrativo, modo
-   captura.
-9. Publicación final y revisión de honestidad.
-
-En cada paso:
-- Explica qué vas a hacer.
-- Escribe el código con comentarios breves en catalán.
-- Dime cómo probarlo.
-- Propón un commit de git con un mensaje claro.
-- Espera mi confirmación antes de seguir.
-
-## Fuera de alcance en el MVP
-
-- Locales candidatos concretos y anuncios inmobiliarios.
-- Isócronas.
-- Ranking comparativo (posible ampliación: ranking por barrios).
-- Botón de descarga de imagen.
-- Backend, bases de datos, usuarios o autenticación.
-- Datos en tiempo real.
-- Previsión de socios o de rendimiento del club.
-- Afirmar que se verifica la compatibilidad urbanística.
-- Cualquier afirmación de "inteligencia artificial".
+- Automatizar los pasos manuales de QGIS (ver `preparacio/PROTOCOL.md`).
+- Confirmar Synergym en su web oficial (hoy: fuente secundaria).
+- Comprobar la tarjeta de LinkedIn con el Post Inspector.
+- Probar con un director de expansión real.
+- Decidir la licencia del código del repositorio (hoy: sin licencia).
 
 ## Principios de honestidad
 
-- Solo datos públicos y verificables, con la fuente y el año indicados
-  en la app.
+- Solo datos públicos y verificables, con la fuente y la fecha en la app.
 - Aviso fijo: "Caso ilustrativo elaborado con datos públicos. VivaGym no
   es cliente de SmartXpand ni ha participado en este análisis."
 - No usar el logotipo de VivaGym, solo el nombre.
 - Ninguna frase del tipo "VivaGym debería abrir aquí".
-- Dejar claro que el mapa es un cribado relativo de zonas dentro de la
-  ciudad, no una recomendación de locales ni de viabilidad absoluta.
-- Indicar que el radio de 800 m es en línea recta, no un tiempo real.
+- Las puntuaciones son relativas (comparación), nunca viabilidad absoluta.
+- Indicar siempre si el área es un radio en línea recta o una isócrona.
+- No mostrar controles que aún no funcionen.
+- No copiar la identidad visual de competidores (p. ej. Black Rocket):
+  patrones de interfaz sí, marca no.
 
 ## Identidad visual
 
 - Tipografía Poppins.
-- Fondo y elementos principales en navy (#051C2C), un solo color de
-  acento: turquesa #2BB3C0.
-- Colores de clasificación: verde (investigar), ámbar (esperar), gris
-  (descartar).
+- Navy (#051C2C) y un solo acento: turquesa #2BB3C0.
+- Clases: verde (investigar), ámbar (esperar), gris (descartar).
 - Estética sobria, sin adornos.
 
 ## Criterio de éxito
 
-Un director de expansión que abra la app sin explicación debe entender
-en menos de 10 segundos qué zonas investigar, cuáles esperar y cuáles
-descartar (mapa), y por qué (dashboard del hexágono seleccionado).
+Un director de expansión entiende en menos de 10 segundos qué zonas valen
+la pena (descubrimiento) y, ante un local concreto, si llega a su mínimo y
+por qué (evaluación), con cada cifra trazable a su fuente.
