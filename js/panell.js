@@ -82,6 +82,14 @@ function mostraPanellInicial(config) {
   `;
 }
 
+// Variables que l'eina no cobreix: es diu clarament, amb el motiu (no s'estimen)
+function htmlNoCobertes(config, numeroSeccio) {
+  const files = config.variables_no_cubiertas.map((v) => `
+    <li><strong>${v.variable}</strong> <span class="etiqueta-no-cobert">No cubierto</span><br>
+      ${v.motivo}${v.fuente ? `<span class="font-dada">${v.fuente}</span>` : ""}</li>`).join("");
+  return `${titolSeccio(numeroSeccio, "Variables no cubiertas")}<ul class="dades no-cobertes">${files}</ul>`;
+}
+
 // "Fuentes y método": limitacions del mètode i fonts amb data (de scoring.json)
 function seccioFontsIMetode(config) {
   const limitacions = config.limitacions.map((l) => `<li>${l}</li>`).join("");
@@ -91,7 +99,8 @@ function seccioFontsIMetode(config) {
   return `
     ${titolSeccio(3, "Método: qué hay que saber", "fonts-i-metode")}
     <ul class="fonts">${limitacions}</ul>
-    ${titolSeccio(4, "Fuentes")}
+    ${htmlNoCobertes(config, 4)}
+    ${titolSeccio(5, "Fuentes")}
     <ul class="fonts">${fonts}</ul>
   `;
 }

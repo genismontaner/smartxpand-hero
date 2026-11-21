@@ -323,6 +323,8 @@ function mostraResultatsAvaluacio() {
         (${decimal(pctCompartida)} % del público objetivo del área)</li>
     </ul>
     ${font("Personas del área que también viven dentro del mismo radio de algún centro propio")}
+
+    ${htmlNoCobertes(avaluacio.config, n + 5)}
   `;
   connectaComparador(); // js/comparador.js
 }
@@ -353,11 +355,13 @@ async function preparaAvaluacio() {
   if (avaluacio.graella) return;
   const vista = document.getElementById("avaluacio");
   vista.innerHTML = `<h2>Evaluar un local</h2><p class="subtitol">Cargando datos de población…</p>`;
-  const [graella, clubs, limit] = await Promise.all([
+  const [graella, clubs, limit, config] = await Promise.all([
     carregaGeoJSON("data/poblacio_100m.json"),
     carregaGeoJSON("data/clubs_segments.geojson"),
     carregaGeoJSON("data/limit_municipal.geojson"),
+    carregaGeoJSON("config/scoring.json"),
   ]);
+  avaluacio.config = config;
   preparaGraella(graella);
   avaluacio.clubs = clubs;
   avaluacio.limit = limit;

@@ -883,3 +883,18 @@ input[type="range"] {
   margin-top: 8px;
   font-size: 0.75rem;
 }
+
+/* --- Variables no cobertes (pas 5) --- */
+.etiqueta-no-cobert {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 8px;
+  border: 1px solid var(--gris-text);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--gris-text);
+}
+.no-cobertes li {
+  margin-bottom: 8px;
+}

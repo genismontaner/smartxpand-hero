@@ -109,6 +109,19 @@
 
   "nota_relativa": "Puntuación relativa entre zonas de {ciutat}; no mide la viabilidad de un club.",
 
+  "variables_no_cubiertas": [
+    {
+      "variable": "Tránsito peatonal",
+      "motivo": "Barcelona no publica aforos de peatones: los aforos municipales cuentan vehículos y bicicletas. Requiere datos de telefonía móvil.",
+      "fuente": "Open Data BCN, aforos de movilidad (consulta 22/11/2026)"
+    },
+    {
+      "variable": "Facturación y ocupación de la competencia",
+      "motivo": "Dato propietario de cada operador: no se publica.",
+      "fuente": null
+    }
+  ],
+
   "fonts_resum": "Fuentes: INE (ADRH 2024) · Mapa urbanístic de Catalunya (enero 2023) · webs oficiales de las marcas, Time Out y Open Data BCN (consulta oct. 2026) · Mapa base: IGN.",
 
   "fonts": [

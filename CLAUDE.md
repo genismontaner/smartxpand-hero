@@ -72,6 +72,11 @@ cadena de 60 instalaciones y tres consultores.
   peatones (requiere datos de telefonía móvil) y la facturación u
   ocupación de la competencia (dato propietario) aparecen como
   **"no cubierto"**, con el motivo, nunca con un proxy disfrazado.
+- Comprobado el 22/11/2026: los aforos de Barcelona cuentan vehículos y
+  bicicletas, no peatones. Ojo: Madrid sí publica campañas de aforos de
+  peatones (datos.gob.es, l01280796), así que "no hay dato abierto en España"
+  no es exacto; el texto de la app habla solo de Barcelona. Textos en
+  `config/scoring.json` → `variables_no_cubiertas`.
 
 ## Alcance de la v1 (Barcelona, de punta a punta, datos reales)
 
