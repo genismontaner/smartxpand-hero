@@ -123,7 +123,7 @@ En cada paso:
 | Ciudad | Barcelona. Metodología reutilizable (ciudad como parámetro). |
 | Cadena propia del caso | VivaGym (real, low cost), caso ilustrativo. No tenemos su rendimiento real: la calibración se demuestra con carga de fichero. |
 | Área de un punto | Suma de celdas de una rejilla de población de 100 m dentro del radio o de la isócrona (sin librerías de geometría pesadas). |
-| Puntuación de un punto | Cada criterio comparado con los centros propios (percentil entre ellos). |
+| Puntuación de un punto | Cada criterio comparado con los centros propios (percentil entre ellos, mismos parámetros). Población: más es mejor; competencia (segmentos elegidos) y solapamiento: menos es mejor; renta por hogar: cuanto más cerca de la mediana de los centros propios, mejor. Pesos iniciales 35/25/25/15. Umbral sí/no por defecto 50 (= mediana de los centros). El solapamiento de un centro propio de referencia se mide con los otros centros. Código en `js/mirroring.js`. |
 | Isócronas | OpenRouteService con clave en el navegador (500/día en el plan gratuito). |
 | Mapa | Leaflet. HTML/CSS/JS sin frameworks. |
 | Publicación | GitHub Pages, web independiente. |

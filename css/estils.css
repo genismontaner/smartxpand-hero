@@ -785,3 +785,31 @@ input[type="range"] {
 .llista-adreces button:hover {
   background: var(--accent-suau);
 }
+
+/* --- Puntuació mirroring (pas 3) --- */
+.etiqueta-classe.si {
+  background: #2f9e44;
+}
+.etiqueta-classe.no {
+  background: #868e96;
+}
+.comparacio {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  color: var(--gris-text);
+}
+.plegable {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border: 1px solid var(--gris-linia);
+  border-radius: 12px;
+}
+.plegable summary {
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.plegable[open] summary {
+  margin-bottom: 8px;
+}

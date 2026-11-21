@@ -1,5 +1,5 @@
 // =============================================================
-// v1 · Pas 2 · Mode "Evaluar un local"
+// v1 · Pasos 2 i 3 · Mode "Evaluar un local"
 // L'usuari clica un punt del mapa; es calcula l'àrea (radi en km)
 // sumant les cel·les de la graella de població de 100 m, i es
 // compten els clubs de cada segment i els centres propis.
@@ -83,16 +83,24 @@ function textEdat() {
   return `de ${Number(des)} a ${fins === "más de 85" ? fins : Number(fins)} años`;
 }
 
-// Càlcul principal: tot el que hi ha dins del radi d'un punt
-function calculaArea(lat, lon, radiM) {
+// Càlcul principal: tot el que hi ha dins del radi d'un punt.
+// 'excloure' ([lat, lon]): un centre propi que no compta per al solapament (ell mateix)
+function calculaArea(lat, lon, radiM, excloure = null) {
   const iDes = avaluacio.trams.indexOf(avaluacio.edatDes);
   const iFins = avaluacio.trams.indexOf(avaluacio.edatFins);
-  const propis = avaluacio.clubs.features.filter(
-    (c) => c.properties.segment === "propia" && c.properties.estat === "obert"
-  );
+  const propis = avaluacio.clubs.features.filter((c) => {
+    if (c.properties.segment !== "propia" || c.properties.estat !== "obert") return false;
+    const [plon, plat] = c.geometry.coordinates;
+    return !(excloure && distanciaM(excloure[0], excloure[1], plat, plon) < 1);
+  });
+
+  // Rectangle que conté el cercle: les cel·les de fora es descarten sense calcular distàncies
+  const dLat = radiM / 111320;
+  const dLon = radiM / (111320 * Math.cos((lat * Math.PI) / 180));
 
   const r = { pobTotal: 0, pobObjectiu: 0, llars: 0, compartida: 0, rpSuma: 0, rpPes: 0, rlSuma: 0, rlPes: 0 };
   for (const c of avaluacio.graella) {
+    if (Math.abs(c.lat - lat) > dLat || Math.abs(c.lon - lon) > dLon) continue;
     if (distanciaM(lat, lon, c.lat, c.lon) > radiM) continue;
     const total = c.trams.reduce((a, b) => a + b, 0);
     const objectiu = c.trams.slice(iDes, iFins + 1).reduce((a, b) => a + b, 0);
@@ -163,8 +171,10 @@ function dibuixaControlsAvaluacio() {
         <select id="edat-fins" aria-label="Edad hasta">${opcions(avaluacio.edatFins)}</select>
       </div>
     </div>
+    ${htmlControlsMirroring()}
     <div id="resultats-avaluacio"></div>
   `;
+  connectaControlsMirroring(mostraResultatsAvaluacio); // js/mirroring.js
 
   // Cerca d'adreces: el formulari no recarrega la pàgina (preventDefault)
   vista.querySelector("#cercador-adreca").addEventListener("submit", (e) => {
@@ -247,7 +257,7 @@ function mostraResultatsAvaluacio() {
 
   if (!avaluacio.punt) {
     caixa.innerHTML = `<p class="nota-relativa">El área es un radio en línea recta desde el punto.
-      La puntuación y la comparación con los centros propios llegarán en el siguiente paso.</p>`;
+      El local se puntúa comparándolo con tus centros, con los mismos parámetros.</p>`;
     return;
   }
 
@@ -277,7 +287,9 @@ function mostraResultatsAvaluacio() {
     ${fora ? `<p class="avis">El punto está fuera de Barcelona: la competencia low cost y municipal
       solo está recogida dentro de la ciudad y en una franja de 800 m.</p>` : ""}
 
-    ${titolSeccio(1, "Población")}
+    ${htmlMirroring(valorsCriteris(r))}
+
+    ${titolSeccio(2, "Población")}
     <ul class="dades">
       <li>Población total: <strong>${numero(r.pobTotal)}</strong></li>
       <li>Público objetivo (${textEdat()}): <strong>${numero(r.pobObjectiu)}</strong></li>
@@ -285,18 +297,18 @@ function mostraResultatsAvaluacio() {
     </ul>
     ${font(fontsPob)}
 
-    ${titolSeccio(2, "Renta")}
+    ${titolSeccio(3, "Renta")}
     <ul class="dades">
       <li>Renta neta media por persona: <strong>${r.rendaPersona ? numero(r.rendaPersona) + " €" : "sin dato"}</strong></li>
       <li>Renta neta media por hogar: <strong>${r.rendaLlar ? numero(r.rendaLlar) + " €" : "sin dato"}</strong></li>
     </ul>
     ${font(fontsRenda)}
 
-    ${titolSeccio(3, "Competencia en el área")}
+    ${titolSeccio(4, "Competencia en el área")}
     <ul class="dades llista-competencia">${files}</ul>
     ${font("Webs oficiales de las marcas, Open Data BCN y OpenStreetMap · consulta octubre–noviembre 2026")}
 
-    ${titolSeccio(4, `Centros propios (${marcaPropia})`)}
+    ${titolSeccio(5, `Centros propios (${marcaPropia})`)}
     <ul class="dades">
       <li>Centros propios en el área: <strong>${(r.clubs.propia || []).length}</strong>${propis ? `<br><small>${propis}</small>` : ""}</li>
       <li>Centro propio más cercano: <strong>${numero(r.propiMesProper)} m</strong></li>
