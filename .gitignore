@@ -16,3 +16,6 @@ preparacio/dades_brutes/
 
 # Configuració local de l'editor
 .vscode/
+
+# Memòria cau de Python
+__pycache__/
