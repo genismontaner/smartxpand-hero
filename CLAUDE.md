@@ -136,9 +136,17 @@ En cada paso:
 - Edad quinquenal por sección: INE, Censo Anual de Población (por
   provincias; solo descarga). Pendiente de localizar la tabla exacta.
 - Centros propios: web oficial de VivaGym (JSON-LD con coordenadas).
-- Competencia low cost: webs oficiales de las marcas; criterio en
-  `preparacio/marques_lowcost.csv` (cuota ≤ 35 €/mes).
-- Competencia premium: pendiente de recoger y documentar con el mismo rigor.
+- Competencia en tres segmentos (decidido el 21/11/2026), con la fuente y el
+  tipo de fuente de cada marca en `preparacio/marques.csv`: low cost
+  (≤ 35 €/mes), gama media (35–70 €) y premium (> 70 €). Las marcas premium no
+  publican precios: se usan fuentes secundarias o, sin cifra, "posicionamiento"
+  (We/On, Àccura), marcado como tal. BDiR (gama media) y Àccura (premium) son
+  clasificaciones del proyecto pendientes de validar.
+- Ubicaciones de gama media y premium: `dades_intermedies/clubs_segments_<fecha>.csv`
+  (script 10). Anytime Fitness y Àccura salen de OSM (no verificados en web
+  oficial: la de Anytime exige verificación humana).
+- Limitación: los clubes low cost solo se recogieron en Barcelona + 800 m; en
+  la franja de 3 km la competencia low cost está incompleta.
 - Centros municipales: Open Data BCN (solo Barcelona).
 - Urbanismo: Mapa urbanístic de Catalunya (enero 2023), solo urbano o
   urbanizable frente a no urbanizable.

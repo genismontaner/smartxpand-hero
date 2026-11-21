@@ -73,7 +73,7 @@ Los valores por defecto, los pesos, umbrales, textos y fuentes están en
 | Mapa base | Instituto Geográfico Nacional (CC BY 4.0) | servicio en línea |
 
 El criterio para considerar una marca "low cost" (cuota básica ≤ 35 €/mes) y la
-fuente de cada precio están en [`preparacio/marques_lowcost.csv`](preparacio/marques_lowcost.csv).
+fuente de cada precio están en [`preparacio/marques.csv`](preparacio/marques.csv).
 
 ## Estructura
 

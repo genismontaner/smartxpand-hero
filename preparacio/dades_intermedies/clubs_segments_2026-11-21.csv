@@ -1,0 +1,46 @@
+marca,nom,adreca,municipi,estat,lat,lon,font_coord,adreca_trobada,tipus_font,font_url,data_consulta,notes
+BDiR,BDiR Alcúdia,C/ D'Alcúdia 66,08016,obert,41.4365726,2.1749423,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/alcudia,2026-11-21,
+DiR,DiR Av. Madrid,Avda Madrid 170-174,08028,obert,41.3803782,2.1314828,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/avenida-madrid,2026-11-21,
+BDiR,BDiR Calvet,C/ Del Mestre Nicolau 23,08021,obert,41.3944143,2.143159,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/calvet,2026-11-21,
+DiR,DiR Campus,Avda Doctor Marañon 17,08028,obert,41.3812583,2.1144333,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/campus,2026-11-21,
+DiR,DiR Castillejos,C/ Castillejos 388,08025,obert,41.4122987,2.1708105,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/castillejos,2026-11-21,
+DiR,DiR Claret,C/ Sant Antoni Maria Claret 84-86,08025,obert,41.4063005,2.1680088,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/claret,2026-11-21,
+DiR,DiR Claris,C/ Casp 34,08010,obert,41.3900484,2.1718054,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/claris,2026-11-21,
+DiR,DiR Hispà,C/ Jorge Manrique 15-19,08035,obert,41.4313775,2.1497342,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/club-hispa,2026-11-21,
+DiR,DiR Diagonal,C/ Ganduxer 25-27,08021,obert,41.3936253,2.1383294,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/diagonal,2026-11-21,
+BDiR,BDiR Figueres,Av. Salvador Dalí I Domènech 24,17600,obert,42.257999,2.9623657,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/figueres,2026-11-21,
+DiR,DiR Gràcia,C/ Gran De Gracia 37,08012,obert,41.3988877,2.1564629,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/gracia,2026-11-21,
+BDiR,BDiR Granados,C/ Mallorca 207,08036,obert,41.3904912,2.1579393,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/granados,2026-11-21,
+BDiR,BDiR Lesseps,Trav De Dalt 4-6,08024,obert,41.4081211,2.1515937,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/lesseps,2026-11-21,
+BDiR,BDiR Llúria,Av Diagonal 426,08037,obert,41.3974327,2.1621578,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/lluria,2026-11-21,
+BDiR,BDiR Mallorca,C/ Mallorca 146-148,08036,obert,41.3876157,2.154505,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/mallorca,2026-11-21,
+DiR,DiR Maragall,C/ Sant Antoni Maria Claret 362,08041,obert,41.4165097,2.1816357,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/maragall,2026-11-21,
+DiR,DiR Metasports Polinyà,Carretera Sentmenat 24,08213,obert,41.5446543,2.1629401,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/metasports-polinya,2026-11-21,
+DiR,DiR Palau-Solità i Plegamans,Av. Diagonal 20,08184,obert,41.58731,2.17492,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/palau,2026-11-21,
+BDiR,BDiR Parets,"Carrer  Volta, 3",08150,obert,41.5589806,2.2303548,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/parets,2026-11-21,
+OneDiR,OneDiR Piera,"Carrer Cervantes, 30",08784,obert,41.5215983,1.7516926,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/piera,2026-11-21,
+BDiR,BDiR Putxet,"Carrer Hurtado, 5",08023,obert,41.4101399,2.1411897,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/putxet,2026-11-21,
+DiR,DiR Sant Cugat,Cra Rubi 76-80,08173,obert,41.4801367,2.05916,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/sant-cugat,2026-11-21,
+BDiR,BDiR Motiva't Sant Quirze,Carrer Penedes 33,08192,obert,41.540035,2.0740459,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/st-quirze,2026-11-21,
+DiR,DiR Tarragona,C/ Tarragona 108-110,08015,obert,41.3795829,2.1446214,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/tarragona,2026-11-21,
+DiR,DiR Tres Torres,C/ Vergos 4,08017,obert,41.3997945,2.1310917,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/tres-torres,2026-11-21,
+DiR,DiR Tuset Boutiques,C/ Aribau 230-240 2º Na Plta,08006,obert,41.395296,2.1503618,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/tuset,2026-11-21,
+DiR,DiR Up&Down,C/ Flos I Calcat 22-24,08034,obert,41.390539,2.1313336,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/up-down,2026-11-21,
+OneDiR,OneDiR Vic,"Carrer Sant Isidre, 4, Local 1",08500,obert,41.9231719,2.2477206,web oficial (JSON-LD),,oficial,https://www.dir.cat/es/gimnasios-barcelona/vic,2026-11-21,
+Metropolitan,Metropolitan Balmes,"C/ Balmes, 215",Barcelona,obert,41.39843717,2.150992,geocodificador ICGC,"Carrer de Balmes 215, Barcelona",oficial,https://clubmetropolitan.com/clubs/barcelona/,2026-11-21,
+Metropolitan,Metropolitan Iradier,"C/ Escoles Pies, 105",Barcelona,obert,41.40491844,2.12650615,geocodificador ICGC,"Carrer de les Escoles Pies 105, Barcelona",oficial,https://clubmetropolitan.com/clubs/barcelona/,2026-11-21,
+Metropolitan,Metropolitan Galileo,"C/ Galileo, 186",Barcelona,obert,41.38160765,2.1334031,geocodificador ICGC,"Carrer de Galileu 180-196, Barcelona",oficial,https://clubmetropolitan.com/clubs/barcelona/,2026-11-21,
+Metropolitan,Metropolitan Sagrada Familia,"C/ Provença, 408 08025 Barcelona",Barcelona,obert,41.40154818,2.17072757,geocodificador ICGC,"Carrer de Provença 398-404, Barcelona",oficial,https://clubmetropolitan.com/clubs/barcelona/,2026-11-21,
+Metropolitan,Metropolitan Las Arenas,Gran Via de les Corts Catalanes 373,Barcelona,obert,41.37600682,2.14995483,geocodificador ICGC,"Gran Via de les Corts Catalanes 373-385, Barcelona",oficial,https://clubmetropolitan.com/clubs/barcelona/,2026-11-21,
+Metropolitan,Metropolitan Gran vía,"Avda. de la Gran Vía de l'Hospitalet, 142",L'Hospitalet de Llobregat,obert,41.34668784,2.10965959,geocodificador ICGC,"Avinguda de la Granvia de l'Hospitalet 142, l'Hospitalet de Llobregat",oficial,https://clubmetropolitan.com/clubs/barcelona/,2026-11-21,
+Metropolitan,Metropolitan Badalona,"Carrer de Sant Miquel, 16",Badalona,obert,41.45008509,2.24856478,geocodificador ICGC,"Carrer de Sant Miquel 16, Badalona",oficial,https://clubmetropolitan.com/clubs/barcelona/,2026-11-21,
+Metropolitan,Metropolitan Sant Just,"Carrer de Frederic Mompou, 1, 08960 Sant Just Desvern, Barcelona",Sant Just Desvern,obert,41.37508354,2.07421056,geocodificador ICGC,"Carrer de Frederic Mompou 1, Sant Just Desvern",oficial,https://clubmetropolitan.com/clubs/barcelona/,2026-11-21,
+We/On,We/On Balmes,"C/ Balmes, 44-46",Barcelona,obert,41.38877636,2.16352296,geocodificador ICGC,"Carrer de Balmes 44-46, Barcelona",oficial,https://www.weonclub.com/clubs/balmes,2026-11-21,La web de Holmes Place España redirige a We/On.
+We/On,We/On Urquinaona,"C/ d'Ausiàs Marc, 9-11,",Barcelona,obert,41.39021852,2.17392918,geocodificador ICGC,"Carrer d'Ausiàs Marc 9-11, Barcelona",oficial,https://www.weonclub.com/clubs/urquinaona,2026-11-21,La web de Holmes Place España redirige a We/On.
+Dreamfit,Dreamfit L'Hospitalet de Llobregat,"Avinguda de Josep Tarradellas i Joan, 139",L'Hospitalet de Llobregat,obert,41.36361856,2.10572896,geocodificador ICGC,"Avinguda de Josep Tarradellas i Joan 139, l'Hospitalet de Llobregat",oficial,https://www.dreamfit.es/centros/hospitalet,2026-11-21,
+Dreamfit,Dreamfit Sant Boi de Llobregat,"Calle Alberedes, 6",Sant Boi de Llobregat,exclos,,,geocodificador ICGC,Sant Boi de Llobregat,oficial,https://www.dreamfit.es/centros/sant-boi-de-llobregat,2026-11-21,Geocodificación imprecisa (sin número de portal).
+Anytime Fitness,Anytime Fitness,Gran Via de les Corts Catalanes 438,Barcelona,obert,41.3781691,2.153791,OpenStreetMap,,secundaria,https://www.openstreetmap.org/node/5540079455,2026-10-25,No verificado en la web oficial.
+Anytime Fitness,Anytime Fitness,,Barcelona,obert,41.4016592,2.1979346,OpenStreetMap,,secundaria,https://www.openstreetmap.org/node/7556742596,2026-10-25,No verificado en la web oficial.
+Àccura,Áccura Bruc,Carrer del Bruc 122,Barcelona,obert,41.3964326,2.1669339,OpenStreetMap,,secundaria,https://www.openstreetmap.org/node/9858522817,2026-10-25,No verificado en la web oficial.
+Anytime Fitness,Anytime Fitness,Avinguda de Josep Vicens i Foix 60,Barcelona,obert,41.3958894,2.1201333,OpenStreetMap,,secundaria,https://www.openstreetmap.org/node/11028063359,2026-10-25,No verificado en la web oficial.
+Anytime Fitness,Anytime Fitness,"Carrer del Montnegre 8, 12",Barcelona,obert,41.3865667,2.1381245,OpenStreetMap,,secundaria,https://www.openstreetmap.org/node/12798485901,2026-10-25,No verificado en la web oficial.

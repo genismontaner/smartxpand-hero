@@ -56,7 +56,7 @@ debe coincidir con la del ADRH.
 
 ## 2. Clubes propios y competencia
 
-**2.1 · Criterio de marca** — `marques_lowcost.csv`
+**2.1 · Criterio de marca** — `marques.csv`
 Una marca es *low cost* si su cuota básica publicada es ≤ 35 €/mes (las cuotas
 cada 4 semanas se convierten × 13 / 12). Se registra precio, tipo de fuente
 (oficial / secundaria), URL y fecha de consulta. Sin fuente → no cuenta.
