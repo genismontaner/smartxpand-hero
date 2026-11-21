@@ -22,6 +22,11 @@ MARQUES = f"{ARREL}/preparacio/marques.csv"
 SORTIDA = f"{ARREL}/data/clubs_segments.geojson"
 CAMPS = ["marca", "segment", "nom", "adreca", "estat", "tipus_font", "font_url", "data_consulta", "notes"]
 
+# Noms nets dels clubs (mòdul compartit amb 07_exportar_web.py)
+import sys
+sys.path.insert(0, f"{ARREL}/preparacio/scripts")
+from noms_clubs import nom_net
+
 # Segment de cada marca (columna 'format' de marques.csv)
 with open(MARQUES, encoding="utf-8") as f:
     segments = {r["marca"]: r["format"] for r in csv.DictReader(f)}
@@ -51,7 +56,7 @@ for ruta in ENTRADES:
                 sense_segment.add(c["marca"])
             nou = QgsFeature(capa.fields())
             nou.setGeometry(QgsGeometry.fromPointXY(punt))
-            nou.setAttributes([c["marca"], segment, c["nom"], c["adreca"], c["estat"],
+            nou.setAttributes([c["marca"], segment, nom_net(c["marca"], c["nom"], c["font_url"]), c["adreca"], c["estat"],
                                c["tipus_font"], c["font_url"], c["data_consulta"], c.get("notes", "")])
             noves.append(nou)
 capa.dataProvider().addFeatures(noves)

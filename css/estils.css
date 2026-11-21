@@ -676,3 +676,60 @@ input[type="range"] {
 .boto-restablir:hover {
   border-color: var(--accent);
 }
+
+/* --- Selector de mode: les dues portes d'entrada --- */
+.selector-mode {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  margin: 16px 24px 0;
+}
+.mode {
+  flex: 1;
+  padding: 9px 0;
+  border: 1px solid var(--gris-linia);
+  border-radius: 12px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gris-text);
+  cursor: pointer;
+}
+.mode.activa {
+  border-color: var(--accent);
+  background: var(--accent-suau);
+  color: var(--navy);
+}
+.mode-avaluar .pestanyes,
+.mode-avaluar .llegenda,
+.mode-captura .selector-mode {
+  display: none;
+}
+
+/* --- Mode avaluació --- */
+.selector-edat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.selector-edat select {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--gris-linia);
+  border-radius: 8px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--navy);
+}
+.font-dada {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.68rem;
+  color: var(--gris-text);
+}
+.llista-competencia small {
+  color: var(--gris-text);
+}

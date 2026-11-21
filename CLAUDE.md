@@ -147,6 +147,10 @@ En cada paso:
   oficial: la de Anytime exige verificación humana).
 - Limitación: los clubes low cost solo se recogieron en Barcelona + 800 m; en
   la franja de 3 km la competencia low cost está incompleta.
+- Población: la evaluación de puntos usa el Censo Anual 2024 (rejilla de 100 m)
+  y el mapa de descubrimiento aún usa la población del ADRH 2024. En algunos
+  barrios el Censo da un 10–11 % más (verificado en QGIS con cálculo exacto). Se
+  unifica en el paso 8. Causa de la diferencia entre fuentes: sin investigar.
 - Centros municipales: Open Data BCN (solo Barcelona).
 - Urbanismo: Mapa urbanístic de Catalunya (enero 2023), solo urbano o
   urbanizable frente a no urbanizable.

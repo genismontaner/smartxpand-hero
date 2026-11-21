@@ -171,6 +171,37 @@ document.querySelectorAll(".pestanya").forEach((boto) => {
   });
 });
 
+// --- Les dues portes d'entrada: "Descubrir zonas" i "Evaluar un local" ---
+let capesDescobriment = []; // capes del mapa de zones (s'omple a inicia)
+
+async function canviaMode(mode) {
+  const avaluar = mode === "avaluar";
+  document.body.classList.toggle("mode-avaluar", avaluar);
+  document.querySelectorAll(".mode").forEach((boto) => {
+    boto.classList.toggle("activa", boto.dataset.mode === mode);
+  });
+  for (const capa of capesDescobriment) {
+    if (avaluar) capa.remove();
+    else capa.addTo(mapa);
+  }
+  // El cercle de 800 m de la zona seleccionada (si n'hi ha) segueix el mateix camí
+  if (cercle) {
+    if (avaluar) cercle.remove();
+    else cercle.addTo(mapa);
+  }
+  if (avaluar) {
+    mostraVista("avaluacio");
+    await activaAvaluacio(); // js/avaluacio.js
+  } else {
+    desactivaAvaluacio();
+    mostraVista("panell");
+  }
+}
+
+document.querySelectorAll(".mode").forEach((boto) => {
+  boto.addEventListener("click", () => canviaMode(boto.dataset.mode));
+});
+
 // --- Selecció d'un hexàgon ---
 let seleccionat = null; // capa de l'hexàgon seleccionat
 let cercle = null; // cercle de 800 m dibuixat al mapa
@@ -276,6 +307,9 @@ async function inicia() {
       mostraPanellInicial(configActual);
     }
   }
+
+  // Capes que s'amaguen en el mode "Evaluar un local"
+  capesDescobriment = [capaHexagons, capaClubs];
 
   mostraAjustes(config, ajustos, recalcula);
   actualitzaResumClasses(hexagons, config);

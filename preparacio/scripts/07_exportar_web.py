@@ -12,7 +12,7 @@ S'executa DINS de QGIS, després de 06_muc.py.
 import re
 from qgis.core import (QgsVectorLayer, QgsVectorFileWriter, QgsCoordinateTransformContext,
                        QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject,
-                       QgsField, QgsFeature, QgsSpatialIndex, QgsWkbTypes)
+                       QgsField, QgsFeature, QgsSpatialIndex, QgsWkbTypes, QgsGeometry)
 from qgis.PyQt.QtCore import QVariant
 
 # Paràmetres
@@ -26,31 +26,22 @@ CAMPS_HEX = ["hex_id", "barri", "districte", "pob_total", "pob_objectiu", "renda
              "pct_no_urbanitzable", "sol"]
 CAMPS_CLUBS = ["marca", "nom", "adreca", "municipi", "estat", "tipus_font"]
 
-# Noms dels clubs VivaGym tal com surten al directori oficial (www.vivagym.com/es-es/gimnasios/),
-# identificats pel final de la URL de cada club
-NOMS_VIVAGYM = {
-    "arc-de-triomf": "Arc de Triomf", "av-roma": "Av. Roma", "berlin": "Berlín",
-    "besos-mar": "Besós Mar", "bruc": "Bruc", "diagonal": "Diagonal", "entenca": "Entença",
-    "glories": "Glòries", "la-rotonda": "La Rotonda", "la-verneda": "La Verneda",
-    "londres": "Londres", "magoria": "Magoria", "manso": "Manso", "meridiana": "Meridiana",
-    "passeig-de-sant-joan": "Passeig de Sant Joan", "sagrada-familia": "Sagrada Familia",
-    "sagrera": "Sagrera", "sant-antoni": "Sant Antoni", "sants": "Sants",
-    "universitat": "Universitat", "via-augusta": "Vía Augusta",
-    "gran-via": "Gran Vía – Hospitalet", "santa-eulalia": "Santa Eulàlia",
-    "finestrelles": "Finestrelles", "cornella": "Cornellà",
-}
+# Noms nets dels clubs (mòdul compartit amb 11_exportar_clubs_segments.py)
+import sys
+sys.path.insert(0, f"{ARREL}/preparacio/scripts")
+from noms_clubs import nom_net
 
 
 def nom_curt(nom):
     """Escurça els noms llargs dels centres municipals."""
-    return nom.replace("Centre Esportiu Municipal ", "CEM ")
+    return nom_net("", nom, "")
 
 
-def exporta(capa, nom_fitxer):
+def exporta(capa, nom_fitxer, rfc7946=True):
     """Desa una capa en GeoJSON (EPSG:4326, 5 decimals)."""
     opcions = QgsVectorFileWriter.SaveVectorOptions()
     opcions.driverName = "GeoJSON"
-    opcions.layerOptions = ["COORDINATE_PRECISION=5", "RFC7946=YES"]
+    opcions.layerOptions = ["COORDINATE_PRECISION=5"] + (["RFC7946=YES"] if rfc7946 else [])
     opcions.ct = QgsCoordinateTransform(capa.crs(), QgsCoordinateReferenceSystem("EPSG:4326"), QgsProject.instance())
     resultat = QgsVectorFileWriter.writeAsVectorFormatV3(capa, f"{SORTIDA}/{nom_fitxer}",
                                                          QgsCoordinateTransformContext(), opcions)
@@ -102,10 +93,7 @@ for c in clubs.getFeatures():
     if c["estat"] == "exclos":
         continue
     valors = {n: c[n] for n in CAMPS_CLUBS}
-    if c["marca"] == "VivaGym":
-        clau = c["font_url"].rstrip("/").split("/")[-1]
-        valors["nom"] = f"VivaGym {NOMS_VIVAGYM.get(clau, clau)}"
-    valors["nom"] = nom_curt(valors["nom"])
+    valors["nom"] = nom_net(c["marca"], c["nom"], c["font_url"])
     f = QgsFeature(clubs_web.fields())
     f.setGeometry(c.geometry())
     f.setAttributes([valors[n] for n in CAMPS_CLUBS])
@@ -120,7 +108,12 @@ limit = QgsVectorLayer(f"{GPKG}|layername=limit_barcelona", "limit", "ogr")
 limit_web = capa_memoria("MultiPolygon", "EPSG:25831", [QgsField("municipi", QVariant.String)])
 f_limit = next(limit.getFeatures())
 nou = QgsFeature(limit_web.fields())
-nou.setGeometry(f_limit.geometry().convertToType(QgsWkbTypes.PolygonGeometry, True))
+# Ens quedem només amb les parts de polígon (convertToType no treia la línia sobrant)
+parts = [p for p in f_limit.geometry().asGeometryCollection()
+         if p.type() == QgsWkbTypes.PolygonGeometry]
+nou.setGeometry(QgsGeometry.collectGeometry(parts))
 nou.setAttributes([f_limit["NMUN"]])
 limit_web.dataProvider().addFeatures([nou])
-exporta(limit_web, "limit_municipal.geojson")
+# Sense l'opció RFC7946: combinada amb l'arrodoniment, convertia una part petita del límit
+# en una línia (GeometryCollection). Les coordenades ja es transformen a EPSG:4326.
+exporta(limit_web, "limit_municipal.geojson", rfc7946=False)
