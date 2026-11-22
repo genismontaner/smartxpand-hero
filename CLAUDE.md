@@ -172,7 +172,7 @@ urbanizable; menos público objetivo que el centro propio con menos. Con los
 valores por defecto (1,5 km, 20–64 años, 35/25/25/15, low cost + municipal,
 umbral 50) salen **259 / 252 / 113** zonas y 682 por regla previa: es la nueva
 referencia. El mapa de zonas usa solo radio (isócronas a pie de los hexágonos:
-pendientes, paso 8.2, requieren unas 812 peticiones a ORS). Un solo juego de
+pendientes, paso 8.2: script 13, 1.092 peticiones a ORS en unos 3 días de cuota). Un solo juego de
 controles (`#controls-comuns`) se mueve entre la pestaña «Parámetros» y
 «Evaluar un local».
 
