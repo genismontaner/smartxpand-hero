@@ -250,9 +250,11 @@ function dibuixaControlsAvaluacio() {
       </div>
     </div>
     ${htmlControlsMirroring()}
+    ${htmlCalibratge()}
     <div id="resultats-avaluacio"></div>
   `;
   connectaControlsMirroring(mostraResultatsAvaluacio); // js/mirroring.js
+  connectaCalibratge(); // js/calibratge.js
 
   // Cerca d'adreces: el formulari no recarrega la pàgina (preventDefault)
   vista.querySelector("#cercador-adreca").addEventListener("submit", (e) => {
@@ -331,6 +333,7 @@ async function cercaAdreca(text) {
 
 // Resultats de l'àrea del punt candidat (es redibuixen a cada canvi)
 function mostraResultatsAvaluacio() {
+  mostraCalibratge(); // el calibratge també es recalcula amb els paràmetres nous
   const caixa = document.getElementById("resultats-avaluacio");
 
   if (!avaluacio.punt) {

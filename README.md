@@ -29,6 +29,12 @@ directores de expansión de cadenas de fitness en España.
   parámetros ("mirroring": 50 = como la mediana de tus centros), con pesos
   editables, desglose y un umbral sí/no fijado por el usuario. Se pueden guardar
   hasta 5 locales y compararlos en una tabla, siempre con los mismos parámetros.
+- **Calibración:** el usuario carga un CSV con el rendimiento real de sus centros
+  (`nombre; lat; lon; rendimiento`; hay una plantilla descargable con el
+  rendimiento vacío). La herramienta puntúa cada centro con los parámetros
+  actuales y compara su orden con el real (correlación de rangos de Spearman,
+  total y por criterio). El fichero se lee en el navegador y no se envía. No se
+  publica ningún fichero de ejemplo con rendimiento: no tenemos datos reales.
 - **Isócronas:** se calculan con OpenRouteService (las de los centros propios,
   una vez, con `preparacio/scripts/12_isocrones_propis.py`; la del local, al
   seleccionarlo). Necesitan una clave en `config/ors_clau.txt`, que no se publica:
@@ -110,6 +116,7 @@ js/avaluacio.js         Modo «Evaluar un local»
 js/isocrones.js         Áreas de captación: radio o isócrona (OpenRouteService)
 js/mirroring.js         Puntuación contra los centros propios
 js/comparador.js        Comparador de locales
+js/calibratge.js        Calibración con el rendimiento real de los centros propios
 config/scoring.json     Criterios, pesos, umbrales, textos y fuentes
 data/                   GeoJSON que lee la web
 fonts/                  Poppins (licencia OFL)

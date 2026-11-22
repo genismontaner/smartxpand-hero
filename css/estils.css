@@ -834,6 +834,12 @@ input[type="range"] {
   color: var(--navy);
   cursor: pointer;
 }
+/* Botó per carregar el CSV del calibratge (pas 7) */
+.boto-fitxer {
+  display: block;
+  box-sizing: border-box;
+  text-align: center;
+}
 .taula-contenidor {
   overflow-x: auto; /* si hi ha molts locals, la taula es desplaça de costat */
 }
