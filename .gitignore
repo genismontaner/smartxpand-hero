@@ -19,3 +19,6 @@ preparacio/dades_brutes/
 
 # Memòria cau de Python
 __pycache__/
+
+# Clau d'OpenRouteService (credencial local; no es publica)
+config/ors_clau.txt
