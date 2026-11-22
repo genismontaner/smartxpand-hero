@@ -1,7 +1,7 @@
 // =============================================================
 // v1 · Pas 4 · Comparador de locals candidats
 // L'usuari desa fins a 5 locals (A, B, C...). Tots es recalculen
-// sempre amb els paràmetres actuals (radi, edat, pesos, segments),
+// sempre amb els paràmetres actuals (àrea, edat, pesos, segments),
 // perquè la comparació sigui justa.
 // =============================================================
 
@@ -62,10 +62,19 @@ function htmlComparador(numeroSeccio) {
       Guarda al menos otro para compararlos.</p>`;
   }
 
-  const resultats = comparador.locals.map((l) => {
-    const r = calculaArea(l.lat, l.lon, avaluacio.radiKm * 1000);
+  // Àrea de cada local amb els paràmetres actuals (amb isòcrona, pot caldre demanar-la a ORS)
+  const arees = comparador.locals.map((l) => areaCandidat(l.lat, l.lon));
+  if (arees.some((a) => !a)) return `${titol}<p class="nota-relativa">Calculando las isócronas de los locales guardados…</p>`;
+  const ambError = comparador.locals.filter((l, i) => arees[i].error).map((l) => l.lletra);
+  if (ambError.length) {
+    return `${titol}<p class="avis">No se ha podido calcular la isócrona de: ${ambError.join(", ")}.
+      ${arees.find((a) => a.error).error}</p>`;
+  }
+
+  const resultats = comparador.locals.map((l, i) => {
+    const r = calculaArea(arees[i]);
     const valors = valorsCriteris(r);
-    return { local: l, r, valors, p: puntuaMirroring(valors) };
+    return { local: l, r, valors, p: puntuaMirroring(valors), incomplet: foraZonaDades(arees[i]) };
   });
 
   // Fila de la taula. 'millor' indica quin valor és millor ("max" o "min") per posar-lo en negreta
@@ -87,7 +96,7 @@ function htmlComparador(numeroSeccio) {
 
   const files = [
     fila("Puntuación", resultats.map((x) => x.p.total), (v) => `<strong>${v}</strong>`, "max"),
-    fila("¿Llega al mínimo?", resultats.map((x) => (x.p.total >= mirroring.llindar ? "Sí" : "No")), (v) => v, null),
+    fila("¿Llega al mínimo?", resultats.map((x) => (x.incomplet ? null : x.p.total >= mirroring.llindar ? "Sí" : "No")), (v) => v, null),
     ...mirroring.criteris.map((c) => fila(
       `${c.etiqueta} <small>(nota)</small>`,
       resultats.map((x) => {
@@ -113,8 +122,9 @@ function htmlComparador(numeroSeccio) {
       </table>
     </div>
     <ul class="dades llegenda-locals">${llegenda}</ul>
-    ${font(`Mismos parámetros para todos: radio de ${decimal(avaluacio.radiKm)} km en línea recta,
-      público ${textEdat()}, pesos y segmentos actuales. En negrita, el mejor valor de cada fila.`)}
+    ${font(`Mismos parámetros para todos: ${textArea()}, público ${textEdat()}, pesos y segmentos
+      actuales. En negrita, el mejor valor de cada fila.${resultats.some((x) => x.incomplet)
+        ? " «—» en «¿Llega al mínimo?»: el área supera la zona con datos." : ""}`)}
   `;
 }
 

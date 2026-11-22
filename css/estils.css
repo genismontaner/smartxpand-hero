@@ -793,6 +793,12 @@ input[type="range"] {
 .etiqueta-classe.no {
   background: #868e96;
 }
+/* Àrea fora de la zona amb dades: no hi ha sí/no (pas 6) */
+.etiqueta-classe.incomplet {
+  background: #ffffff;
+  border: 1px solid #868e96;
+  color: var(--navy);
+}
 .comparacio {
   display: block;
   margin-top: 4px;

@@ -18,7 +18,8 @@ directores de expansión de cadenas de fitness en España.
 
 - **Descubrir zonas:** el mapa de hexágonos clasificados (ver abajo).
 - **Evaluar un local:** busca una dirección (geocodificador del ICGC) o haz clic
-  en el mapa. Para un radio de 0,5 a 3 km en línea recta se calcula la población
+  en el mapa. Para un radio de 0,5 a 3 km en línea recta o una isócrona (a pie
+  5, 10 o 15 min; en coche 5 min) se calcula la población
   total y por tramos de edad de 5 años, los hogares, la renta por persona y por
   hogar, la competencia por segmentos (low cost, centros municipales, gama media,
   premium) y el público objetivo compartido con los centros propios. Cada cifra
@@ -28,6 +29,11 @@ directores de expansión de cadenas de fitness en España.
   parámetros ("mirroring": 50 = como la mediana de tus centros), con pesos
   editables, desglose y un umbral sí/no fijado por el usuario. Se pueden guardar
   hasta 5 locales y compararlos en una tabla, siempre con los mismos parámetros.
+- **Isócronas:** se calculan con OpenRouteService (las de los centros propios,
+  una vez, con `preparacio/scripts/12_isocrones_propis.py`; la del local, al
+  seleccionarlo). Necesitan una clave en `config/ors_clau.txt`, que no se publica:
+  sin clave, la web solo ofrece el radio. En coche, 10 y 15 min no se ofrecen
+  porque salen de la zona con datos (Barcelona + 3 km).
 
 ## Qué mide
 
@@ -85,6 +91,7 @@ Los valores por defecto, los pesos, umbrales, textos y fuentes están en
 | Barrios y distritos | Open Data BCN (Ajuntament de Barcelona, CC BY 4.0) | 26/10/2026 |
 | Clasificación del suelo | Mapa urbanístic de Catalunya (Generalitat), servido por la Diputació de Barcelona | enero 2023 |
 | Geocodificación | Geocodificador del ICGC | 25/10/2026 |
+| Isócronas | openrouteservice.org (HeiGIT), red viaria de OpenStreetMap | 22/11/2026 (centros propios) |
 | Mapa base | Instituto Geográfico Nacional (CC BY 4.0) | servicio en línea |
 
 El criterio para considerar una marca "low cost" (cuota básica ≤ 35 €/mes) y la
@@ -100,6 +107,7 @@ js/puntuacio.js         Puntuación sobre 100 y clase
 js/panell.js            Panel de decisión
 js/ajustos.js           Pestaña de ajustes y recálculo
 js/avaluacio.js         Modo «Evaluar un local»
+js/isocrones.js         Áreas de captación: radio o isócrona (OpenRouteService)
 js/mirroring.js         Puntuación contra los centros propios
 js/comparador.js        Comparador de locales
 config/scoring.json     Criterios, pesos, umbrales, textos y fuentes

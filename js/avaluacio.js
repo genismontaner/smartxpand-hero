@@ -1,13 +1,17 @@
 // =============================================================
-// v1 · Pasos 2 i 3 · Mode "Evaluar un local"
-// L'usuari clica un punt del mapa; es calcula l'àrea (radi en km)
-// sumant les cel·les de la graella de població de 100 m, i es
-// compten els clubs de cada segment i els centres propis.
+// v1 · Pasos 2, 3 i 6 · Mode "Evaluar un local"
+// L'usuari clica un punt del mapa; es calcula l'àrea (radi en km o
+// isòcrona en minuts, js/isocrones.js) sumant les cel·les de la
+// graella de població de 100 m, i es compten els clubs de cada
+// segment i els centres propis.
 // =============================================================
 
 const avaluacio = {
   punt: null, // L.latLng del local candidat
+  tipusArea: "radi", // "radi" o "isocrona"
   radiKm: 1.5,
+  modeIso: "a_pie", // "a_pie" o "coche"
+  minuts: 10,
   edatDes: "e20_24",
   edatFins: "e60_64",
   graella: null, // cel·les de data/poblacio_100m.json
@@ -36,15 +40,14 @@ function distanciaM(lat1, lon1, lat2, lon2) {
   return Math.hypot(x, y);
 }
 
-// Cert si el punt és dins del contorn de Barcelona (mètode del raig: es compten els creuaments)
-function dinsDelLimit(lat, lon) {
+// Cert si el punt és dins d'un polígon GeoJSON (mètode del raig: es compten els creuaments
+// d'una línia horitzontal amb les vores; senar = dins). Mirar tots els anells resol els forats.
+function dinsPoligon(g, lat, lon) {
+  // Polygon → un polígon; MultiPolygon → diversos; qualsevol altra cosa s'ignora
+  const poligons = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
   let dins = false;
-  for (const f of avaluacio.limit.features) {
-    const g = f.geometry;
-    // Polygon → un polígon; MultiPolygon → diversos; qualsevol altra cosa s'ignora
-    const poligons = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
-    for (const poligon of poligons) {
-      const anell = poligon[0];
+  for (const poligon of poligons) {
+    for (const anell of poligon) {
       for (let i = 0, j = anell.length - 1; i < anell.length; j = i++) {
         const [xi, yi] = anell[i];
         const [xj, yj] = anell[j];
@@ -53,6 +56,11 @@ function dinsDelLimit(lat, lon) {
     }
   }
   return dins;
+}
+
+// Cert si el punt és dins del contorn de Barcelona
+function dinsDelLimit(lat, lon) {
+  return avaluacio.limit.features.some((f) => dinsPoligon(f.geometry, lat, lon));
 }
 
 // Converteix el JSON compacte en una llista d'objectes fàcils de fer servir
@@ -83,9 +91,10 @@ function textEdat() {
   return `de ${Number(des)} a ${fins === "más de 85" ? fins : Number(fins)} años`;
 }
 
-// Càlcul principal: tot el que hi ha dins del radi d'un punt.
+// Càlcul principal: tot el que hi ha dins d'una àrea (radi o isòcrona, js/isocrones.js).
 // 'excloure' ([lat, lon]): un centre propi que no compta per al solapament (ell mateix)
-function calculaArea(lat, lon, radiM, excloure = null) {
+function calculaArea(area, excloure = null) {
+  const { lat, lon } = area;
   const iDes = avaluacio.trams.indexOf(avaluacio.edatDes);
   const iFins = avaluacio.trams.indexOf(avaluacio.edatFins);
   const propis = avaluacio.clubs.features.filter((c) => {
@@ -94,14 +103,12 @@ function calculaArea(lat, lon, radiM, excloure = null) {
     return !(excloure && distanciaM(excloure[0], excloure[1], plat, plon) < 1);
   });
 
-  // Rectangle que conté el cercle: les cel·les de fora es descarten sense calcular distàncies
-  const dLat = radiM / 111320;
-  const dLon = radiM / (111320 * Math.cos((lat * Math.PI) / 180));
+  // Àrees dels centres propis amb el mateix tipus d'àrea; només les que toquen la del candidat
+  const areesPropies = propis.map(areaPropi).filter((a) => a && caixesEsToquen(a, area));
 
   const r = { pobTotal: 0, pobObjectiu: 0, llars: 0, compartida: 0, rpSuma: 0, rpPes: 0, rlSuma: 0, rlPes: 0 };
   for (const c of avaluacio.graella) {
-    if (Math.abs(c.lat - lat) > dLat || Math.abs(c.lon - lon) > dLon) continue;
-    if (distanciaM(lat, lon, c.lat, c.lon) > radiM) continue;
+    if (!conte(area, c.lat, c.lon)) continue;
     const total = c.trams.reduce((a, b) => a + b, 0);
     const objectiu = c.trams.slice(iDes, iFins + 1).reduce((a, b) => a + b, 0);
     r.pobTotal += total;
@@ -109,28 +116,23 @@ function calculaArea(lat, lon, radiM, excloure = null) {
     r.llars += c.llars;
     if (c.rendaPersona) { r.rpSuma += c.rendaPersona * total; r.rpPes += total; }
     if (c.rendaLlar) { r.rlSuma += c.rendaLlar * c.llars; r.rlPes += c.llars; }
-    // Població compartida: la cel·la també és dins del radi d'algun centre propi
-    const compartida = propis.some((p) => {
-      const [plon, plat] = p.geometry.coordinates;
-      return distanciaM(plat, plon, c.lat, c.lon) <= radiM;
-    });
-    if (compartida) r.compartida += objectiu;
+    // Població compartida: la cel·la també és dins de l'àrea d'algun centre propi
+    if (areesPropies.some((a) => conte(a, c.lat, c.lon))) r.compartida += objectiu;
   }
   r.rendaPersona = r.rpPes ? r.rpSuma / r.rpPes : null;
   r.rendaLlar = r.rlPes ? r.rlSuma / r.rlPes : null;
 
-  // Clubs dins del radi, per segment
+  // Clubs dins de l'àrea, per segment (la distància és en línia recta)
   r.clubs = {};
   for (const c of avaluacio.clubs.features) {
     const [clon, clat] = c.geometry.coordinates;
-    const d = distanciaM(lat, lon, clat, clon);
-    if (d > radiM) continue;
+    if (!conte(area, clat, clon)) continue;
     const s = c.properties.segment;
-    (r.clubs[s] = r.clubs[s] || []).push({ ...c.properties, distancia: d });
+    (r.clubs[s] = r.clubs[s] || []).push({ ...c.properties, distancia: distanciaM(lat, lon, clat, clon) });
   }
   for (const llista of Object.values(r.clubs)) llista.sort((a, b) => a.distancia - b.distancia);
 
-  // Centre propi més proper (encara que sigui fora del radi)
+  // Centre propi més proper (encara que sigui fora de l'àrea)
   r.propiMesProper = Math.min(...propis.map((p) => {
     const [plon, plat] = p.geometry.coordinates;
     return distanciaM(lat, lon, plat, plon);
@@ -141,6 +143,86 @@ function calculaArea(lat, lon, radiM, excloure = null) {
 // Petit text de font sota cada xifra
 function font(text) {
   return `<span class="font-dada">${text}</span>`;
+}
+
+// Controls de l'àrea de captació: radi en km o isòcrona en minuts (principi 2: tria l'usuari).
+// Si no hi ha clau d'ORS, només es mostra el radi (cap control que no funcioni).
+function htmlControlsArea() {
+  const radi = `
+    <div class="criteri" id="control-radi">
+      <div class="linia"><label for="radi-km">Radio de captación</label>
+        <span class="valor" id="valor-radi"></span></div>
+      <input type="range" id="radi-km" min="0.5" max="3" step="0.1" value="${avaluacio.radiKm}">
+    </div>`;
+  if (!isocronesDisponibles()) return radi;
+
+  const modes = Object.entries(MODES_ISOCRONA)
+    .map(([id, m]) => `<button type="button" class="pindola" data-mode-iso="${id}">${m.etiqueta}</button>`).join("");
+  const minuts = [5, 10, 15]
+    .map((m) => `<button type="button" class="pindola" data-minuts="${m}">${m} min</button>`).join("");
+  return `
+    <div class="criteri">
+      <label>Área de captación</label>
+      <div class="pindoles" role="group" aria-label="Tipo de área">
+        <button type="button" class="pindola" data-tipus-area="radi">Radio (km)</button>
+        <button type="button" class="pindola" data-tipus-area="isocrona">Isócrona (min)</button>
+      </div>
+    </div>
+    ${radi}
+    <div class="criteri" id="control-isocrona">
+      <div class="pindoles" role="group" aria-label="Modo de desplazamiento">${modes}</div>
+      <div class="pindoles" role="group" aria-label="Minutos" style="margin-top:8px">${minuts}</div>
+      <p class="nota-relativa" id="nota-cotxe">En coche, 10 y 15 min salen de la zona con datos
+        (Barcelona + 3 km) y no se ofrecen.</p>
+    </div>`;
+}
+
+// Marca els botons actius i amaga el que no toca segons l'estat
+function actualitzaControlsArea() {
+  const esRadi = avaluacio.tipusArea === "radi";
+  document.getElementById("valor-radi").textContent = `${decimal(avaluacio.radiKm)} km`;
+  if (!isocronesDisponibles()) return;
+  document.getElementById("control-radi").hidden = !esRadi;
+  document.getElementById("control-isocrona").hidden = esRadi;
+  document.getElementById("nota-cotxe").hidden = avaluacio.modeIso !== "coche";
+  const permesos = MODES_ISOCRONA[avaluacio.modeIso].minuts;
+  document.querySelectorAll("[data-tipus-area]").forEach((b) => b.classList.toggle("activa", b.dataset.tipusArea === avaluacio.tipusArea));
+  document.querySelectorAll("[data-mode-iso]").forEach((b) => b.classList.toggle("activa", b.dataset.modeIso === avaluacio.modeIso));
+  document.querySelectorAll("[data-minuts]").forEach((b) => {
+    b.hidden = !permesos.includes(Number(b.dataset.minuts));
+    b.classList.toggle("activa", Number(b.dataset.minuts) === avaluacio.minuts);
+  });
+}
+
+function connectaControlsArea() {
+  // Qualsevol canvi d'àrea: es redibuixa el mapa i els resultats
+  const aplica = () => {
+    actualitzaControlsArea();
+    actualitzaAtribucio();
+    actualitzaMapaAvaluacio();
+    mostraResultatsAvaluacio();
+  };
+  document.getElementById("radi-km").addEventListener("input", (e) => {
+    avaluacio.radiKm = Number(e.target.value);
+    aplica();
+  });
+  document.querySelectorAll("[data-tipus-area]").forEach((b) => b.addEventListener("click", () => {
+    avaluacio.tipusArea = b.dataset.tipusArea;
+    aplica();
+  }));
+  document.querySelectorAll("[data-mode-iso]").forEach((b) => b.addEventListener("click", () => {
+    avaluacio.modeIso = b.dataset.modeIso;
+    // Si el temps triat no existeix en aquest mode (cotxe: només 5 min), es pren el primer
+    if (!MODES_ISOCRONA[avaluacio.modeIso].minuts.includes(avaluacio.minuts)) {
+      avaluacio.minuts = MODES_ISOCRONA[avaluacio.modeIso].minuts[0];
+    }
+    aplica();
+  }));
+  document.querySelectorAll("[data-minuts]").forEach((b) => b.addEventListener("click", () => {
+    avaluacio.minuts = Number(b.dataset.minuts);
+    aplica();
+  }));
+  actualitzaControlsArea();
 }
 
 // Controls del mode (es dibuixen una sola vegada, perquè no es perdin mentre s'arrosseguen)
@@ -158,11 +240,7 @@ function dibuixaControlsAvaluacio() {
       <button type="submit">Buscar</button>
     </form>
     <div id="resultats-cerca"></div>
-    <div class="criteri">
-      <div class="linia"><label for="radi-km">Radio de captación</label>
-        <span class="valor" id="valor-radi"></span></div>
-      <input type="range" id="radi-km" min="0.5" max="3" step="0.1" value="${avaluacio.radiKm}">
-    </div>
+    ${htmlControlsArea()}
     <div class="criteri">
       <label for="edat-des">Público objetivo (edad, tramos de 5 años)</label>
       <div class="selector-edat">
@@ -184,11 +262,7 @@ function dibuixaControlsAvaluacio() {
 
   const desSelect = vista.querySelector("#edat-des");
   const finsSelect = vista.querySelector("#edat-fins");
-  vista.querySelector("#radi-km").addEventListener("input", (e) => {
-    avaluacio.radiKm = Number(e.target.value);
-    actualitzaMapaAvaluacio();
-    mostraResultatsAvaluacio();
-  });
+  connectaControlsArea();
   desSelect.addEventListener("change", () => {
     avaluacio.edatDes = desSelect.value;
     // L'edat final no pot ser anterior a la inicial
@@ -212,6 +286,8 @@ function dibuixaControlsAvaluacio() {
 // 'nom': l'adreça trobada (si el punt ve del cercador)
 function situaPunt(latlng, centrar = false, nom = null) {
   avaluacio.punt = L.latLng(latlng);
+  // Els errors d'ORS no es guarden per sempre: en tornar a triar un punt, es pot reintentar
+  for (const [clau, valor] of isocrones.memoria) if (valor.error) isocrones.memoria.delete(clau);
   avaluacio.nomPunt = nom || `Punto ${avaluacio.punt.lat.toFixed(4)}, ${avaluacio.punt.lng.toFixed(4)}`;
   actualitzaMapaAvaluacio();
   mostraResultatsAvaluacio();
@@ -255,17 +331,25 @@ async function cercaAdreca(text) {
 
 // Resultats de l'àrea del punt candidat (es redibuixen a cada canvi)
 function mostraResultatsAvaluacio() {
-  document.getElementById("valor-radi").textContent = `${decimal(avaluacio.radiKm)} km`;
   const caixa = document.getElementById("resultats-avaluacio");
 
   if (!avaluacio.punt) {
-    caixa.innerHTML = `<p class="nota-relativa">El área es un radio en línea recta desde el punto.
-      El local se puntúa comparándolo con tus centros, con los mismos parámetros.</p>`;
+    caixa.innerHTML = `<p class="nota-relativa">El área es un ${textArea()} desde el punto.
+      El local se puntúa comparándolo con tus centros, con la misma área y los mismos parámetros.</p>`;
     return;
   }
 
   const { lat, lng } = avaluacio.punt;
-  const r = calculaArea(lat, lng, avaluacio.radiKm * 1000);
+  const capcalera = `<p class="nota-relativa">${avaluacio.nomPunt} · ${textArea()}</p>`;
+  const area = areaCandidat(lat, lng);
+  // La isòcrona encara no ha arribat, o ORS ha tornat un error
+  if (!area || area.error) {
+    caixa.innerHTML = `${capcalera}<p class="${area ? "avis" : "nota-relativa"}">
+      ${area ? area.error : "Calculando la isócrona…"}</p>`;
+    return;
+  }
+  const r = calculaArea(area);
+  const incomplet = foraZonaDades(area);
   const fontsPob = "INE, Censo Anual de Población 2024 · reparto en rejilla de 100 m";
   const fontsRenda = "INE, Atlas de Distribución de Renta de los Hogares 2024";
 
@@ -287,12 +371,14 @@ function mostraResultatsAvaluacio() {
   const n = comparador.locals.length ? 2 : 1;
 
   caixa.innerHTML = `
-    <p class="nota-relativa">${avaluacio.nomPunt} · radio de
-      ${decimal(avaluacio.radiKm)} km en línea recta</p>
+    ${capcalera}
+    ${area.tipus === "isocrona" ? font(fontIsocrones()) : ""}
+    ${incomplet ? `<p class="avis">El área supera la zona con datos (Barcelona + 3 km): cifras
+      incompletas. No se responde sí o no.</p>` : ""}
     ${fora ? `<p class="avis">El punto está fuera de Barcelona: la competencia low cost y municipal
       solo está recogida dentro de la ciudad y en una franja de 800 m.</p>` : ""}
 
-    ${htmlMirroring(valorsCriteris(r))}
+    ${htmlMirroring(valorsCriteris(r), incomplet)}
     ${htmlBotoGuardar()}
     ${htmlComparador(2)}
 
@@ -322,30 +408,40 @@ function mostraResultatsAvaluacio() {
       <li>Público objetivo compartido con centros propios: <strong>${numero(r.compartida)}</strong>
         (${decimal(pctCompartida)} % del público objetivo del área)</li>
     </ul>
-    ${font("Personas del área que también viven dentro del mismo radio de algún centro propio")}
+    ${font(`Personas del área que también viven dentro del área de algún centro propio
+      (${avaluacio.tipusArea === "radi" ? "mismo radio" : "misma isócrona"})`)}
 
     ${htmlNoCobertes(avaluacio.config, n + 5)}
   `;
   connectaComparador(); // js/comparador.js
 }
 
-// Dibuixa el punt, el cercle del candidat i els cercles dels centres propis que el toquen
+// Dibuix d'una àrea: cercle si és un radi, polígon si és una isòcrona
+function capaArea(area, estil) {
+  return area.tipus === "radi"
+    ? L.circle([area.lat, area.lon], { radius: area.radiM, ...estil, interactive: false })
+    : L.geoJSON(area.geometria, { style: estil, interactive: false });
+}
+
+// Dibuixa el punt, l'àrea del candidat i les àrees dels centres propis que la toquen
 function actualitzaMapaAvaluacio() {
   avaluacio.capa.clearLayers();
   if (!avaluacio.punt) return;
-  const radiM = avaluacio.radiKm * 1000;
+  const area = areaCandidat(avaluacio.punt.lat, avaluacio.punt.lng);
 
-  for (const c of avaluacio.clubs.features) {
-    if (c.properties.segment !== "propia" || c.properties.estat !== "obert") continue;
-    const [lon, lat] = c.geometry.coordinates;
-    // Només els que se solapen amb el candidat (centres a menys de dos radis)
-    if (distanciaM(avaluacio.punt.lat, avaluacio.punt.lng, lat, lon) < 2 * radiM) {
-      L.circle([lat, lon], { radius: radiM, color: NAVY, weight: 1, opacity: 0.4, fillColor: NAVY,
-        fillOpacity: 0.06, interactive: false }).addTo(avaluacio.capa);
+  if (area && !area.error) {
+    for (const c of avaluacio.clubs.features) {
+      if (c.properties.segment !== "propia" || c.properties.estat !== "obert") continue;
+      const a = areaPropi(c);
+      // Només les que se solapen (o gairebé) amb la del candidat
+      if (a && caixesEsToquen(a, area)) {
+        capaArea(a, { color: NAVY, weight: 1, opacity: 0.4, fillColor: NAVY, fillOpacity: 0.06 })
+          .addTo(avaluacio.capa);
+      }
     }
+    capaArea(area, { color: NAVY, weight: 2, dashArray: "6 6", fill: false, pane: "superior" })
+      .addTo(avaluacio.capa);
   }
-  L.circle(avaluacio.punt, { radius: radiM, color: NAVY, weight: 2, dashArray: "6 6", fill: false,
-    interactive: false, pane: "superior" }).addTo(avaluacio.capa);
   L.circleMarker(avaluacio.punt, { radius: 8, color: "#ffffff", weight: 2, fillColor: "#2bb3c0",
     fillOpacity: 1, interactive: false, pane: "superior" }).addTo(avaluacio.capa);
 }
@@ -360,6 +456,7 @@ async function preparaAvaluacio() {
     carregaGeoJSON("data/clubs_segments.geojson"),
     carregaGeoJSON("data/limit_municipal.geojson"),
     carregaGeoJSON("config/scoring.json"),
+    carregaIsocrones(), // js/isocrones.js (només si hi ha clau d'ORS)
   ]);
   avaluacio.config = config;
   preparaGraella(graella);
@@ -396,6 +493,7 @@ async function activaAvaluacio() {
   comparador.capa?.addTo(mapa);
   actualitzaMapaAvaluacio();
   dibuixaControlsAvaluacio();
+  actualitzaAtribucio();
   mostraResultatsAvaluacio();
 }
 
@@ -404,4 +502,5 @@ function desactivaAvaluacio() {
   avaluacio.capa.remove();
   avaluacio.capaClubs.remove();
   comparador.capa?.remove();
+  actualitzaAtribucio(); // treu l'atribució d'ORS fora d'aquest mode
 }

@@ -114,6 +114,15 @@ distrito), `clubs.geojson` (sin los excluidos) y `limit_municipal.geojson`
 Después, **revisar `config/scoring.json`**: ciudad, marca propia, textos y la
 lista de fuentes con sus fechas.
 
+## 4b. Isócronas de los centros propios — `12_isocrones_propis.py`
+
+Con la clave de OpenRouteService en `config/ors_clau.txt` (fuera de git):
+`/usr/bin/python3 preparacio/scripts/12_isocrones_propis.py`. Pide, por centro y
+modo, las isócronas de 5, 10 y 15 min (24 centros × 2 modos = 48 peticiones, con
+pausas para no pasar de 20 por minuto) y escribe `data/isocrones_propis.geojson`.
+Atención a la cuota diaria de la clave: el 22/11/2026 se agotó poco después de
+esta ejecución (ORS responde 403 «Quota exceeded»).
+
 ## 5. Qué cambia para otra ciudad
 
 | Elemento | Barcelona | Otra ciudad |

@@ -1,7 +1,7 @@
 // =============================================================
 // v1 · Pas 3 · Puntuació "mirroring"
 // Cada criteri del local candidat es compara amb el mateix criteri
-// calculat per als centres propis (mateix radi, edat i segments).
+// calculat per als centres propis (mateixa àrea, edat i segments).
 // Nota = percentil entre els centres propis: 50 = com la mediana.
 // =============================================================
 
@@ -44,8 +44,8 @@ function valorsCriteris(r) {
 
 // Valors de cada centre propi amb els paràmetres actuals (es recalculen només si canvien)
 function valorsReferencia() {
-  const clau = [avaluacio.radiKm, avaluacio.edatDes, avaluacio.edatFins,
-    JSON.stringify(mirroring.segments)].join("|");
+  const clau = [avaluacio.tipusArea, avaluacio.radiKm, avaluacio.modeIso, avaluacio.minuts,
+    avaluacio.edatDes, avaluacio.edatFins, JSON.stringify(mirroring.segments)].join("|");
   if (mirroring.memoria.clau === clau) return mirroring.memoria.valors;
 
   const propis = avaluacio.clubs.features.filter(
@@ -53,8 +53,9 @@ function valorsReferencia() {
   );
   const valors = propis.map((c) => {
     const [lon, lat] = c.geometry.coordinates;
+    // Mateix tipus d'àrea que el candidat (radi o la seva isòcrona precalculada).
     // El solapament d'un centre propi es mesura amb els ALTRES centres propis
-    const r = calculaArea(lat, lon, avaluacio.radiKm * 1000, [lat, lon]);
+    const r = calculaArea(areaPropi(c), [lat, lon]);
     return { nom: c.properties.nom, ...valorsCriteris(r) };
   });
   mirroring.memoria = { clau, valors };
@@ -98,10 +99,14 @@ function formatValor(id, valor) {
   return numero(valor);
 }
 
-// Bloc de resultat: puntuació, sí/no i desglossament
-function htmlMirroring(valors) {
+// Bloc de resultat: puntuació, sí/no i desglossament.
+// 'incomplet': l'àrea surt de la zona amb dades; es mostra la puntuació però no el sí/no
+function htmlMirroring(valors, incomplet = false) {
   const p = puntuaMirroring(valors);
   const arriba = p.total >= mirroring.llindar;
+  const etiqueta = incomplet
+    ? `<span class="etiqueta-classe incomplet">Cifras incompletas</span>`
+    : `<span class="etiqueta-classe ${arriba ? "si" : "no"}">${arriba ? "SÍ llega al mínimo" : "NO llega al mínimo"}</span>`;
   const files = p.detalls.map((d) => `
     <div class="criteri">
       <div class="linia">
@@ -116,9 +121,10 @@ function htmlMirroring(valors) {
   return `
     <div class="puntuacio">
       <span class="xifra">${p.total}<small> / 100</small></span>
-      <span class="etiqueta-classe ${arriba ? "si" : "no"}">${arriba ? "SÍ llega al mínimo" : "NO llega al mínimo"}</span>
+      ${etiqueta}
     </div>
-    <p class="nota-relativa">Comparado con tus ${p.nCentres} centros con los mismos parámetros.
+    <p class="nota-relativa">Comparado con tus ${p.nCentres} centros con la misma área (${textArea()})
+      y los mismos parámetros.
       50 = como la mediana de tus centros. Umbral fijado: ${mirroring.llindar}.
       No es una previsión de socios ni de facturación.</p>
     ${titolSeccio(1, "Desglose de la puntuación")}
