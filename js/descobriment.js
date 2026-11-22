@@ -23,22 +23,39 @@ function centreHexagon(hex) {
   return { lat, lon };
 }
 
-// Àrea d'un hexàgon: radi des del centre (les isòcrones de les zones encara no estan calculades)
+// Àrea d'un hexàgon des del centre: radi, o la seva isòcrona a peu precalculada (pas 8.2).
+// Retorna null si l'hexàgon no té isòcrona (sòl no urbanitzable o sense carrers a prop)
 function areaHexagon(hex) {
-  return areaRadi(hex.centre.lat, hex.centre.lon, avaluacio.radiKm * 1000);
+  const { lat, lon } = hex.centre;
+  if (avaluacio.tipusArea === "radi") return areaRadi(lat, lon, avaluacio.radiKm * 1000);
+  const geometria = isocrones.zones.get(`${hex.properties.hex_id}|${avaluacio.minuts}`);
+  return geometria ? areaIsocrona(lat, lon, geometria) : null;
 }
 
 // Valors bruts de cada hexàgon. Només depenen de l'àrea, l'edat i els segments:
 // si només canvien els pesos o el llindar, no cal tornar-los a calcular
 function calculaValorsHexagons() {
-  const clau = [avaluacio.radiKm, avaluacio.edatDes, avaluacio.edatFins,
-    JSON.stringify(mirroring.segments)].join("|");
+  const clau = [avaluacio.tipusArea, avaluacio.radiKm, avaluacio.minuts, avaluacio.edatDes,
+    avaluacio.edatFins, JSON.stringify(mirroring.segments)].join("|");
   if (descobriment.clau === clau) return;
   for (const hex of descobriment.hexagons.features) {
-    const r = calculaArea(areaHexagon(hex));
-    hex.calcul = { r, valors: valorsCriteris(r) };
+    const area = areaHexagon(hex);
+    const r = area ? calculaArea(area) : null;
+    hex.calcul = { r, valors: r ? valorsCriteris(r) : null };
   }
   descobriment.clau = clau;
+}
+
+// "Evaluar este punto como local": l'avaluació reaprofita la isòcrona precalculada de la zona
+// (mateixa clau que areaCandidat, js/isocrones.js) i no gasta cap petició a ORS
+function passaIsocronesZonaALocal(hex) {
+  const { lat, lon } = hex.centre;
+  for (const minuts of MODES_ISOCRONA.a_pie.minuts) {
+    const geometria = isocrones.zones.get(`${hex.properties.hex_id}|${minuts}`);
+    if (geometria) {
+      isocrones.memoria.set(`a_pie|${minuts}|${lat.toFixed(5)}|${lon.toFixed(5)}`, areaIsocrona(lat, lon, geometria));
+    }
+  }
 }
 
 // Classe d'una zona: verd si arriba al llindar, ambre si s'hi queda a prop, gris si no
@@ -61,6 +78,8 @@ function puntuaHexagons() {
     c.motiu = null;
     if (hex.properties.sol === "no_urbanitzable") {
       c.motiu = regla("sol_no_urbanitzable").motiu;
+    } else if (!c.r) {
+      c.motiu = regla("sense_isocrona").motiu;
     } else if (c.valors.poblacio < descobriment.minimPoblacio) {
       c.motiu = regla("poblacio_minima").motiu
         .replace("{valor}", numero(c.valors.poblacio))
@@ -116,7 +135,9 @@ function dibuixaSeleccio() {
   descobriment.capaSeleccio?.remove();
   capa.setStyle({ color: NAVY, weight: 3 });
   capa.bringToFront();
-  descobriment.capaSeleccio = capaArea(areaHexagon(capa.feature),
+  const area = areaHexagon(capa.feature);
+  if (!area) return; // sense isòcrona no hi ha àrea per dibuixar
+  descobriment.capaSeleccio = capaArea(area,
     { color: NAVY, weight: 1.5, dashArray: "6 6", fill: false, pane: "superior" }).addTo(mapa);
 }
 

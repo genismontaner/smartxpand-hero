@@ -55,6 +55,11 @@
       "id": "poblacio_minima",
       "classe": "descartar",
       "motiu": "Menos público objetivo ({valor}) que tu centro con menos ({minim}): ninguno de tus centros tiene tan poca población en su área."
+    },
+    {
+      "id": "sense_isocrona",
+      "classe": "descartar",
+      "motiu": "OpenRouteService no puede calcular la isócrona a pie desde el centro de esta zona (no hay calles cerca). Prueba con el radio."
     }
   ],
   "nota_decisio": {

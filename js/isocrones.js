@@ -15,6 +15,9 @@ const isocrones = {
   dataPropies: null, // data de càlcul de les precalculades
   memoria: new Map(), // isòcrones dels locals candidats ja demanades: clau → àrea o { error }
   pendents: new Set(), // peticions en curs (per no repetir-les)
+  zones: new Map(), // isòcrones a peu precalculades dels hexàgons (pas 8.2): "hex_id|minuts" → àrea
+  senseIsocrona: new Set(), // hexàgons sense carrers a prop (ORS no en pot calcular la isòcrona)
+  dataZones: null, // data de càlcul de les dels hexàgons
 };
 
 // Temps que s'ofereixen per a cada mode (decisió del 22/11/2026: en cotxe, 10 i 15 min
@@ -27,7 +30,8 @@ const MODES_ISOCRONA = {
 const ATRIBUCIO_ORS = '<a href="https://openrouteservice.org">© openrouteservice.org by HeiGIT</a> · '
   + 'red viaria © colaboradores de OpenStreetMap';
 
-// Carrega la clau (si n'hi ha) i les isòcrones dels centres propis
+// Carrega la clau (si n'hi ha) i les isòcrones precalculades dels centres propis i dels hexàgons.
+// Les precalculades no necessiten clau: el mapa de zones les pot fer servir a la web publicada.
 async function carregaIsocrones() {
   try {
     const resposta = await fetch("config/ors_clau.txt", { cache: "no-cache" });
@@ -37,7 +41,6 @@ async function carregaIsocrones() {
   } catch {
     isocrones.clau = null;
   }
-  if (!isocrones.clau) return; // sense clau no es mostren les isòcrones
 
   const json = await carregaGeoJSON("data/isocrones_propis.geojson");
   for (const f of json.features) {
@@ -45,10 +48,47 @@ async function carregaIsocrones() {
     isocrones.propies.set(`${p.nom}|${p.mode}|${p.minuts}`, areaIsocrona(p.lat, p.lon, f.geometry));
     isocrones.dataPropies = p.data_consulta;
   }
+
+  // Isòcrones dels hexàgons: el fitxer només existeix quan l'script 13 les ha calculades totes
+  const resposta = await fetch("data/isocrones_hexagons.geojson", { cache: "no-cache" }).catch(() => null);
+  if (!resposta?.ok) return;
+  const zones = await resposta.json();
+  for (const f of zones.features) {
+    const p = f.properties;
+    isocrones.zones.set(`${p.hex_id}|${p.minuts}`, f.geometry); // l'àrea es completa amb el centre (js/descobriment.js)
+    isocrones.dataZones = p.data_consulta;
+  }
+  for (const id of zones.sense_isocrona || []) isocrones.senseIsocrona.add(id);
 }
 
-function isocronesDisponibles() {
+// Hi ha isòcrones per avaluar un local nou? Cal la clau (es demana a ORS en directe)
+function isocronesAvaluacio() {
   return Boolean(isocrones.clau) && isocrones.propies.size > 0;
+}
+
+// Hi ha isòcrones per al mapa de zones? Només a peu, precalculades (no cal clau)
+function isocronesZones() {
+  return isocrones.zones.size > 0 && isocrones.propies.size > 0;
+}
+
+// Isòcrones disponibles al mode que es veu ara
+function isocronesDisponibles() {
+  return document.body.classList.contains("mode-avaluar") ? isocronesAvaluacio() : isocronesZones();
+}
+
+// Cert si alguna de les dues portes pot fer servir isòcrones (per dibuixar-ne els controls)
+function isocronesEnAlgunMode() {
+  return isocronesAvaluacio() || isocronesZones();
+}
+
+// Torna a un tipus d'àrea vàlid per al mode actual: radi si no hi ha isòcrones,
+// i a peu al mapa de zones (en cotxe no estan precalculades)
+function ajustaAreaAlMode() {
+  if (!isocronesDisponibles()) avaluacio.tipusArea = "radi";
+  if (!document.body.classList.contains("mode-avaluar") && avaluacio.modeIso !== "a_pie") {
+    avaluacio.modeIso = "a_pie";
+    if (!MODES_ISOCRONA.a_pie.minuts.includes(avaluacio.minuts)) avaluacio.minuts = 10;
+  }
 }
 
 // --- Construcció d'àrees ---
@@ -148,15 +188,23 @@ function textArea() {
   return `isócrona de ${avaluacio.minuts} min ${MODES_ISOCRONA[avaluacio.modeIso].etiqueta.toLowerCase()}`;
 }
 
+// "2026-11-22" → "22/11/2026"
+function dataCurta(iso) {
+  const [any, mes, dia] = (iso || "").split("-");
+  return `${dia}/${mes}/${any}`;
+}
+
 function fontIsocrones() {
-  const [any, mes, dia] = (isocrones.dataPropies || "").split("-");
-  return `Isócronas: openrouteservice.org (HeiGIT), red viaria de OpenStreetMap.
-    Centros propios calculados el ${dia}/${mes}/${any}; este local, al seleccionarlo.`;
+  const text = "Isócronas: openrouteservice.org (HeiGIT), red viaria de OpenStreetMap.";
+  if (!document.body.classList.contains("mode-avaluar")) {
+    return `${text} Zonas calculadas el ${dataCurta(isocrones.dataZones)}; centros propios, el ${dataCurta(isocrones.dataPropies)}.`;
+  }
+  return `${text} Centros propios calculados el ${dataCurta(isocrones.dataPropies)}; este local, al seleccionarlo.`;
 }
 
 // Atribució obligatòria d'ORS al mapa, només quan es fan servir isòcrones
 function actualitzaAtribucio() {
-  const usa = document.body.classList.contains("mode-avaluar") && avaluacio.tipusArea === "isocrona";
+  const usa = avaluacio.tipusArea === "isocrona";
   mapa.attributionControl.removeAttribution(ATRIBUCIO_ORS);
   if (usa) mapa.attributionControl.addAttribution(ATRIBUCIO_ORS);
 }

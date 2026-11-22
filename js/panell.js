@@ -78,7 +78,8 @@ function mostraPanellInicial(config) {
     ${titolSeccio(1, "Clasificación")}
     <ul class="llista-classes">${classes}</ul>
     <p class="nota-relativa">${recompte.regla} zonas más, descartadas por una regla previa (suelo no
-      urbanizable o menos público objetivo que tu centro con menos). Los parámetros se cambian en la
+      urbanizable${avaluacio.tipusArea === "isocrona" ? ", sin isócrona a pie" : ""} o menos público
+      objetivo que tu centro con menos). Los parámetros se cambian en la
       pestaña «Parámetros» y valen también para «Evaluar un local».</p>
     ${titolSeccio(2, "Pesos de la puntuación")}
     <ul class="dades">${pesos}</ul>
@@ -144,23 +145,26 @@ function mostraPanellHexagon(hex, config) {
     n = 2; // htmlMirroring ja porta la secció 1 (desglossament)
   }
 
-  // Dades de l'àrea (també per als descartats, per transparència)
-  const competidors = Object.entries(SEGMENTS)
-    .map(([id, s]) => `${s.etiqueta}: ${(r.clubs[id] || []).filter((x) => x.estat === "obert").length}`)
-    .join(" · ");
-  const pctCompartida = r.pobObjectiu ? (r.compartida / r.pobObjectiu) * 100 : 0;
-  html += `
-    ${titolSeccio(++n, "Datos del área")}
-    <ul class="dades">
-      <li>Público objetivo (${textEdat()}): <strong>${numero(r.pobObjectiu)}</strong>
-        · población total ${numero(r.pobTotal)}</li>
-      <li>Renta neta media por hogar: <strong>${r.rendaLlar ? numero(r.rendaLlar) + " €" : "sin dato"}</strong></li>
-      <li>Competencia abierta: ${competidors}</li>
-      <li>Público compartido con centros propios: <strong>${decimal(pctCompartida)} %</strong></li>
-      <li>${config.marca_propia} más cercano: ${numero(r.propiMesProper)} m</li>
-    </ul>
-    ${font("INE, Censo Anual de Población 2024 y ADRH 2024 (rejilla de 100 m) · clubes: webs oficiales, Open Data BCN y OpenStreetMap")}
-  `;
+  // Dades de l'àrea (també per als descartats, per transparència). Sense isòcrona no n'hi ha
+  if (r) {
+    const competidors = Object.entries(SEGMENTS)
+      .map(([id, s]) => `${s.etiqueta}: ${(r.clubs[id] || []).filter((x) => x.estat === "obert").length}`)
+      .join(" · ");
+    const pctCompartida = r.pobObjectiu ? (r.compartida / r.pobObjectiu) * 100 : 0;
+    html += `
+      ${titolSeccio(++n, "Datos del área")}
+      <ul class="dades">
+        <li>Público objetivo (${textEdat()}): <strong>${numero(r.pobObjectiu)}</strong>
+          · población total ${numero(r.pobTotal)}</li>
+        <li>Renta neta media por hogar: <strong>${r.rendaLlar ? numero(r.rendaLlar) + " €" : "sin dato"}</strong></li>
+        <li>Competencia abierta: ${competidors}</li>
+        <li>Público compartido con centros propios: <strong>${decimal(pctCompartida)} %</strong></li>
+        <li>${config.marca_propia} más cercano: ${numero(r.propiMesProper)} m</li>
+      </ul>
+      ${font("INE, Censo Anual de Población 2024 y ADRH 2024 (rejilla de 100 m) · clubes: webs oficiales, Open Data BCN y OpenStreetMap")}
+      ${avaluacio.tipusArea === "isocrona" ? font(fontIsocrones()) : ""}
+    `;
+  }
 
   // Avís urbanístic preliminar: SEMPRE, amb "Requiere confirmación profesional"
   const avisos = config.avisos;
@@ -179,6 +183,7 @@ function mostraPanellHexagon(hex, config) {
   panell.querySelector(".tanca").addEventListener("click", () => desseleccionaHexagon());
   // Porta d'entrada a l'avaluació: el centre de l'hexàgon passa a ser el local candidat
   panell.querySelector("#avaluar-zona").addEventListener("click", async () => {
+    passaIsocronesZonaALocal(hex); // js/descobriment.js
     await canviaMode("avaluar");
     situaPunt([hex.centre.lat, hex.centre.lon], true, `Centro de la zona ${p.hex_id} (${p.barri})`);
   });

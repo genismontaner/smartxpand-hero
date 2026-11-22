@@ -123,8 +123,8 @@ async function canviaMode(mode) {
     activaAvaluacio(); // js/avaluacio.js
   } else {
     desactivaAvaluacio();
-    // El mapa de zones fa servir radi: si a l'avaluació s'havia triat isòcrona, es torna al radi
-    avaluacio.tipusArea = "radi";
+    // Mapa de zones: radi o isòcrona a peu precalculada (js/isocrones.js)
+    ajustaAreaAlMode();
     actualitzaControlsArea();
     actualitzaAtribucio();
     descobriment.capa.addTo(mapa);
@@ -217,8 +217,8 @@ function dibuixaVistaParametres() {
     <h2>Parámetros</h2>
     <p class="subtitol">El mapa se recalcula al momento. Valen también para «Evaluar un local».</p>
     <div id="resum-classes" class="resum-classes"></div>
-    <p class="nota-relativa">En el mapa de zonas el área es siempre un radio en línea recta:
-      las isócronas de las zonas aún no están calculadas.</p>
+    ${isocronesZones() ? "" : `<p class="nota-relativa">En el mapa de zonas el área es un radio en
+      línea recta: las isócronas a pie de las zonas aún no están calculadas.</p>`}
     <div class="ranura-controls"></div>
   `;
 }

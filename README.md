@@ -38,9 +38,12 @@ directores de expansión de cadenas de fitness en España.
   publica ningún fichero de ejemplo con rendimiento: no tenemos datos reales.
 - **Isócronas:** se calculan con OpenRouteService (las de los centros propios,
   una vez, con `preparacio/scripts/12_isocrones_propis.py`; la del local, al
-  seleccionarlo). Necesitan una clave en `config/ors_clau.txt`, que no se publica:
-  sin clave, la web solo ofrece el radio. En coche, 10 y 15 min no se ofrecen
-  porque salen de la zona con datos (Barcelona + 3 km).
+  seleccionarlo). Para evaluar un local hace falta una clave en
+  `config/ors_clau.txt`, que no se publica: sin clave, «Evaluar un local» solo
+  ofrece el radio. En coche, 10 y 15 min no se ofrecen porque salen de la zona
+  con datos (Barcelona + 3 km). El mapa de zonas ofrece la isócrona a pie (5, 10
+  y 15 min) cuando existe `data/isocrones_hexagons.geojson`, precalculado con
+  `preparacio/scripts/13_isocrones_hexagons.py`; no necesita clave.
 
 ## Qué mide
 

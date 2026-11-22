@@ -123,6 +123,18 @@ pausas para no pasar de 20 por minuto) y escribe `data/isocrones_propis.geojson`
 Atención a la cuota diaria de la clave: el 22/11/2026 se agotó poco después de
 esta ejecución (ORS responde 403 «Quota exceeded»).
 
+## 4c. Isócronas a pie de las zonas — `13_isocrones_hexagons.py`
+
+`/usr/bin/python3 preparacio/scripts/13_isocrones_hexagons.py` (opcional
+`--maxim N`, por defecto 480). Una petición por hexágono con 5, 10 y 15 min a pie:
+1.092 hexágonos (todos menos los de suelo no urbanizable), unos 3 días con la
+cuota gratuita de 500 al día. Se puede interrumpir y reanudar: cada hexágono se
+guarda en `dades_intermedies/isocrones_hexagons.jsonl` y se salta al volver a
+ejecutarlo; si ORS responde 403/429, se detiene. Los hexágonos sin calles cerca
+(400/404) se guardan como error y en la web se descartan por regla previa
+(«sin isócrona»). Solo cuando están todos escribe `data/isocrones_hexagons.geojson`;
+hasta entonces la web no ofrece isócronas en el mapa de zonas.
+
 ## 5. Qué cambia para otra ciudad
 
 | Elemento | Barcelona | Otra ciudad |

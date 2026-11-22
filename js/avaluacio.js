@@ -146,7 +146,7 @@ function font(text) {
 }
 
 // Controls de l'àrea de captació: radi en km o isòcrona en minuts (principi 2: tria l'usuari).
-// Si no hi ha clau d'ORS, només es mostra el radi (cap control que no funcioni).
+// Si cap de les dues portes té isòcrones, només es mostra el radi (cap control que no funcioni).
 function htmlControlsArea() {
   const radi = `
     <div class="criteri" id="control-radi">
@@ -154,7 +154,7 @@ function htmlControlsArea() {
         <span class="valor" id="valor-radi"></span></div>
       <input type="range" id="radi-km" min="0.5" max="3" step="0.1" value="${avaluacio.radiKm}">
     </div>`;
-  if (!isocronesDisponibles()) return radi;
+  if (!isocronesEnAlgunMode()) return radi;
 
   const modes = Object.entries(MODES_ISOCRONA)
     .map(([id, m]) => `<button type="button" class="pindola" data-mode-iso="${id}">${m.etiqueta}</button>`).join("");
@@ -170,20 +170,25 @@ function htmlControlsArea() {
     </div>
     ${radi}
     <div class="criteri" id="control-isocrona">
-      <div class="pindoles" role="group" aria-label="Modo de desplazamiento">${modes}</div>
+      <div class="pindoles" role="group" aria-label="Modo de desplazamiento" id="grup-mode-iso">${modes}</div>
+      <p class="nota-relativa" id="nota-zones-a-peu">En el mapa de zonas, isócronas a pie
+        (precalculadas para cada zona).</p>
       <div class="pindoles" role="group" aria-label="Minutos" style="margin-top:8px">${minuts}</div>
       <p class="nota-relativa" id="nota-cotxe">En coche, 10 y 15 min salen de la zona con datos
         (Barcelona + 3 km) y no se ofrecen.</p>
     </div>`;
 }
 
-// Marca els botons actius i amaga el que no toca segons l'estat.
-// Al mapa de zones només hi ha radi (les isòcrones de les zones encara no estan calculades)
+// Marca els botons actius i amaga el que no toca segons l'estat i el mode.
+// Al mapa de zones, isòcrona només a peu i només si estan precalculades (js/isocrones.js)
 function actualitzaControlsArea() {
   const esRadi = avaluacio.tipusArea === "radi";
+  const avaluar = document.body.classList.contains("mode-avaluar");
   document.getElementById("valor-radi").textContent = `${decimal(avaluacio.radiKm)} km`;
-  if (!isocronesDisponibles()) return;
-  document.getElementById("grup-tipus-area").hidden = !document.body.classList.contains("mode-avaluar");
+  if (!isocronesEnAlgunMode()) return;
+  document.getElementById("grup-tipus-area").hidden = !isocronesDisponibles();
+  document.getElementById("grup-mode-iso").hidden = !avaluar;
+  document.getElementById("nota-zones-a-peu").hidden = avaluar;
   document.getElementById("control-radi").hidden = !esRadi;
   document.getElementById("control-isocrona").hidden = esRadi;
   document.getElementById("nota-cotxe").hidden = avaluacio.modeIso !== "coche";
@@ -515,6 +520,7 @@ function activaAvaluacio() {
   avaluacio.capa.addTo(mapa);
   comparador.capa?.addTo(mapa);
   colocaControls("avaluacio");
+  ajustaAreaAlMode(); // sense clau, l'avaluació només fa servir radi (js/isocrones.js)
   actualitzaControlsArea();
   actualitzaAtribucio();
   actualitzaMapaAvaluacio();
