@@ -22,6 +22,18 @@ const mirroring = {
 
 const PESOS_INICIALS = Object.fromEntries(mirroring.criteris.map((c) => [c.id, c.pes]));
 
+// Percentil d'un valor dins d'una llista (0-100).
+// Empats: compten la meitat. Ex.: si el 40 % té menys i el 20 % té el mateix valor → 50.
+function percentil(valor, llista) {
+  let menors = 0;
+  let iguals = 0;
+  for (const v of llista) {
+    if (v < valor) menors++;
+    else if (v === valor) iguals++;
+  }
+  return ((menors + iguals / 2) / llista.length) * 100;
+}
+
 // Mediana d'una llista de números
 function mediana(llista) {
   const ordenada = [...llista].sort((a, b) => a - b);
@@ -65,7 +77,7 @@ function valorsReferencia() {
 // Nota de 0 a 100 d'un valor comparat amb els dels centres propis
 function notaMirroring(criteri, valor, referencia) {
   if (valor === null || valor === undefined) return null;
-  const p = percentil(valor, referencia); // js/puntuacio.js
+  const p = percentil(valor, referencia);
   if (criteri.sentit === "mes") return p;
   if (criteri.sentit === "menys") return 100 - p;
   return Math.max(0, 100 - Math.abs(p - 50) * 2); // "proper": màxim a la mediana
@@ -100,8 +112,9 @@ function formatValor(id, valor) {
 }
 
 // Bloc de resultat: puntuació, sí/no i desglossament.
-// 'incomplet': l'àrea surt de la zona amb dades; es mostra la puntuació però no el sí/no
-function htmlMirroring(valors, incomplet = false) {
+// 'incomplet': l'àrea surt de la zona amb dades; es mostra la puntuació però no el sí/no.
+// 'subjecte': com es diu el que es puntua ("Este local" o "Esta zona")
+function htmlMirroring(valors, incomplet = false, subjecte = "Este local") {
   const p = puntuaMirroring(valors);
   const arriba = p.total >= mirroring.llindar;
   const etiqueta = incomplet
@@ -114,7 +127,7 @@ function htmlMirroring(valors, incomplet = false) {
         <span class="valor">${d.nota === null ? "sin dato" : `${Math.round(d.nota)}/100 · +${decimal(d.punts)} pts`}</span>
       </div>
       <div class="barra"><div style="width:${d.nota ?? 0}%"></div></div>
-      <small class="comparacio">Este local: ${formatValor(d.criteri.id, d.valor)} · mediana de tus centros:
+      <small class="comparacio">${subjecte}: ${formatValor(d.criteri.id, d.valor)} · mediana de tus centros:
         ${formatValor(d.criteri.id, d.mediana)}</small>
     </div>`).join("");
 
@@ -200,8 +213,8 @@ function connectaControlsMirroring(enCanviar) {
     for (const c of mirroring.criteris) c.pes = PESOS_INICIALS[c.id];
     mirroring.segments = { "low cost": true, "municipal": true, "gama media": false, "premium": false };
     mirroring.llindar = 50;
-    dibuixaControlsAvaluacio(); // torna a dibuixar els controls amb els valors inicials
-    mostraResultatsAvaluacio();
+    dibuixaControlsComuns(); // torna a dibuixar els controls amb els valors inicials
+    recalculaTot();
   });
   actualitzaValorsPesos();
 }

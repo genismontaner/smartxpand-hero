@@ -161,7 +161,7 @@ function htmlControlsArea() {
   const minuts = [5, 10, 15]
     .map((m) => `<button type="button" class="pindola" data-minuts="${m}">${m} min</button>`).join("");
   return `
-    <div class="criteri">
+    <div class="criteri" id="grup-tipus-area">
       <label>Área de captación</label>
       <div class="pindoles" role="group" aria-label="Tipo de área">
         <button type="button" class="pindola" data-tipus-area="radi">Radio (km)</button>
@@ -177,11 +177,13 @@ function htmlControlsArea() {
     </div>`;
 }
 
-// Marca els botons actius i amaga el que no toca segons l'estat
+// Marca els botons actius i amaga el que no toca segons l'estat.
+// Al mapa de zones només hi ha radi (les isòcrones de les zones encara no estan calculades)
 function actualitzaControlsArea() {
   const esRadi = avaluacio.tipusArea === "radi";
   document.getElementById("valor-radi").textContent = `${decimal(avaluacio.radiKm)} km`;
   if (!isocronesDisponibles()) return;
+  document.getElementById("grup-tipus-area").hidden = !document.body.classList.contains("mode-avaluar");
   document.getElementById("control-radi").hidden = !esRadi;
   document.getElementById("control-isocrona").hidden = esRadi;
   document.getElementById("nota-cotxe").hidden = avaluacio.modeIso !== "coche";
@@ -195,12 +197,11 @@ function actualitzaControlsArea() {
 }
 
 function connectaControlsArea() {
-  // Qualsevol canvi d'àrea: es redibuixa el mapa i els resultats
+  // Qualsevol canvi d'àrea: es recalcula el mode actiu (js/app.js)
   const aplica = () => {
     actualitzaControlsArea();
     actualitzaAtribucio();
-    actualitzaMapaAvaluacio();
-    mostraResultatsAvaluacio();
+    recalculaTot();
   };
   document.getElementById("radi-km").addEventListener("input", (e) => {
     avaluacio.radiKm = Number(e.target.value);
@@ -225,21 +226,21 @@ function connectaControlsArea() {
   actualitzaControlsArea();
 }
 
-// Controls del mode (es dibuixen una sola vegada, perquè no es perdin mentre s'arrosseguen)
-function dibuixaControlsAvaluacio() {
-  const vista = document.getElementById("avaluacio");
+// Controls comuns a les dues portes d'entrada (àrea, edat, pesos, segments, llindar i
+// calibratge). N'hi ha una sola còpia: es mou a la vista que es mostra (colocaControls)
+function dibuixaControlsComuns() {
+  let caixa = document.getElementById("controls-comuns");
+  if (!caixa) {
+    caixa = document.createElement("div");
+    caixa.id = "controls-comuns";
+    // Ha de ser a la pàgina abans de connectar els controls (es busquen per id)
+    document.querySelector(".ranura-controls").appendChild(caixa);
+  }
   const opcions = (seleccionat) => avaluacio.trams
     .map((t) => `<option value="${t}"${t === seleccionat ? " selected" : ""}>${etiquetaTram(t)}</option>`)
     .join("");
 
-  vista.innerHTML = `
-    <h2>Evaluar un local</h2>
-    <p class="subtitol">Busca una dirección o haz clic en el mapa</p>
-    <form class="cercador" id="cercador-adreca">
-      <input type="search" id="text-adreca" placeholder="Calle, número y municipio" aria-label="Dirección del local">
-      <button type="submit">Buscar</button>
-    </form>
-    <div id="resultats-cerca"></div>
+  caixa.innerHTML = `
     ${htmlControlsArea()}
     <div class="criteri">
       <label for="edat-des">Público objetivo (edad, tramos de 5 años)</label>
@@ -251,20 +252,13 @@ function dibuixaControlsAvaluacio() {
     </div>
     ${htmlControlsMirroring()}
     ${htmlCalibratge()}
-    <div id="resultats-avaluacio"></div>
   `;
-  connectaControlsMirroring(mostraResultatsAvaluacio); // js/mirroring.js
+  connectaControlsMirroring(recalculaTot); // js/mirroring.js
   connectaCalibratge(); // js/calibratge.js
-
-  // Cerca d'adreces: el formulari no recarrega la pàgina (preventDefault)
-  vista.querySelector("#cercador-adreca").addEventListener("submit", (e) => {
-    e.preventDefault();
-    cercaAdreca(vista.querySelector("#text-adreca").value);
-  });
-
-  const desSelect = vista.querySelector("#edat-des");
-  const finsSelect = vista.querySelector("#edat-fins");
   connectaControlsArea();
+
+  const desSelect = caixa.querySelector("#edat-des");
+  const finsSelect = caixa.querySelector("#edat-fins");
   desSelect.addEventListener("change", () => {
     avaluacio.edatDes = desSelect.value;
     // L'edat final no pot ser anterior a la inicial
@@ -272,7 +266,7 @@ function dibuixaControlsAvaluacio() {
       avaluacio.edatFins = avaluacio.edatDes;
       finsSelect.value = avaluacio.edatFins;
     }
-    mostraResultatsAvaluacio();
+    recalculaTot();
   });
   finsSelect.addEventListener("change", () => {
     avaluacio.edatFins = finsSelect.value;
@@ -280,7 +274,37 @@ function dibuixaControlsAvaluacio() {
       avaluacio.edatDes = avaluacio.edatFins;
       desSelect.value = avaluacio.edatDes;
     }
-    mostraResultatsAvaluacio();
+    recalculaTot();
+  });
+  return caixa;
+}
+
+// Mou els controls comuns a la vista indicada. appendChild amb un element que ja és a la
+// pàgina no el copia: el treu d'on era i el posa aquí, amb els seus esdeveniments
+function colocaControls(idVista) {
+  const ranura = document.querySelector(`#${idVista} .ranura-controls`);
+  const controls = document.getElementById("controls-comuns");
+  if (ranura && controls && controls.parentElement !== ranura) ranura.appendChild(controls);
+}
+
+// Vista "Evaluar un local": cercador, lloc per als controls i resultats (es dibuixa una vegada)
+function dibuixaVistaAvaluacio() {
+  const vista = document.getElementById("avaluacio");
+  vista.innerHTML = `
+    <h2>Evaluar un local</h2>
+    <p class="subtitol">Busca una dirección o haz clic en el mapa</p>
+    <form class="cercador" id="cercador-adreca">
+      <input type="search" id="text-adreca" placeholder="Calle, número y municipio" aria-label="Dirección del local">
+      <button type="submit">Buscar</button>
+    </form>
+    <div id="resultats-cerca"></div>
+    <div class="ranura-controls"></div>
+    <div id="resultats-avaluacio"></div>
+  `;
+  // Cerca d'adreces: el formulari no recarrega la pàgina (preventDefault)
+  vista.querySelector("#cercador-adreca").addEventListener("submit", (e) => {
+    e.preventDefault();
+    cercaAdreca(vista.querySelector("#text-adreca").value);
   });
 }
 
@@ -335,6 +359,7 @@ async function cercaAdreca(text) {
 function mostraResultatsAvaluacio() {
   mostraCalibratge(); // el calibratge també es recalcula amb els paràmetres nous
   const caixa = document.getElementById("resultats-avaluacio");
+  if (!caixa) return;
 
   if (!avaluacio.punt) {
     caixa.innerHTML = `<p class="nota-relativa">El área es un ${textArea()} desde el punto.
@@ -449,11 +474,8 @@ function actualitzaMapaAvaluacio() {
     fillOpacity: 1, interactive: false, pane: "superior" }).addTo(avaluacio.capa);
 }
 
-// Primera vegada que s'entra al mode: carrega les dades (la graella pesa uns 2,8 MB)
-async function preparaAvaluacio() {
-  if (avaluacio.graella) return;
-  const vista = document.getElementById("avaluacio");
-  vista.innerHTML = `<h2>Evaluar un local</h2><p class="subtitol">Cargando datos de población…</p>`;
+// En obrir la pàgina: carrega les dades comunes a les dues portes (la graella pesa uns 2,8 MB)
+async function preparaDades() {
   const [graella, clubs, limit, config] = await Promise.all([
     carregaGeoJSON("data/poblacio_100m.json"),
     carregaGeoJSON("data/clubs_segments.geojson"),
@@ -488,22 +510,19 @@ async function preparaAvaluacio() {
   });
 }
 
-// Entrar i sortir del mode
-async function activaAvaluacio() {
-  await preparaAvaluacio();
+// Entrar i sortir del mode (els clubs es veuen en tots dos modes)
+function activaAvaluacio() {
   avaluacio.capa.addTo(mapa);
-  avaluacio.capaClubs.addTo(mapa);
   comparador.capa?.addTo(mapa);
-  actualitzaMapaAvaluacio();
-  dibuixaControlsAvaluacio();
+  colocaControls("avaluacio");
+  actualitzaControlsArea();
   actualitzaAtribucio();
+  actualitzaMapaAvaluacio();
   mostraResultatsAvaluacio();
 }
 
 function desactivaAvaluacio() {
-  if (!avaluacio.capa) return;
   avaluacio.capa.remove();
-  avaluacio.capaClubs.remove();
   comparador.capa?.remove();
   actualitzaAtribucio(); // treu l'atribució d'ORS fora d'aquest mode
 }

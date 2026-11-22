@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <!-- Els nostres estils. "?v=..." és la versió: canviar-la en cada publicació
        obliga el navegador a descarregar els fitxers nous (en lloc de la còpia guardada) -->
-  <link rel="stylesheet" href="css/estils.css?v=16b">
+  <link rel="stylesheet" href="css/estils.css?v=17a">
 </head>
 <body>
   <!-- Capçalera -->
@@ -59,13 +59,13 @@
       <!-- Pestanyes del mode descobrir: la zona seleccionada i els controls -->
       <nav class="pestanyes">
         <button class="pestanya activa" data-vista="panell">Zona</button>
-        <button class="pestanya" data-vista="ajustes">Ajustes</button>
+        <button class="pestanya" data-vista="ajustes">Parámetros</button>
       </nav>
 
       <!-- Panell de decisió: el contingut l'omple js/panell.js -->
       <div id="panell" class="vista"></div>
 
-      <!-- Controls: el contingut l'omple js/ajustos.js -->
+      <!-- Paràmetres comuns (els dibuixa js/app.js; els controls es mouen entre vistes) -->
       <div id="ajustes" class="vista" hidden></div>
 
       <!-- Mode avaluar: controls i resultats (els omple js/avaluacio.js) -->
@@ -84,14 +84,13 @@
 
   <!-- Primer Leaflet, després el nostre codi (que el fa servir) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script src="js/puntuacio.js?v=16b"></script>
-  <script src="js/panell.js?v=16b"></script>
-  <script src="js/ajustos.js?v=16b"></script>
-  <script src="js/avaluacio.js?v=16b"></script>
-  <script src="js/isocrones.js?v=16b"></script>
-  <script src="js/mirroring.js?v=16b"></script>
-  <script src="js/comparador.js?v=16b"></script>
-  <script src="js/calibratge.js?v=16b"></script>
-  <script src="js/app.js?v=16b"></script>
+  <script src="js/panell.js?v=17a"></script>
+  <script src="js/avaluacio.js?v=17a"></script>
+  <script src="js/isocrones.js?v=17a"></script>
+  <script src="js/mirroring.js?v=17a"></script>
+  <script src="js/comparador.js?v=17a"></script>
+  <script src="js/calibratge.js?v=17a"></script>
+  <script src="js/descobriment.js?v=17a"></script>
+  <script src="js/app.js?v=17a"></script>
 </body>
 </html>

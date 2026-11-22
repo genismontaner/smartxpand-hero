@@ -1,6 +1,6 @@
 // =============================================================
-// Pas 6 · Panell de decisió
-// Omple el <aside id="panell"> amb el contingut de l'hexàgon
+// Pas 6 i v1 pas 8 · Panell de decisió
+// Omple el <div id="panell"> amb el contingut de l'hexàgon
 // seleccionat, o amb l'explicació inicial si no n'hi ha cap.
 // =============================================================
 
@@ -17,11 +17,6 @@ function decimal(valor) {
   return valor.toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
 
-// Busca la classe (etiqueta i color) a partir del seu id
-function infoClasse(id, config) {
-  return config.classes.find((c) => c.id === id);
-}
-
 // Uneix frases: ["a"] → "a"; ["a", "b"] → "a y b"
 function llistaFrases(frases) {
   return frases.length > 1 ? frases.slice(0, -1).join(", ") + " y " + frases.at(-1) : frases[0];
@@ -30,23 +25,25 @@ function llistaFrases(frases) {
 // Nota de decisió amb plantilla fixa. Només afirma el que diuen les dades:
 // - A favor: criteris amb nota alta, ordenats pels punts que aporten
 // - En contra: criteris amb nota baixa, ordenats pels punts que fan perdre
-function notaDecisio(props, config) {
+// 'p' és el resultat de puntuaMirroring() (js/mirroring.js)
+function notaDecisio(p, classe, config) {
   const nd = config.nota_decisio;
-  const nota = (c) => props.notes[c.id];
+  const frase = (d, camp) => config.criteris.find((c) => c.id === d.criteri.id)[camp];
+  const ambNota = p.detalls.filter((d) => d.nota !== null);
 
-  const aFavor = config.criteris
-    .filter((c) => nota(c) >= nd.nota_a_favor)
-    .sort((a, b) => nota(b) * b.pes - nota(a) * a.pes)
+  const aFavor = ambNota
+    .filter((d) => d.nota >= nd.nota_a_favor)
+    .sort((a, b) => b.punts - a.punts)
     .slice(0, nd.maxim_per_banda)
-    .map((c) => c.frase_fort);
+    .map((d) => frase(d, "frase_fort"));
 
-  const enContra = config.criteris
-    .filter((c) => nota(c) < nd.nota_en_contra)
-    .sort((a, b) => (100 - nota(b)) * b.pes - (100 - nota(a)) * a.pes)
+  const enContra = ambNota
+    .filter((d) => d.nota < nd.nota_en_contra)
+    .sort((a, b) => (100 - b.nota) * b.pesEfectiu - (100 - a.nota) * a.pesEfectiu)
     .slice(0, nd.maxim_per_banda)
-    .map((c) => c.frase_feble);
+    .map((d) => frase(d, "frase_feble"));
 
-  const parts = [nd.classe[props.classe]];
+  const parts = [nd.classe[classe]];
   // Els textos "sense..." porten els llindars reals ({nota_a_favor}, {nota_en_contra})
   const senseAFavor = nd.sense_a_favor.replace("{nota_a_favor}", nd.nota_a_favor);
   const senseEnContra = nd.sense_en_contra.replace("{nota_en_contra}", nd.nota_en_contra);
@@ -60,22 +57,29 @@ function titolSeccio(numero, text, id = "") {
   return `<h3 class="seccio"${id ? ` id="${id}"` : ""}><span class="num">${numero}</span>${text}</h3>`;
 }
 
-// Panell inicial: com es llegeix el mapa i quins pesos té la puntuació
+// Panell inicial: com es llegeix el mapa, amb quins paràmetres i quantes zones hi ha de cada classe
 function mostraPanellInicial(config) {
-  const pesos = config.criteris
-    .map((c) => `<li><strong>${c.etiqueta}</strong> (${Math.round(c.pes)} %): ${c.descripcio.toLowerCase()}</li>`)
-    .join("");
+  const recompte = recompteClasses(); // js/descobriment.js
   const classes = config.classes
-    .map((c) => `<li><span class="etiqueta-classe" style="background:${c.color}">${c.etiqueta}</span> ${c.minim > 0 ? "≥ " + c.minim : "< " + config.classes[1].minim} puntos</li>`)
+    .map((c) => `<li><span class="etiqueta-classe" style="background:${c.color}">${c.etiqueta}</span>
+      ${rangClasse(c.id)} · <strong>${recompte[c.id]}</strong> zonas</li>`)
+    .join("");
+  const suma = mirroring.criteris.reduce((s, c) => s + c.pes, 0);
+  const pesos = mirroring.criteris
+    .map((c) => `<li><strong>${c.etiqueta}</strong> (${Math.round((c.pes / suma) * 100)} %)</li>`)
     .join("");
 
   panell.innerHTML = `
     <h2>Mapa de oportunidad</h2>
     <p class="subtitol">Gimnasio ${config.format} · ${config.ciutat}</p>
-    <p class="intro">Cada hexágono es una zona de ${config.mida_hexagon_m} m puntuada sobre 100
-       según su entorno a ${config.radi_m} m. Haz clic en un hexágono para ver por qué.</p>
+    <p class="intro">Cada hexágono es una zona de ${config.mida_hexagon_m} m evaluada como si fuera un local:
+       ${textArea()} desde su centro, público ${textEdat()}, comparada con tus ${valorsReferencia().length}
+       centros ${config.marca_propia}. Haz clic en un hexágono para ver por qué.</p>
     ${titolSeccio(1, "Clasificación")}
     <ul class="llista-classes">${classes}</ul>
+    <p class="nota-relativa">${recompte.regla} zonas más, descartadas por una regla previa (suelo no
+      urbanizable o menos público objetivo que tu centro con menos). Los parámetros se cambian en la
+      pestaña «Parámetros» y valen también para «Evaluar un local».</p>
     ${titolSeccio(2, "Pesos de la puntuación")}
     <ul class="dades">${pesos}</ul>
     ${seccioFontsIMetode(config)}
@@ -105,65 +109,57 @@ function seccioFontsIMetode(config) {
   `;
 }
 
-// Panell d'un hexàgon seleccionat. 'enTancar' és la funció que s'executa en clicar ✕
-function mostraPanellHexagon(props, config, enTancar) {
-  const classe = infoClasse(props.classe, config);
+// Panell d'un hexàgon seleccionat: el mateix contingut que un local, més l'avís urbanístic
+function mostraPanellHexagon(hex, config) {
+  const p = hex.properties;
+  const c = hex.calcul; // js/descobriment.js
+  const classe = config.classes.find((x) => x.id === c.classe);
+  const r = c.r;
   let n = 0; // comptador de seccions: ++n suma 1 i retorna el valor nou
   let html = `
     <button class="tanca" aria-label="Cerrar">✕</button>
-    <h2>${props.barri}</h2>
-    <p class="subtitol">${props.districte} · zona ${props.hex_id}</p>
+    <h2>${p.barri}</h2>
+    <p class="subtitol">${p.districte} · zona ${p.hex_id} · ${textArea()}</p>
   `;
 
-  if (props.puntuacio === null) {
+  if (c.motiu) {
     // Descartat per una regla prèvia: no té puntuació
     html += `
       <div class="puntuacio">
         <span class="etiqueta-classe" style="background:${classe.color}">${classe.etiqueta}</span>
       </div>
       ${titolSeccio(++n, "Motivo")}
-      <p class="nota-decisio">${props.motiu}</p>
+      <p class="nota-decisio">${c.motiu}</p>
     `;
   } else {
-    // Desglossament: nota de cada criteri, pes i punts que aporta
-    const desglossament = config.criteris
-      .map((c) => {
-        const nota = props.notes[c.id];
-        const punts = (nota * c.pes) / 100;
-        return `
-          <div class="criteri">
-            <div class="linia">
-              <span>${c.etiqueta} <small>(${Math.round(c.pes)} %)</small></span>
-              <span class="valor">${nota}/100 · +${decimal(punts)} pts</span>
-            </div>
-            <div class="barra"><div style="width:${nota}%"></div></div>
-          </div>`;
-      })
-      .join("");
-
+    // Mateix bloc que un local (puntuació, sí/no i desglossament), amb la classe de la zona
     html += `
       <div class="puntuacio">
-        <span class="xifra">${props.puntuacio}<small> / 100</small></span>
         <span class="etiqueta-classe" style="background:${classe.color}">${classe.etiqueta}</span>
       </div>
-      <p class="nota-relativa">${config.nota_relativa.replace("{ciutat}", config.ciutat)}</p>
-      ${titolSeccio(++n, "Nota de decisión")}
-      <p class="nota-decisio">${notaDecisio(props, config)}</p>
-      ${titolSeccio(++n, "Desglose de la puntuación")}
-      ${desglossament}
+      ${htmlMirroring(c.valors, false, "Esta zona")}
+      ${titolSeccio(2, "Nota de decisión")}
+      <p class="nota-decisio">${notaDecisio(c.puntuacio, c.classe, config)}</p>
     `;
+    n = 2; // htmlMirroring ja porta la secció 1 (desglossament)
   }
 
-  // Dades a 800 m (també per als descartats, per transparència)
+  // Dades de l'àrea (també per als descartats, per transparència)
+  const competidors = Object.entries(SEGMENTS)
+    .map(([id, s]) => `${s.etiqueta}: ${(r.clubs[id] || []).filter((x) => x.estat === "obert").length}`)
+    .join(" · ");
+  const pctCompartida = r.pobObjectiu ? (r.compartida / r.pobObjectiu) * 100 : 0;
   html += `
-    ${titolSeccio(++n, `Datos a ${config.radi_m} m <small>(en línea recta)</small>`)}
+    ${titolSeccio(++n, "Datos del área")}
     <ul class="dades">
-      <li>Población de 18 a 64 años: ${numero(props.pob_objectiu)}</li>
-      <li>Renta neta media por persona: ${numero(props.renda)} €</li>
-      <li>Competidores: ${props.n_competidors}${props.competidors ? " (" + props.competidors + ")" : ""}</li>
-      <li>Solapamiento con ${config.marca_propia}: ${props.solapament_pct.toLocaleString("es-ES")} %</li>
-      <li>${config.marca_propia} más cercano: ${numero(props.dist_propi_m)} m</li>
+      <li>Público objetivo (${textEdat()}): <strong>${numero(r.pobObjectiu)}</strong>
+        · población total ${numero(r.pobTotal)}</li>
+      <li>Renta neta media por hogar: <strong>${r.rendaLlar ? numero(r.rendaLlar) + " €" : "sin dato"}</strong></li>
+      <li>Competencia abierta: ${competidors}</li>
+      <li>Público compartido con centros propios: <strong>${decimal(pctCompartida)} %</strong></li>
+      <li>${config.marca_propia} más cercano: ${numero(r.propiMesProper)} m</li>
     </ul>
+    ${font("INE, Censo Anual de Población 2024 y ADRH 2024 (rejilla de 100 m) · clubes: webs oficiales, Open Data BCN y OpenStreetMap")}
   `;
 
   // Avís urbanístic preliminar: SEMPRE, amb "Requiere confirmación profesional"
@@ -171,19 +167,23 @@ function mostraPanellHexagon(props, config, enTancar) {
   html += `
     ${titolSeccio(++n, "Aviso urbanístico preliminar")}
     <p class="avis">
-      ${avisos[props.sol]} <strong>${avisos.sempre}</strong><br>
+      ${avisos[p.sol]} <strong>${avisos.sempre}</strong><br>
       <small>${avisos.font}</small>
     </p>
+    <button class="boto-guardar" id="avaluar-zona">Evaluar este punto como local</button>
+    <button class="enllac">Ver fuentes y método</button>
   `;
-
-  // Enllaç a les fonts i el mètode (tanca la selecció i baixa fins a la secció)
-  html += `<button class="enllac">Ver fuentes y método</button>`;
 
   panell.innerHTML = html;
   panell.scrollTop = 0;
-  panell.querySelector(".tanca").addEventListener("click", enTancar);
+  panell.querySelector(".tanca").addEventListener("click", () => desseleccionaHexagon());
+  // Porta d'entrada a l'avaluació: el centre de l'hexàgon passa a ser el local candidat
+  panell.querySelector("#avaluar-zona").addEventListener("click", async () => {
+    await canviaMode("avaluar");
+    situaPunt([hex.centre.lat, hex.centre.lon], true, `Centro de la zona ${p.hex_id} (${p.barri})`);
+  });
   panell.querySelector(".enllac").addEventListener("click", () => {
-    enTancar();
+    desseleccionaHexagon();
     document.getElementById("fonts-i-metode").scrollIntoView({ behavior: "smooth" });
   });
 }

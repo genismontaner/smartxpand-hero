@@ -22,12 +22,11 @@ L.tileLayer(
   }
 ).addTo(mapa);
 
-// Panell (capa de dibuix) per sobre dels hexàgons: clubs i cercle de 800 m
+// Panell (capa de dibuix) per sobre dels hexàgons: clubs i àrees dibuixades
 mapa.createPane("superior");
 mapa.getPane("superior").style.zIndex = 450;
 
 const NAVY = "#051C2C";
-const GRIS_COMPETENCIA = "#868e96";
 
 // Llegeix un fitxer GeoJSON (o JSON) i el retorna com a objecte de JavaScript.
 // cache "no-cache": el navegador comprova amb el servidor si el fitxer ha canviat
@@ -35,68 +34,6 @@ const GRIS_COMPETENCIA = "#868e96";
 async function carregaGeoJSON(ruta) {
   const resposta = await fetch(ruta, { cache: "no-cache" });
   return resposta.json();
-}
-
-// Estil de cada club: VivaGym en navy i més gran; la competència en gris
-function estilClub(club, ajustos) {
-  const esPropi = club.properties.marca === "VivaGym";
-  const esPrevist = club.properties.estat === "previst";
-  // Els centres municipals desapareixen del mapa si l'usuari no els compta
-  const amagat = !ajustos.comptarCem && club.properties.marca.startsWith("CEM");
-  return {
-    radius: esPropi ? 6 : 4,
-    color: "#ffffff",
-    weight: 1,
-    opacity: amagat ? 0 : 1,
-    fillColor: esPropi ? NAVY : GRIS_COMPETENCIA,
-    fillOpacity: amagat ? 0 : esPrevist ? 0.4 : 1,
-  };
-}
-
-// Estil de cada hexàgon segons la seva classe.
-// Els descartats per regla prèvia (Collserola, port...) gairebé transparents perquè no distreguin.
-function estilHexagon(hex, colors) {
-  const p = hex.properties;
-  const perRegla = p.motiu !== null;
-  return {
-    color: "#ffffff",
-    weight: 0.5,
-    fillColor: colors[p.classe],
-    fillOpacity: perRegla ? 0.15 : 0.7,
-  };
-}
-
-// --- Llegenda ---
-// Un "control" de Leaflet és un element HTML col·locat damunt del mapa, en una cantonada
-function afegeixLlegenda(config) {
-  const llegenda = L.control({ position: "bottomleft" });
-  llegenda.onAdd = () => {
-    const div = L.DomUtil.create("div", "llegenda");
-    const classes = config.classes
-      .map((c) => `<div><span class="mostra" style="background:${c.color}"></span>${c.etiqueta[0] + c.etiqueta.slice(1).toLowerCase()}</div>`)
-      .join("");
-    div.innerHTML = `
-      <button class="boto-llegenda">Leyenda</button>
-      <div class="contingut">
-      <strong>Clasificación</strong>
-      ${classes}
-      <div><span class="mostra" style="background:${config.classes.at(-1).color};opacity:0.3"></span>Descartado por regla previa</div>
-      <strong>Clubes</strong>
-      <div><span class="punt" style="background:${NAVY};width:12px;height:12px"></span>${config.marca_propia}</div>
-      <div><span class="punt" style="background:${GRIS_COMPETENCIA}"></span>Competencia</div>
-      <div><span class="punt" style="background:${GRIS_COMPETENCIA};opacity:0.4"></span>Apertura prevista</div>
-      <div><span class="cercle"></span>Radio de ${config.radi_m} m</div>
-      </div>
-    `;
-    // Oberta d'entrada només en pantalles amples (on no tapa la ciutat)
-    if (window.innerWidth >= 1280) div.classList.add("oberta");
-    // El botó obre i tanca la llegenda
-    div.querySelector(".boto-llegenda").addEventListener("click", () => div.classList.toggle("oberta"));
-    // Els clics a la llegenda no han d'arribar al mapa
-    L.DomEvent.disableClickPropagation(div);
-    return div;
-  };
-  llegenda.addTo(mapa);
 }
 
 // --- Mòbil: fitxa inferior ---
@@ -155,6 +92,7 @@ document.querySelector(".capcalera").addEventListener("click", () => {
 
 // --- Pestanyes del panell ---
 function mostraVista(id) {
+  colocaControls(id); // js/avaluacio.js: els controls comuns van a la vista que es mostra
   document.querySelectorAll(".vista").forEach((vista) => {
     vista.hidden = vista.id !== id;
   });
@@ -172,29 +110,26 @@ document.querySelectorAll(".pestanya").forEach((boto) => {
 });
 
 // --- Les dues portes d'entrada: "Descubrir zonas" i "Evaluar un local" ---
-let capesDescobriment = []; // capes del mapa de zones (s'omple a inicia)
-
 async function canviaMode(mode) {
   const avaluar = mode === "avaluar";
   document.body.classList.toggle("mode-avaluar", avaluar);
   document.querySelectorAll(".mode").forEach((boto) => {
     boto.classList.toggle("activa", boto.dataset.mode === mode);
   });
-  for (const capa of capesDescobriment) {
-    if (avaluar) capa.remove();
-    else capa.addTo(mapa);
-  }
-  // El cercle de 800 m de la zona seleccionada (si n'hi ha) segueix el mateix camí
-  if (cercle) {
-    if (avaluar) cercle.remove();
-    else cercle.addTo(mapa);
-  }
   if (avaluar) {
+    descobriment.capa.remove();
+    descobriment.capaSeleccio?.remove();
     mostraVista("avaluacio");
-    await activaAvaluacio(); // js/avaluacio.js
+    activaAvaluacio(); // js/avaluacio.js
   } else {
     desactivaAvaluacio();
+    // El mapa de zones fa servir radi: si a l'avaluació s'havia triat isòcrona, es torna al radi
+    avaluacio.tipusArea = "radi";
+    actualitzaControlsArea();
+    actualitzaAtribucio();
+    descobriment.capa.addTo(mapa);
     mostraVista("panell");
+    recalculaDescobriment();
   }
 }
 
@@ -202,117 +137,59 @@ document.querySelectorAll(".mode").forEach((boto) => {
   boto.addEventListener("click", () => canviaMode(boto.dataset.mode));
 });
 
-// --- Selecció d'un hexàgon ---
-let seleccionat = null; // capa de l'hexàgon seleccionat
-let cercle = null; // cercle de 800 m dibuixat al mapa
-
-function selecciona(capa, capaHexagons, config) {
-  desselecciona(capaHexagons, config);
-  seleccionat = capa;
-  mostraVista("panell");
-
-  // Ressalta l'hexàgon amb una vora navy gruixuda
-  capa.setStyle({ color: NAVY, weight: 3 });
-  capa.bringToFront();
-
-  // Cercle de 800 m des del centre de l'hexàgon
-  const centre = capa.getBounds().getCenter();
-  cercle = L.circle(centre, {
-    radius: config.radi_m,
-    pane: "superior",
-    color: NAVY,
-    weight: 1.5,
-    dashArray: "6 6",
-    fill: false,
-    interactive: false, // no captura clics: es pot clicar l'hexàgon de sota
-  }).addTo(mapa);
-
-  mostraPanellHexagon(capa.feature.properties, config, () => desselecciona(capaHexagons, config));
-
-  // L'hexàgon ha de quedar visible, no tapat per les targetes
-  // (al mòbil, a més, la fitxa es plega perquè es vegi la puntuació)
-  if (esMobil()) lateral.classList.remove("desplegada");
-  mapa.panInside(centre, margesMapa());
-}
-
-function desselecciona(capaHexagons, config) {
-  if (seleccionat) capaHexagons.resetStyle(seleccionat);
-  if (cercle) cercle.remove();
-  seleccionat = null;
-  cercle = null;
-  mostraPanellInicial(config);
+// Qualsevol canvi de paràmetres recalcula el mode actiu.
+// Al mapa de zones, el càlcul de 1.306 hexàgons triga fins a 1 s: si l'usuari arrossega un
+// control, s'espera que s'aturi 200 ms abans de calcular ("debounce": s'agrupen els canvis)
+let esperaRecalcul = null;
+function recalculaTot() {
+  if (document.body.classList.contains("mode-avaluar")) {
+    actualitzaMapaAvaluacio();
+    mostraResultatsAvaluacio();
+    return;
+  }
+  mostraCalibratge();
+  clearTimeout(esperaRecalcul);
+  esperaRecalcul = setTimeout(recalculaDescobriment, 200);
 }
 
 // 3. Carrega les dades i les afegeix al mapa
 async function inicia() {
-  const hexagons = await carregaGeoJSON("data/hexagons.geojson");
-  const limit = await carregaGeoJSON("data/limit_municipal.geojson");
-  const clubs = await carregaGeoJSON("data/clubs.geojson");
-  const config = await carregaGeoJSON("config/scoring.json");
+  panell.innerHTML = `<h2>Mapa de oportunidad</h2><p class="subtitol">Cargando datos de población…</p>`;
+  const [hexagons, config] = await Promise.all([
+    carregaGeoJSON("data/hexagons.geojson"),
+    carregaGeoJSON("config/scoring.json"),
+    preparaDades(), // js/avaluacio.js: graella, clubs, límit i isòcrones
+  ]);
+  descobriment.config = config;
+  descobriment.hexagons = hexagons;
+  for (const hex of hexagons.features) hex.centre = centreHexagon(hex);
 
-  // Ajustos de l'usuari (js/ajustos.js). Comencen amb els valors de scoring.json
-  const ajustos = ajustosPerDefecte(config);
-  let configActual = configEfectiva(config, ajustos);
+  // Vistes i controls comuns (una sola còpia, a la pestanya "Parámetros" d'entrada)
+  dibuixaVistaAvaluacio();
+  dibuixaVistaParametres();
+  dibuixaControlsComuns();
+  colocaControls("ajustes");
 
-  // Puntuació i classe de cada hexàgon (js/puntuacio.js)
-  aplicaCompetencia(hexagons, clubs, configActual, ajustos);
-  calculaPuntuacions(hexagons, configActual);
-
-  // Hexàgons pintats segons la classe (colors de scoring.json)
-  const colors = {};
-  for (const c of config.classes) colors[c.id] = c.color;
-
-  const capaHexagons = L.geoJSON(hexagons, {
+  // Puntuació de cada hexàgon amb els paràmetres inicials (js/descobriment.js)
+  puntuaHexagons();
+  descobriment.capa = L.geoJSON(hexagons, {
     // 'style' també pot ser una funció: Leaflet la crida per a cada hexàgon
-    style: (hex) => estilHexagon(hex, colors),
+    style: estilHexagon,
     // 'onEachFeature' s'executa per a cada hexàgon: hi afegim l'esdeveniment de clic
-    onEachFeature: (hex, capa) => {
-      capa.on("click", () => selecciona(capa, capaHexagons, configActual));
-    },
+    onEachFeature: (hex, capa) => capa.on("click", () => seleccionaHexagon(capa)),
   }).addTo(mapa);
-
-  // Panell inicial (sense cap hexàgon seleccionat), llegenda i fonts del mode captura
-  mostraPanellInicial(configActual);
-  afegeixLlegenda(config);
-  document.querySelector(".fonts-captura").textContent = config.fonts_resum;
-  document.querySelector(".parametres-captura").textContent = resumAjustos(config, ajustos);
 
   // Límit municipal: només la línia, sense farciment
-  const capaLimit = L.geoJSON(limit, {
-    style: { color: NAVY, weight: 2, fill: false },
-  }).addTo(mapa);
+  const capaLimit = L.geoJSON(avaluacio.limit, { style: { color: NAVY, weight: 2, fill: false } }).addTo(mapa);
+  // Clubs per segment, als dos modes (interactive: false → els clics arriben a l'hexàgon)
+  avaluacio.capaClubs.addTo(mapa);
 
-  // Clubs: cada punt es dibuixa com un cercle, al panell superior
-  // (interactive: false → els clics hi passen a través i arriben a l'hexàgon de sota)
-  const capaClubs = L.geoJSON(clubs, {
-    pointToLayer: (club, posicio) =>
-      L.circleMarker(posicio, { ...estilClub(club, ajustos), pane: "superior", interactive: false }),
-  }).addTo(mapa);
-
-  // Es crida cada vegada que l'usuari canvia un ajust: recalcula i repinta
-  function recalcula() {
-    configActual = configEfectiva(config, ajustos);
-    aplicaCompetencia(hexagons, clubs, configActual, ajustos);
-    calculaPuntuacions(hexagons, configActual);
-    capaHexagons.setStyle((hex) => estilHexagon(hex, colors));
-    capaClubs.setStyle((club) => estilClub(club, ajustos));
-    actualitzaResumClasses(hexagons, config);
-    document.querySelector(".parametres-captura").textContent = resumAjustos(config, ajustos);
-
-    // Si hi ha una zona seleccionada, en manté el ressalt i n'actualitza el panell
-    if (seleccionat) {
-      seleccionat.setStyle({ color: NAVY, weight: 3 });
-      mostraPanellHexagon(seleccionat.feature.properties, configActual, () => desselecciona(capaHexagons, configActual));
-    } else {
-      mostraPanellInicial(configActual);
-    }
-  }
-
-  // Capes que s'amaguen en el mode "Evaluar un local"
-  capesDescobriment = [capaHexagons, capaClubs];
-
-  mostraAjustes(config, ajustos, recalcula);
-  actualitzaResumClasses(hexagons, config);
+  afegeixLlegenda();
+  actualitzaLlegenda();
+  actualitzaResumClasses();
+  mostraPanellInicial(config);
+  document.querySelector(".fonts-captura").textContent = config.fonts_resum;
+  document.querySelector(".parametres-captura").textContent = resumParametres();
 
   // Ajusta la vista perquè es vegi tota la ciutat dins de la zona no tapada.
   // Si la pàgina s'ha obert en una pestanya en segon pla, el mapa encara fa 0 px:
@@ -327,11 +204,23 @@ async function inicia() {
   const parametres = new URLSearchParams(window.location.search);
   const zona = parametres.get("zona");
   if (zona) {
-    capaHexagons.eachLayer((capa) => {
-      if (capa.feature.properties.hex_id === zona) selecciona(capa, capaHexagons, configActual);
+    descobriment.capa.eachLayer((capa) => {
+      if (capa.feature.properties.hex_id === zona) seleccionaHexagon(capa);
     });
   }
   if (parametres.get("captura") === "1") activaCaptura(false);
+}
+
+// Pestanya "Parámetros" del mapa de zones: recompte i controls comuns
+function dibuixaVistaParametres() {
+  document.getElementById("ajustes").innerHTML = `
+    <h2>Parámetros</h2>
+    <p class="subtitol">El mapa se recalcula al momento. Valen también para «Evaluar un local».</p>
+    <div id="resum-classes" class="resum-classes"></div>
+    <p class="nota-relativa">En el mapa de zonas el área es siempre un radio en línea recta:
+      las isócronas de las zonas aún no están calculadas.</p>
+    <div class="ranura-controls"></div>
+  `;
 }
 
 inicia();

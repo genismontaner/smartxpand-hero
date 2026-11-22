@@ -152,28 +152,37 @@ En cada paso:
   oficial: la de Anytime exige verificación humana).
 - Limitación: los clubes low cost solo se recogieron en Barcelona + 800 m; en
   la franja de 3 km la competencia low cost está incompleta.
-- Población: la evaluación de puntos usa el Censo Anual 2024 (rejilla de 100 m)
-  y el mapa de descubrimiento aún usa la población del ADRH 2024. En algunos
-  barrios el Censo da un 10–11 % más (verificado en QGIS con cálculo exacto). Se
-  unifica en el paso 8. Causa de la diferencia entre fuentes: sin investigar.
+- Población: las dos puertas usan el Censo Anual 2024 (rejilla de 100 m) desde el
+  paso 8. En algunos barrios el Censo da un 10–11 % más que el ADRH (verificado en
+  QGIS con cálculo exacto). Causa de la diferencia entre fuentes: sin investigar.
+  `data/clubs.geojson` y los campos precalculados de `hexagons.geojson` ya no se
+  usan en la web.
 - Centros municipales: Open Data BCN (solo Barcelona).
 - Urbanismo: Mapa urbanístic de Catalunya (enero 2023), solo urbano o
   urbanizable frente a no urbanizable.
 
 ## Lo ya construido (mapa de descubrimiento)
 
-Hexágonos de 300 m, radio de 800 m en línea recta, cuatro criterios
-(población 18–64 35 %, competencia 25 %, solapamiento 25 %, renta 15 %),
-percentiles dentro de la ciudad y clases INVESTIGAR ≥ 70 / ESPERAR 60–69 /
-DESCARTAR < 60, con reglas previas (suelo no urbanizable; menos de 5.000
-personas de 18 a 64 años). Con los valores por defecto salen 66 / 170 / 576
-zonas: deben mantenerse mientras no se cambie el método a propósito.
+Desde el paso 8 (22/11/2026, cambio de método decidido a propósito): hexágonos de
+300 m calculados en el navegador como si fueran locales (`calculaArea`, misma
+rejilla, mismos parámetros que «Evaluar un local»: radio, edad, segmentos, pesos,
+umbral) y puntuados con mirroring. Clases: INVESTIGAR ≥ umbral, ESPERAR a menos
+de 10 puntos (`marge_esperar`), DESCARTAR por debajo. Reglas previas: suelo no
+urbanizable; menos público objetivo que el centro propio con menos. Con los
+valores por defecto (1,5 km, 20–64 años, 35/25/25/15, low cost + municipal,
+umbral 50) salen **259 / 252 / 113** zonas y 682 por regla previa: es la nueva
+referencia. El mapa de zonas usa solo radio (isócronas a pie de los hexágonos:
+pendientes, paso 8.2, requieren unas 812 peticiones a ORS). Un solo juego de
+controles (`#controls-comuns`) se mueve entre la pestaña «Parámetros» y
+«Evaluar un local».
+
+Método anterior (MVP, hasta el 22/11/2026): 800 m, ADRH 18–64, percentiles dentro
+de la ciudad, 70/60, mínimo 5.000 personas: 66 / 170 / 576 zonas.
 
 Nota de decisión: plantilla fija sin texto inventado. "A favor" (nota ≥ 60)
 y "En contra" (nota < 40), máximo dos por banda; los intermedios no se
 mencionan. Aviso urbanístico preliminar en todos los hexágonos, siempre con
-"Requiere confirmación profesional". Textos y parámetros en
-`config/scoring.json`.
+"Requiere confirmación profesional". Textos en `config/scoring.json`.
 
 ## Estructura de carpetas
 
@@ -182,9 +191,13 @@ smartxpand-hero/
 ├── index.html
 ├── css/estils.css
 ├── js/app.js            → mapa, carga de datos, clics
-├── js/puntuacio.js      → puntuación y clase
 ├── js/panell.js         → panel de decisión
-├── js/ajustos.js        → pestaña "Ajustes" (controles y recálculo)
+├── js/avaluacio.js      → «Evaluar un local», área y controles comunes
+├── js/isocrones.js      → radio o isócrona (ORS)
+├── js/mirroring.js      → puntuación contra los centros propios
+├── js/comparador.js     → comparador de locales
+├── js/calibratge.js     → calibración con el rendimiento real
+├── js/descobriment.js   → mapa de zonas con los mismos parámetros
 ├── data/                → GeoJSON procesados que lee la web
 ├── config/scoring.json  → criterios, pesos, umbrales, textos, fuentes
 ├── fonts/               → Poppins alojada en local (licencia OFL)

@@ -3,66 +3,46 @@
   "ciutat": "Barcelona",
   "marca_propia": "VivaGym",
   "format": "low cost",
-  "radi_m": 800,
   "mida_hexagon_m": 300,
-
   "criteris": [
     {
       "id": "poblacio",
-      "frase_fort": "mucha población objetivo",
-      "frase_feble": "poca población objetivo",
-      "camp": "pob_objectiu",
-      "etiqueta": "Población objetivo",
-      "descripcio": "Personas de 18 a 64 años a 800 m",
-      "pes": 35,
-      "sentit": "mes_es_millor"
+      "frase_fort": "mucho público objetivo",
+      "frase_feble": "poco público objetivo"
     },
     {
       "id": "competencia",
-      "frase_fort": "poca competencia cercana",
-      "frase_feble": "mucha competencia cercana",
-      "camp": "n_competidors",
-      "etiqueta": "Competencia",
-      "descripcio": "Clubes low cost y centros deportivos municipales a 800 m",
-      "pes": 25,
-      "sentit": "menys_es_millor"
+      "frase_fort": "poca competencia",
+      "frase_feble": "mucha competencia"
     },
     {
       "id": "solapament",
-      "frase_fort": "bajo solapamiento con clubes propios",
-      "frase_feble": "alto solapamiento con clubes propios",
-      "camp": "solapament_pct",
-      "etiqueta": "Solapamiento",
-      "descripcio": "% del área de 800 m compartida con clubes propios",
-      "pes": 25,
-      "sentit": "menys_es_millor"
+      "frase_fort": "poco solapamiento con tus centros",
+      "frase_feble": "mucho solapamiento con tus centros"
     },
     {
       "id": "renda",
-      "frase_fort": "renta en la franja objetivo",
-      "frase_feble": "renta alejada de la franja objetivo",
-      "camp": "renda",
-      "etiqueta": "Renta",
-      "descripcio": "Renta neta media por persona a 800 m",
-      "pes": 15,
-      "sentit": "franja_mitjana",
-      "franja_percentils": [25, 75]
+      "frase_fort": "renta parecida a la de tus centros",
+      "frase_feble": "renta alejada de la de tus centros"
     }
   ],
-
   "classes": [
-    { "id": "investigar", "etiqueta": "INVESTIGAR", "minim": 70, "color": "#2f9e44" },
-    { "id": "esperar", "etiqueta": "ESPERAR", "minim": 60, "color": "#f08c00" },
-    { "id": "descartar", "etiqueta": "DESCARTAR", "minim": 0, "color": "#adb5bd" }
+    {
+      "id": "investigar",
+      "etiqueta": "INVESTIGAR",
+      "color": "#2f9e44"
+    },
+    {
+      "id": "esperar",
+      "etiqueta": "ESPERAR",
+      "color": "#f08c00"
+    },
+    {
+      "id": "descartar",
+      "etiqueta": "DESCARTAR",
+      "color": "#adb5bd"
+    }
   ],
-
-  "franges_renda": [
-    { "id": "baja", "etiqueta": "Baja", "percentils": [0, 33] },
-    { "id": "media", "etiqueta": "Media", "percentils": [25, 75] },
-    { "id": "alta", "etiqueta": "Alta", "percentils": [67, 100] }
-  ],
-  "franja_renda_defecte": "media",
-
   "regles_previes": [
     {
       "id": "sol_no_urbanitzable",
@@ -73,24 +53,24 @@
     },
     {
       "id": "poblacio_minima",
-      "camp": "pob_objectiu",
-      "minim": 5000,
       "classe": "descartar",
-      "motiu": "Población objetivo insuficiente (menos de {minim} personas de 18 a 64 años a 800 m)."
+      "motiu": "Menos público objetivo ({valor}) que tu centro con menos ({minim}): ninguno de tus centros tiene tan poca población en su área."
     }
   ],
-
   "nota_decisio": {
     "nota_a_favor": 60,
     "nota_en_contra": 40,
     "maxim_per_banda": 2,
-    "classe": { "investigar": "Investigar.", "esperar": "Esperar.", "descartar": "Descartar." },
+    "classe": {
+      "investigar": "Investigar.",
+      "esperar": "Esperar.",
+      "descartar": "Descartar."
+    },
     "a_favor": "A favor: {llista}.",
     "en_contra": "En contra: {llista}.",
     "sense_a_favor": "Ningún criterio con nota alta ({nota_a_favor} o más).",
     "sense_en_contra": "Ningún criterio con nota baja (menos de {nota_en_contra})."
   },
-
   "avisos": {
     "urba": "El hexágono es suelo urbano o urbanizable según el MUC. No se ha verificado si el uso deportivo está admitido.",
     "parcial": "Parte del hexágono es suelo no urbanizable según el MUC. No se ha verificado si el uso deportivo está admitido en el resto.",
@@ -98,17 +78,14 @@
     "sempre": "Requiere confirmación profesional.",
     "font": "Fuente: Mapa urbanístic de Catalunya, enero 2023."
   },
-
   "limitacions": [
-    "La puntuación es relativa: compara las zonas de esta ciudad entre sí. No mide la viabilidad absoluta de un club.",
-    "El radio de 800 m es una distancia en línea recta, no un tiempo real de desplazamiento a pie.",
-    "La población se reparte de forma uniforme dentro de cada sección censal.",
-    "Los centros deportivos municipales solo incluyen los de Barcelona; en los bordes del municipio la competencia puede estar subestimada.",
-    "El mapa señala zonas donde buscar locales; no evalúa locales concretos."
+    "La puntuación es relativa: cada zona se compara con tus centros (50 = como la mediana de tus centros). No mide la viabilidad absoluta de un club ni prevé socios.",
+    "En el mapa de zonas, el área de cada hexágono es un radio en línea recta desde su centro. Las isócronas solo están disponibles en «Evaluar un local».",
+    "La población se reparte de forma uniforme dentro de cada sección censal (rejilla de 100 m).",
+    "La competencia low cost y los centros municipales solo están recogidos en Barcelona y una franja de 800 m; en los bordes del municipio puede estar subestimada.",
+    "El mapa señala zonas donde buscar locales; para un local concreto, usa «Evaluar un local»."
   ],
-
-  "nota_relativa": "Puntuación relativa entre zonas de {ciutat}; no mide la viabilidad de un club.",
-
+  "nota_relativa": "Puntuación relativa: cada zona se compara con tus centros con los mismos parámetros. No mide la viabilidad de un club ni prevé socios.",
   "variables_no_cubiertas": [
     {
       "variable": "Tránsito peatonal",
@@ -121,19 +98,80 @@
       "fuente": null
     }
   ],
-
-  "fonts_resum": "Fuentes: INE (ADRH 2024) · Mapa urbanístic de Catalunya (enero 2023) · webs oficiales de las marcas, Time Out y Open Data BCN (consulta oct. 2026) · Mapa base: IGN.",
-
+  "fonts_resum": "Fuentes: INE (Censo Anual 2024 y ADRH 2024) · Mapa urbanístic de Catalunya (enero 2023) · webs oficiales de las marcas, Time Out, OpenStreetMap y Open Data BCN (consulta oct.–nov. 2026) · Mapa base: IGN.",
   "fonts": [
-    { "dada": "Población y renta por sección censal", "font": "INE, Atlas de Distribución de Renta de los Hogares", "any": "2024", "url": "https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177088&menu=resultados&idp=1254735976608" },
-    { "dada": "Secciones censales", "font": "INE, cartografía digitalizada de secciones censales", "any": "2024", "url": "https://www.ine.es/prodyser/cartografia/seccionado_2024.zip" },
-    { "dada": "Clubes VivaGym", "font": "Web oficial de VivaGym", "any": "consulta 25/10/2026", "url": "https://www.vivagym.com/es-es/gimnasios/" },
-    { "dada": "Clubes Basic-Fit y Fitness Park", "font": "Webs oficiales de las marcas", "any": "consulta 25/10/2026", "url": "https://www.basic-fit.com/es-es/gimnasios/barcelona" },
-    { "dada": "Clubes Synergym", "font": "Time Out Barcelona (fuente secundaria)", "any": "consulta 25/10/2026", "url": "https://www.timeout.es/barcelona/es/deportes/gimnasios-baratos-y-otros-deportes-low-cost-en-barcelona" },
-    { "dada": "Centros deportivos municipales", "font": "Open Data BCN, equipamientos deportivos", "any": "consulta 25/10/2026", "url": "https://opendata-ajuntament.barcelona.cat/data/dataset/equipament-esports" },
-    { "dada": "Barrios y distritos", "font": "Open Data BCN, unidades administrativas", "any": "consulta 26/10/2026", "url": "https://opendata-ajuntament.barcelona.cat/data/dataset/20170706-districtes-barris" },
-    { "dada": "Clasificación del suelo", "font": "Mapa urbanístic de Catalunya (Generalitat), servido por la Diputació de Barcelona", "any": "enero 2023", "url": "https://gissrv.diba.cat/arcgis/rest/services/CARTOBASE/MUC/MapServer" },
-    { "dada": "Geocodificación de direcciones", "font": "Geocodificador del ICGC", "any": "consulta 25/10/2026", "url": "https://eines.icgc.cat/geocodificador/" },
-    { "dada": "Mapa base", "font": "Instituto Geográfico Nacional (CC BY 4.0)", "any": "servicio en línea", "url": "https://www.ign.es" }
-  ]
+    {
+      "dada": "Población por edad (tramos de 5 años) por sección censal",
+      "font": "INE, Censo Anual de Población",
+      "any": "2024",
+      "url": "https://www.ine.es/jaxiT3/Tabla.htm?t=69129"
+    },
+    {
+      "dada": "Hogares y renta por sección censal",
+      "font": "INE, Atlas de Distribución de Renta de los Hogares",
+      "any": "2024",
+      "url": "https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177088&menu=resultados&idp=1254735976608"
+    },
+    {
+      "dada": "Secciones censales",
+      "font": "INE, cartografía digitalizada de secciones censales",
+      "any": "2024",
+      "url": "https://www.ine.es/prodyser/cartografia/seccionado_2024.zip"
+    },
+    {
+      "dada": "Clubes VivaGym",
+      "font": "Web oficial de VivaGym",
+      "any": "consulta 25/10/2026",
+      "url": "https://www.vivagym.com/es-es/gimnasios/"
+    },
+    {
+      "dada": "Clubes Basic-Fit y Fitness Park",
+      "font": "Webs oficiales de las marcas",
+      "any": "consulta 25/10/2026",
+      "url": "https://www.basic-fit.com/es-es/gimnasios/barcelona"
+    },
+    {
+      "dada": "Clubes Synergym",
+      "font": "Time Out Barcelona (fuente secundaria)",
+      "any": "consulta 25/10/2026",
+      "url": "https://www.timeout.es/barcelona/es/deportes/gimnasios-baratos-y-otros-deportes-low-cost-en-barcelona"
+    },
+    {
+      "dada": "Clubes de gama media y premium",
+      "font": "Webs oficiales de las marcas y OpenStreetMap (detalle en preparacio/marques.csv)",
+      "any": "consulta 21/11/2026",
+      "url": "https://github.com/genismontaner/smartxpand-hero/blob/main/preparacio/marques.csv"
+    },
+    {
+      "dada": "Centros deportivos municipales",
+      "font": "Open Data BCN, equipamientos deportivos",
+      "any": "consulta 25/10/2026",
+      "url": "https://opendata-ajuntament.barcelona.cat/data/dataset/equipament-esports"
+    },
+    {
+      "dada": "Barrios y distritos",
+      "font": "Open Data BCN, unidades administrativas",
+      "any": "consulta 26/10/2026",
+      "url": "https://opendata-ajuntament.barcelona.cat/data/dataset/20170706-districtes-barris"
+    },
+    {
+      "dada": "Clasificación del suelo",
+      "font": "Mapa urbanístic de Catalunya (Generalitat), servido por la Diputació de Barcelona",
+      "any": "enero 2023",
+      "url": "https://gissrv.diba.cat/arcgis/rest/services/CARTOBASE/MUC/MapServer"
+    },
+    {
+      "dada": "Geocodificación de direcciones",
+      "font": "Geocodificador del ICGC",
+      "any": "consulta 25/10/2026",
+      "url": "https://eines.icgc.cat/geocodificador/"
+    },
+    {
+      "dada": "Mapa base",
+      "font": "Instituto Geográfico Nacional (CC BY 4.0)",
+      "any": "servicio en línea",
+      "url": "https://www.ign.es"
+    }
+  ],
+  "marge_esperar": 10
 }

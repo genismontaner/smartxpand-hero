@@ -106,7 +106,7 @@ function carregaCalibratge(text, nomFitxer) {
 
 // --- Estadística ---
 
-// Rangs: el valor més alt té el rang 1. Empats: rang mitjà (com a js/puntuacio.js)
+// Rangs: el valor més alt té el rang 1. Empats: rang mitjà (com el percentil de js/mirroring.js)
 function rangs(valors) {
   const ordenats = valors.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v);
   const r = new Array(valors.length);

@@ -4,7 +4,8 @@
 
 Mapa interactivo que criba las zonas de una ciudad para abrir un gimnasio
 **low cost**. La ciudad se divide en hexágonos de 300 m; cada uno recibe una
-puntuación sobre 100 y una clase: **INVESTIGAR**, **ESPERAR** o **DESCARTAR**.
+puntuación sobre 100 (comparada con los centros propios) y una clase:
+**INVESTIGAR**, **ESPERAR** o **DESCARTAR**.
 Al hacer clic en un hexágono se explica el porqué: desglose por criterio, pesos,
 datos del entorno y aviso urbanístico.
 
@@ -43,43 +44,53 @@ directores de expansión de cadenas de fitness en España.
 
 ## Qué mide
 
-Para cada hexágono se analiza un círculo de **800 m en línea recta** desde su centro.
+Cada hexágono se calcula **como si fuera un local**, con la misma función, la
+misma rejilla de población y los mismos parámetros que «Evaluar un local»: área
+(radio en línea recta desde su centro; por defecto 1,5 km), público objetivo
+(tramos de edad; por defecto 20 a 64 años), segmentos que cuentan como
+competencia, pesos y umbral.
 
-| Criterio | Qué mide | Peso |
-|---|---|---|
-| Población objetivo | Personas de 18 a 64 años | 35 % |
-| Competencia | Clubes low cost y centros deportivos municipales | 25 % |
-| Solapamiento | % del área compartida con clubes propios (VivaGym) | 25 % |
-| Renta | Renta neta media por persona (máximo en la franja media de la ciudad) | 15 % |
+| Criterio | Qué mide | Mejor si… | Peso inicial |
+|---|---|---|---|
+| Público objetivo | Personas de la edad elegida en el área | más | 35 % |
+| Competencia | Clubes abiertos de los segmentos elegidos | menos | 25 % |
+| Solapamiento | % del público compartido con el área de algún centro propio | menos | 25 % |
+| Renta por hogar | Renta neta media por hogar | más cerca de la mediana de tus centros | 15 % |
 
-Cada criterio se convierte en una nota de 0 a 100 por **percentil** entre las
-zonas candidatas de la ciudad. La puntuación es la suma ponderada.
+Cada criterio se convierte en una nota de 0 a 100 por **percentil entre los
+centros propios** calculados con los mismos parámetros ("mirroring": 50 = como la
+mediana de tus centros). La puntuación es la suma ponderada.
 
 | Clase | Puntuación |
 |---|---|
-| INVESTIGAR | ≥ 70 |
-| ESPERAR | 60–69 |
-| DESCARTAR | < 60 |
+| INVESTIGAR | ≥ umbral (por defecto 50: llega al mínimo) |
+| ESPERAR | a menos de 10 puntos del umbral |
+| DESCARTAR | por debajo |
 
 **Reglas previas** (pasan directamente a DESCARTAR): más de la mitad del
-hexágono es suelo no urbanizable, o menos de 5.000 personas de 18 a 64 años a 800 m.
+hexágono es suelo no urbanizable, o menos público objetivo que el centro propio
+que tiene menos.
 
-La pestaña **Ajustes** permite cambiar los pesos, la renta objetivo (baja, media
-o alta), si cuentan los centros municipales y las aperturas previstas, y la
-población mínima. El mapa se recalcula en el navegador. El radio y la franja de
-edad son fijos en esta versión.
+Con los valores por defecto salen 259 / 252 / 113 zonas y 682 descartadas por
+regla previa (22/11/2026).
 
-Los valores por defecto, los pesos, umbrales, textos y fuentes están en
-[`config/scoring.json`](config/scoring.json): nada está escondido en el código.
+La pestaña **Parámetros** tiene los mismos controles que «Evaluar un local»
+(son los mismos: cambiarlos en una puerta los cambia en la otra). El mapa se
+recalcula en el navegador.
+
+Los textos, las clases y las fuentes están en
+[`config/scoring.json`](config/scoring.json); los criterios y los pesos
+iniciales, en [`js/mirroring.js`](js/mirroring.js).
 
 ## Limitaciones
 
-- La puntuación es **relativa**: compara las zonas de la ciudad entre sí. No mide
-  la viabilidad absoluta de un club ni prevé socios.
-- El radio de 800 m es una distancia en línea recta, no un tiempo real a pie.
+- La puntuación es **relativa**: compara cada zona con tus centros. No mide la
+  viabilidad absoluta de un club ni prevé socios.
+- En el mapa de zonas el área es un radio en línea recta; las isócronas solo están
+  en «Evaluar un local» (las de las zonas están pendientes de calcular).
 - La población se reparte de forma uniforme dentro de cada sección censal.
-- Los centros deportivos municipales solo incluyen los de Barcelona; en los bordes
-  del municipio la competencia puede estar subestimada.
+- La competencia low cost y los centros municipales solo se recogieron en Barcelona
+  y una franja de 800 m; en los bordes del municipio puede estar subestimada.
 - El aviso urbanístico solo distingue suelo urbano/urbanizable de no urbanizable.
   **No verifica si el uso deportivo está admitido**: requiere confirmación profesional.
 - El mapa señala zonas donde buscar locales; no evalúa locales concretos.
@@ -109,9 +120,8 @@ fuente de cada precio están en [`preparacio/marques.csv`](preparacio/marques.cs
 index.html              Página
 css/estils.css          Estilos (Poppins, navy #051C2C, turquesa #2BB3C0)
 js/app.js               Mapa Leaflet, capas, selección, móvil y modo captura
-js/puntuacio.js         Puntuación sobre 100 y clase
 js/panell.js            Panel de decisión
-js/ajustos.js           Pestaña de ajustes y recálculo
+js/descobriment.js      Mapa de zonas: cálculo, clases, selección y leyenda
 js/avaluacio.js         Modo «Evaluar un local»
 js/isocrones.js         Áreas de captación: radio o isócrona (OpenRouteService)
 js/mirroring.js         Puntuación contra los centros propios
