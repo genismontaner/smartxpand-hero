@@ -36,6 +36,8 @@ const NAVY = "#051C2C";
 // abans de fer servir la còpia guardada (evita dades velles després de publicar).
 async function carregaGeoJSON(ruta) {
   const resposta = await fetch(ruta, { cache: "no-cache" });
+  // fetch no falla amb un 404 o un 500: ho comprovem nosaltres perquè es vegi l'error
+  if (!resposta.ok) throw new Error(`${ruta} (${resposta.status})`);
   return resposta.json();
 }
 
@@ -231,4 +233,15 @@ function dibuixaVistaParametres() {
   `;
 }
 
-inicia();
+// Si alguna dada no es pot carregar, ho diem i oferim tornar-ho a provar (en lloc de
+// deixar "Cargando…" per sempre). Passi el que passi, l'avís del mapa desapareix.
+function mostraErrorCarrega(error) {
+  console.error(error);
+  panell.innerHTML = `<h2>Mapa de oportunidad</h2>
+    <p class="avis-error">No se han podido cargar los datos. Comprueba la conexión y vuelve a intentarlo.</p>
+    <button class="boto-guardar" onclick="location.reload()">Reintentar</button>`;
+}
+
+inicia()
+  .catch(mostraErrorCarrega)
+  .finally(() => document.querySelector(".avis-carrega")?.remove());

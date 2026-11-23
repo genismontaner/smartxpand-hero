@@ -20,13 +20,13 @@
   <meta name="twitter:card" content="summary_large_image">
 
   <!-- Icona de la pestanya -->
-  <link rel="icon" href="assets/icona.svg?v=19f" type="image/svg+xml">
+  <link rel="icon" href="assets/icona.svg?v=19g" type="image/svg+xml">
 
   <!-- Estils de Leaflet (llibreria de mapes), des d'un CDN públic -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <!-- Els nostres estils. "?v=..." és la versió: canviar-la en cada publicació
        obliga el navegador a descarregar els fitxers nous (en lloc de la còpia guardada) -->
-  <link rel="stylesheet" href="css/estils.css?v=19f">
+  <link rel="stylesheet" href="css/estils.css?v=19g">
 </head>
 <body>
   <!-- Capçalera -->
@@ -45,6 +45,8 @@
   <main class="app">
     <!-- Contenidor on Leaflet dibuixarà el mapa -->
     <div id="mapa"></div>
+    <!-- Avís mentre es carreguen les dades (js/app.js el treu en acabar) -->
+    <div class="avis-carrega" role="status">Cargando datos de población…</div>
 
     <aside class="lateral">
       <!-- Nansa per plegar/desplegar la fitxa (només es veu al mòbil) -->
@@ -84,13 +86,13 @@
 
   <!-- Primer Leaflet, després el nostre codi (que el fa servir) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script src="js/panell.js?v=19f"></script>
-  <script src="js/avaluacio.js?v=19f"></script>
-  <script src="js/isocrones.js?v=19f"></script>
-  <script src="js/mirroring.js?v=19f"></script>
-  <script src="js/comparador.js?v=19f"></script>
-  <script src="js/calibratge.js?v=19f"></script>
-  <script src="js/descobriment.js?v=19f"></script>
-  <script src="js/app.js?v=19f"></script>
+  <script src="js/panell.js?v=19g"></script>
+  <script src="js/avaluacio.js?v=19g"></script>
+  <script src="js/isocrones.js?v=19g"></script>
+  <script src="js/mirroring.js?v=19g"></script>
+  <script src="js/comparador.js?v=19g"></script>
+  <script src="js/calibratge.js?v=19g"></script>
+  <script src="js/descobriment.js?v=19g"></script>
+  <script src="js/app.js?v=19g"></script>
 </body>
 </html>
