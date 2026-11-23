@@ -181,7 +181,7 @@ function actualitzaResumClasses() {
   if (!caixa) return;
   const recompte = recompteClasses();
   caixa.innerHTML = descobriment.config.classes
-    .map((c) => `<div><strong style="color:${c.color}">${recompte[c.id]}</strong>${etiquetaClasse(c)}</div>`)
+    .map((c) => `<div><strong style="border-color:${c.color}">${recompte[c.id]}</strong>${etiquetaClasse(c)}</div>`)
     .join("");
 }
 
@@ -208,7 +208,13 @@ function afegeixLlegenda() {
     div.innerHTML = `<button class="boto-llegenda">Leyenda</button><div class="contingut"></div>`;
     // Oberta d'entrada només en pantalles amples (on no tapa la ciutat)
     if (window.innerWidth >= 1280) div.classList.add("oberta");
-    div.querySelector(".boto-llegenda").addEventListener("click", () => div.classList.toggle("oberta"));
+    // aria-expanded: diu als lectors de pantalla si la llegenda és oberta o tancada
+    const boto = div.querySelector(".boto-llegenda");
+    boto.setAttribute("aria-expanded", div.classList.contains("oberta"));
+    boto.addEventListener("click", () => {
+      div.classList.toggle("oberta");
+      boto.setAttribute("aria-expanded", div.classList.contains("oberta"));
+    });
     L.DomEvent.disableClickPropagation(div); // els clics a la llegenda no arriben al mapa
     // Caselles dels clubs: un sol "escoltador" per a totes (delegació d'esdeveniments)
     div.addEventListener("change", (e) => {

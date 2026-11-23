@@ -34,7 +34,7 @@
   --navy: #051c2c;
   --accent: #c8a96e; /* únic color d'accent: daurat de la marca SmartXpand (mai per a text: poc contrast sobre blanc) */
   --accent-suau: rgba(200, 169, 110, 0.16);
-  --gris-text: #6c757d;
+  --gris-text: #5f6870; /* prou fosc per a contrast 4,5:1 també sobre --gris-fons */
   --gris-linia: #e9ecef;
   --gris-fons: #f5f6f7;
   --marge: 16px; /* separació de les targetes respecte de la vora */
@@ -263,7 +263,7 @@ body {
   display: inline-block;
   padding: 5px 14px;
   border-radius: 999px;
-  color: #ffffff;
+  color: var(--navy); /* en blanc, el contrast sobre verd, ambre o gris no arribava a 4,5:1 */
   font-weight: 600;
   font-size: 0.8rem;
   letter-spacing: 0.03em;
@@ -500,6 +500,12 @@ body {
 /* En una captura, els tipus amagats tampoc surten a la llegenda */
 .mode-captura .casella-capa:has(input:not(:checked)) {
   display: none;
+}
+
+/* Focus del teclat: el mateix contorn a tots els controls (només amb teclat, no amb el ratolí) */
+:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
 }
 
 /* --- Fonts i mètode --- */
@@ -759,8 +765,12 @@ body {
 }
 .resum-classes strong {
   display: block;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+  border-bottom: 3px solid; /* color de la classe (js/descobriment.js); xifra en navy */
   font-size: 1.3rem;
   line-height: 1.2;
+  color: var(--navy);
 }
 input[type="range"] {
   width: 100%;
@@ -888,7 +898,7 @@ input[type="range"] {
   color: var(--navy);
 }
 .cercador input:focus {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--navy); /* el daurat no arriba a 3:1 sobre blanc */
   outline-offset: 1px;
 }
 .cercador button {
