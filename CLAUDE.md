@@ -155,8 +155,8 @@ En cada paso:
 - Población: las dos puertas usan el Censo Anual 2024 (rejilla de 100 m) desde el
   paso 8. En algunos barrios el Censo da un 10–11 % más que el ADRH (verificado en
   QGIS con cálculo exacto). Causa de la diferencia entre fuentes: sin investigar.
-  `data/clubs.geojson` y los campos precalculados de `hexagons.geojson` ya no se
-  usan en la web.
+  `data/clubs.geojson` y los campos precalculados de `hexagons.geojson` (método del
+  MVP) se retiraron el 23/11/2026.
 - Centros municipales: Open Data BCN (solo Barcelona).
 - Urbanismo: Mapa urbanístic de Catalunya (enero 2023), solo urbano o
   urbanizable frente a no urbanizable.

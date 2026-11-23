@@ -107,9 +107,11 @@ de 800 m solo se solapan a menos de 1.600 m).
 
 ## 4. Exportación para la web — `07_exportar_web.py`
 
-Exporta a `data/` en EPSG:4326 con 5 decimales: `hexagons.geojson` (con barrio y
-distrito), `clubs.geojson` (sin los excluidos) y `limit_municipal.geojson`
-(solo la parte poligonal del límite).
+Exporta a `data/` en EPSG:4326 con 5 decimales: `hexagons.geojson` (identificador,
+barrio, distrito y suelo; desde el paso 8 la web calcula el resto en el navegador) y
+`limit_municipal.geojson` (solo la parte poligonal del límite). Los clubes salen de
+`11_exportar_clubs_segments.py`. Hasta el 22/11/2026 también exportaba
+`clubs.geojson` y los indicadores precalculados de cada hexágono (método del MVP).
 
 Después, **revisar `config/scoring.json`**: ciudad, marca propia, textos y la
 lista de fuentes con sus fechas.

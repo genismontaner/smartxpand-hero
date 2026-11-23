@@ -5,7 +5,9 @@ S'executa DINS de QGIS, després de 06_muc.py.
 
 - Coordenades en EPSG:4326 (latitud/longitud), que és el que fa servir Leaflet.
 - 5 decimals (~1 m de precisió): fitxers més lleugers.
-- Només els camps que necessita la web.
+- Només els camps que necessita la web. Des del pas 8 (22/11/2026) la web calcula
+  cada hexàgon al navegador: dels hexàgons només li calen l'identificador, el barri,
+  el districte i el sòl; els clubs surten de 11_exportar_clubs_segments.py.
 - Afegeix barri i districte a cada hexàgon (pel seu centre), amb els límits
   oficials d'Open Data BCN.
 """
@@ -21,20 +23,7 @@ GPKG = f"{ARREL}/preparacio/dades_intermedies/area_estudi.gpkg"
 BARRIS_CSV = f"{ARREL}/preparacio/dades_brutes/opendatabcn_barris_2026-10-26/BarcelonaCiutat_Barris.csv"
 SORTIDA = f"{ARREL}/data"
 
-CAMPS_HEX = ["hex_id", "barri", "districte", "pob_total", "pob_objectiu", "renda",
-             "n_competidors", "competidors", "solapament_pct", "dist_propi_m",
-             "pct_no_urbanitzable", "sol"]
-CAMPS_CLUBS = ["marca", "nom", "adreca", "municipi", "estat", "tipus_font"]
-
-# Noms nets dels clubs (mòdul compartit amb 11_exportar_clubs_segments.py)
-import sys
-sys.path.insert(0, f"{ARREL}/preparacio/scripts")
-from noms_clubs import nom_net
-
-
-def nom_curt(nom):
-    """Escurça els noms llargs dels centres municipals."""
-    return nom_net("", nom, "")
+CAMPS_HEX = ["hex_id", "barri", "districte", "sol"]
 
 
 def exporta(capa, nom_fitxer, rfc7946=True):
@@ -77,29 +66,12 @@ for h in hexagons.getFeatures():
     f = QgsFeature(hex_web.fields())
     f.setGeometry(h.geometry())
     valors = {n: h[n] for n in CAMPS_HEX if n not in ("barri", "districte")}
-    valors["competidors"] = nom_curt(valors["competidors"] or "")
     valors["barri"] = barri["nom_barri"]
     valors["districte"] = barri["nom_districte"]
     f.setAttributes([valors[c.name()] for c in camps])
     noves.append(f)
 hex_web.dataProvider().addFeatures(noves)
 exporta(hex_web, "hexagons.geojson")
-
-# --- Clubs (sense els exclosos) ---
-clubs = QgsVectorLayer(f"{GPKG}|layername=clubs_2026_10_25", "clubs", "ogr")
-clubs_web = capa_memoria("Point", "EPSG:25831", [QgsField(n, QVariant.String) for n in CAMPS_CLUBS])
-noves = []
-for c in clubs.getFeatures():
-    if c["estat"] == "exclos":
-        continue
-    valors = {n: c[n] for n in CAMPS_CLUBS}
-    valors["nom"] = nom_net(c["marca"], c["nom"], c["font_url"])
-    f = QgsFeature(clubs_web.fields())
-    f.setGeometry(c.geometry())
-    f.setAttributes([valors[n] for n in CAMPS_CLUBS])
-    noves.append(f)
-clubs_web.dataProvider().addFeatures(noves)
-exporta(clubs_web, "clubs.geojson")
 
 # --- Límit municipal ---
 # La fusió de seccions (pas 1) va deixar una col·lecció amb un polígon i una línia sobrant:
