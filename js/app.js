@@ -69,20 +69,24 @@ document.querySelector(".nansa").addEventListener("click", () => {
 // Posa la classe "mode-captura" a tota la pàgina: el CSS amaga els controls
 const avisToast = document.querySelector(".avis-toast");
 
+// Missatge breu que desapareix sol (perquè no surti a les captures)
+function mostraAvis(text) {
+  avisToast.textContent = text;
+  avisToast.classList.add("visible");
+  setTimeout(() => avisToast.classList.remove("visible"), 2500);
+}
+
 function activaCaptura(ambMissatge = true) {
   document.body.classList.add("mode-captura");
   mostraVista("panell"); // a la captura es veu la zona, no els controls
-  if (!ambMissatge) return;
-  // Missatge breu que desapareix sol (perquè no surti a la captura)
-  avisToast.classList.add("visible");
-  setTimeout(() => avisToast.classList.remove("visible"), 2500);
+  if (ambMissatge) mostraAvis("Modo captura · pulsa Esc (o toca la cabecera) para salir");
 }
 
 function surtCaptura() {
   document.body.classList.remove("mode-captura");
 }
 
-document.querySelector(".boto-captura").addEventListener("click", (esdeveniment) => {
+document.querySelector(".boto-captura:not(.boto-enllac)").addEventListener("click", (esdeveniment) => {
   // Evita que el mateix clic arribi a la capçalera i en surti de seguida
   esdeveniment.stopPropagation();
   activaCaptura();
@@ -173,6 +177,10 @@ async function inicia() {
   descobriment.hexagons = hexagons;
   for (const hex of hexagons.features) hex.centre = centreHexagon(hex);
 
+  // Paràmetres de l'adreça (enllaç compartit, js/enllac.js): abans de dibuixar els controls
+  const parametres = new URLSearchParams(window.location.search);
+  llegeixEnllac(parametres);
+
   // Vistes i controls comuns (una sola còpia, a la pestanya "Parámetros" d'entrada)
   dibuixaVistaAvaluacio();
   dibuixaVistaParametres();
@@ -212,16 +220,8 @@ async function inicia() {
   if (mapa.getSize().x > 0) ajustaVista();
   else mapa.once("resize", ajustaVista);
 
-  // Paràmetres de l'adreça (el que va després del "?"):
-  //   ?zona=H0913  → obre amb aquesta zona seleccionada (enllaç directe a una zona)
-  //   &captura=1   → obre directament en mode captura
-  const parametres = new URLSearchParams(window.location.search);
-  const zona = parametres.get("zona");
-  if (zona) {
-    descobriment.capa.eachLayer((capa) => {
-      if (capa.feature.properties.hex_id === zona) seleccionaHexagon(capa);
-    });
-  }
+  // Porta d'entrada, local o zona de l'enllaç (js/enllac.js); &captura=1 → mode captura
+  obreEnllac(parametres);
   if (parametres.get("captura") === "1") activaCaptura(false);
 }
 
