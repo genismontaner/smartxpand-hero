@@ -17,7 +17,8 @@ directores de expansión de cadenas de fitness en España.
 
 ## Dos puertas de entrada
 
-- **Descubrir zonas:** el mapa de hexágonos clasificados (ver abajo).
+- **Descubrir zonas:** el mapa de hexágonos clasificados (ver abajo) y, en el panel, las
+  mejores zonas: la de más puntuación de cada barrio, los 10 primeros barrios.
 - **Evaluar un local:** busca una dirección (geocodificador del ICGC) o haz clic
   en el mapa. Para un radio de 0,5 a 3 km en línea recta o una isócrona (a pie
   5, 10 o 15 min; en coche 5 min) se calcula la población

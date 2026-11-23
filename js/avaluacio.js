@@ -292,7 +292,8 @@ function colocaControls(idVista) {
   if (ranura && controls && controls.parentElement !== ranura) ranura.appendChild(controls);
 }
 
-// Vista "Evaluar un local": cercador, lloc per als controls i resultats (es dibuixa una vegada)
+// Vista "Evaluar un local" (es dibuixa una vegada). Ordre: cercador, resultat (puntuació, sí/no i
+// per què), paràmetres plegats i, a sota, les dades detallades i el comparador
 function dibuixaVistaAvaluacio() {
   const vista = document.getElementById("avaluacio");
   vista.innerHTML = `
@@ -303,8 +304,12 @@ function dibuixaVistaAvaluacio() {
       <button type="submit">Buscar</button>
     </form>
     <div id="resultats-cerca"></div>
-    <div class="ranura-controls"></div>
     <div id="resultats-avaluacio"></div>
+    <details class="plegable plegable-parametres">
+      <summary>Ajustar parámetros <span class="resum-parametres"></span></summary>
+      <div class="ranura-controls"></div>
+    </details>
+    <div id="detall-avaluacio"></div>
   `;
   // Cerca d'adreces: el formulari no recarrega la pàgina (preventDefault)
   vista.querySelector("#cercador-adreca").addEventListener("submit", (e) => {
@@ -361,10 +366,18 @@ async function cercaAdreca(text) {
 }
 
 // Resultats de l'àrea del punt candidat (es redibuixen a cada canvi)
+// Paràmetres actuals en una línia, a la capçalera de "Ajustar parámetros"
+function resumCurtParametres() {
+  return `${textArea()} · ${textEdat()} · umbral ${mirroring.llindar}`;
+}
+
 function mostraResultatsAvaluacio() {
   mostraCalibratge(); // el calibratge també es recalcula amb els paràmetres nous
   const caixa = document.getElementById("resultats-avaluacio");
   if (!caixa) return;
+  const detall = document.getElementById("detall-avaluacio");
+  document.querySelector(".resum-parametres").textContent = resumCurtParametres();
+  detall.innerHTML = "";
 
   if (!avaluacio.punt) {
     caixa.innerHTML = `<p class="nota-relativa">El área es un ${textArea()} desde el punto.
@@ -408,11 +421,14 @@ function mostraResultatsAvaluacio() {
     ${area.tipus === "isocrona" ? font(fontIsocrones()) : ""}
     ${incomplet ? `<p class="avis">El área supera la zona con datos (Barcelona + 3 km): cifras
       incompletas. No se responde sí o no.</p>` : ""}
-    ${fora ? `<p class="avis">El punto está fuera de Barcelona: la competencia low cost y municipal
-      solo está recogida dentro de la ciudad y en una franja de 800 m.</p>` : ""}
+    ${fora ? `<p class="avis">El punto está fuera de Barcelona: los centros municipales solo están
+      recogidos dentro de la ciudad.</p>` : ""}
 
     ${htmlMirroring(valorsCriteris(r), incomplet)}
     ${htmlBotoGuardar()}
+  `;
+  // Sota els paràmetres plegats: comparador i dades detallades
+  detall.innerHTML = `
     ${htmlComparador(2)}
 
     ${titolSeccio(n + 1, "Población")}
@@ -456,20 +472,22 @@ function capaArea(area, estil) {
     : L.geoJSON(area.geometria, { style: estil, interactive: false });
 }
 
-// Dibuixa el punt, l'àrea del candidat i les àrees dels centres propis que la toquen
+// Dibuixa el punt, l'àrea del candidat i les àrees dels centres propis amb què comparteix població
 function actualitzaMapaAvaluacio() {
   avaluacio.capa.clearLayers();
   if (!avaluacio.punt) return;
   const area = areaCandidat(avaluacio.punt.lat, avaluacio.punt.lng);
 
   if (area && !area.error) {
+    // Cel·les de població dins de l'àrea del candidat: un centre propi es dibuixa només si
+    // en comparteix alguna (el mateix criteri que el solapament de calculaArea)
+    const celles = avaluacio.graella.filter((c) => conte(area, c.lat, c.lon));
     for (const c of avaluacio.clubs.features) {
       if (c.properties.segment !== "propia" || c.properties.estat !== "obert") continue;
       const a = areaPropi(c);
-      // Només les que se solapen (o gairebé) amb la del candidat
-      if (a && caixesEsToquen(a, area)) {
-        capaArea(a, { color: NAVY, weight: 1, opacity: 0.4, fillColor: NAVY, fillOpacity: 0.06 })
-          .addTo(avaluacio.capa);
+      if (a && caixesEsToquen(a, area) && celles.some((cella) => conte(a, cella.lat, cella.lon))) {
+        // Només el contorn: amb farcit, les àrees superposades enfosquien el mapa
+        capaArea(a, { color: NAVY, weight: 1, opacity: 0.35, fill: false }).addTo(avaluacio.capa);
       }
     }
     capaArea(area, { color: NAVY, weight: 2, dashArray: "6 6", fill: false, pane: "superior" })

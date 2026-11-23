@@ -278,6 +278,57 @@ body {
   font-size: 0.85rem;
 }
 
+/* Rànquing de les millors zones (panell inicial) */
+.millors-zones {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fila-zona {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 8px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--navy);
+  cursor: pointer;
+}
+.fila-zona:hover,
+.fila-zona:focus-visible {
+  background: var(--accent-suau);
+}
+.fila-zona .posicio {
+  width: 18px;
+  font-size: 0.75rem;
+  color: var(--gris-text);
+  text-align: right;
+}
+.fila-zona .nom-zona {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.fila-zona .nom-zona small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: var(--gris-text);
+}
+.fila-zona .punts-zona {
+  min-width: 34px;
+  padding: 2px 0;
+  border: 2px solid; /* color de la classe de la zona */
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 /* Barres del desglossament */
 .criteri {
   margin-bottom: 14px;
@@ -818,6 +869,14 @@ input[type="range"] {
 }
 .plegable[open] summary {
   margin-bottom: 8px;
+}
+/* "Ajustar parámetros" a «Evaluar un local»: els paràmetres actuals, en gris, a la capçalera */
+.plegable-parametres summary .resum-parametres {
+  display: block;
+  margin-top: 2px;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--gris-text);
 }
 
 /* --- Comparador de locals (pas 4) --- */

@@ -57,6 +57,35 @@ function titolSeccio(numero, text, id = "") {
   return `<h3 class="seccio"${id ? ` id="${id}"` : ""}><span class="num">${numero}</span>${text}</h3>`;
 }
 
+// Les millors zones: la zona amb més puntuació de cada barri, i els 10 barris millors.
+// (Sense agrupar, els 10 primers serien gairebé tots hexàgons veïns del mateix barri)
+function millorsZones(quantes = 10) {
+  const perBarri = new Map();
+  for (const hex of descobriment.hexagons.features) {
+    const p = hex.calcul.puntuacio;
+    if (!p) continue; // descartades per regla prèvia
+    const barri = hex.properties.barri;
+    const actual = perBarri.get(barri);
+    if (!actual || p.total > actual.calcul.puntuacio.total) perBarri.set(barri, hex);
+  }
+  return [...perBarri.values()]
+    .sort((a, b) => b.calcul.puntuacio.total - a.calcul.puntuacio.total)
+    .slice(0, quantes);
+}
+
+function htmlMillorsZones(config) {
+  const files = millorsZones().map((hex, i) => {
+    const classe = config.classes.find((c) => c.id === hex.calcul.classe);
+    return `<li><button type="button" class="fila-zona" data-zona="${hex.properties.hex_id}">
+      <span class="posicio">${i + 1}</span>
+      <span class="nom-zona">${hex.properties.barri}<small>${hex.properties.districte} · zona ${hex.properties.hex_id}</small></span>
+      <span class="punts-zona" style="border-color:${classe.color}">${Math.round(hex.calcul.puntuacio.total)}</span>
+    </button></li>`;
+  }).join("");
+  return `<ol class="millors-zones">${files}</ol>
+    <p class="nota-relativa">La mejor zona de cada barrio, de 0 a 100 respecto a tus centros. Haz clic para verla.</p>`;
+}
+
 // Panell inicial: com es llegeix el mapa, amb quins paràmetres i quantes zones hi ha de cada classe
 function mostraPanellInicial(config) {
   const recompte = recompteClasses(); // js/descobriment.js
@@ -75,16 +104,24 @@ function mostraPanellInicial(config) {
     <p class="intro">Cada hexágono es una zona de ${config.mida_hexagon_m} m evaluada como si fuera un local:
        ${textArea()} desde su centro, público ${textEdat()}, comparada con tus ${valorsReferencia().length}
        centros ${config.marca_propia}. Haz clic en un hexágono para ver por qué.</p>
-    ${titolSeccio(1, "Clasificación")}
+    ${titolSeccio(1, "Mejores zonas")}
+    ${htmlMillorsZones(config)}
+    ${titolSeccio(2, "Clasificación")}
     <ul class="llista-classes">${classes}</ul>
     <p class="nota-relativa">${recompte.regla} zonas más, descartadas por una regla previa (suelo no
       urbanizable${avaluacio.tipusArea === "isocrona" ? ", sin isócrona a pie" : ""} o menos público
       objetivo que tu centro con menos). Los parámetros se cambian en la
       pestaña «Parámetros» y valen también para «Evaluar un local».</p>
-    ${titolSeccio(2, "Pesos de la puntuación")}
+    ${titolSeccio(3, "Pesos de la puntuación")}
     <ul class="dades">${pesos}</ul>
-    ${seccioFontsIMetode(config)}
+    ${seccioFontsIMetode(config, 4)}
   `;
+  // Cada fila del rànquing selecciona la seva zona al mapa (js/descobriment.js)
+  panell.querySelectorAll(".fila-zona").forEach((boto) => boto.addEventListener("click", () => {
+    descobriment.capa.eachLayer((capa) => {
+      if (capa.feature.properties.hex_id === boto.dataset.zona) seleccionaHexagon(capa);
+    });
+  }));
 }
 
 // Variables que l'eina no cobreix: es diu clarament, amb el motiu (no s'estimen)
@@ -96,16 +133,16 @@ function htmlNoCobertes(config, numeroSeccio) {
 }
 
 // "Fuentes y método": limitacions del mètode i fonts amb data (de scoring.json)
-function seccioFontsIMetode(config) {
+function seccioFontsIMetode(config, primera = 3) {
   const limitacions = config.limitacions.map((l) => `<li>${l}</li>`).join("");
   const fonts = config.fonts
     .map((f) => `<li>${f.dada}: <a href="${f.url}" target="_blank" rel="noopener">${f.font}</a> (${f.any})</li>`)
     .join("");
   return `
-    ${titolSeccio(3, "Método: qué hay que saber", "fonts-i-metode")}
+    ${titolSeccio(primera, "Método: qué hay que saber", "fonts-i-metode")}
     <ul class="fonts">${limitacions}</ul>
-    ${htmlNoCobertes(config, 4)}
-    ${titolSeccio(5, "Fuentes")}
+    ${htmlNoCobertes(config, primera + 1)}
+    ${titolSeccio(primera + 2, "Fuentes")}
     <ul class="fonts">${fonts}</ul>
   `;
 }
