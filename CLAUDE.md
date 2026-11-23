@@ -172,8 +172,9 @@ urbanizable; menos público objetivo que el centro propio con menos. Con los
 valores por defecto (1,5 km, 20–64 años, 35/25/25/15, low cost + municipal,
 umbral 50) salen **259 / 252 / 113** zonas y 682 por regla previa: es la nueva
 referencia. Paso 8.2: la web ya ofrece isócrona a pie (5/10/15) en el mapa de zonas
-si existe `data/isocrones_hexagons.geojson` (script 13, 1.092 peticiones a ORS en unos
-3 días de cuota; tarea programada diaria a las 10 h desde el 22/11/2026). No necesita
+si existe `data/isocrones_hexagons.geojson` (script 13: 1.092 zonas, 5 por petición; ORS solo deja
+unas 50 peticiones de isócronas al día aunque su panel diga 500; tarea programada diaria
+a las 10 h desde el 22/11/2026; 49 zonas hechas el 23/11/2026). No necesita
 clave: centros propios y zonas están precalculados. Hasta tenerlo, solo radio. Un solo juego de
 controles (`#controls-comuns`) se mueve entre la pestaña «Parámetros» y
 «Evaluar un local».

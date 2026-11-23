@@ -126,9 +126,12 @@ esta ejecución (ORS responde 403 «Quota exceeded»).
 ## 4c. Isócronas a pie de las zonas — `13_isocrones_hexagons.py`
 
 `/usr/bin/python3 preparacio/scripts/13_isocrones_hexagons.py` (opcional
-`--maxim N`, por defecto 480). Una petición por hexágono con 5, 10 y 15 min a pie:
-1.092 hexágonos (todos menos los de suelo no urbanizable), unos 3 días con la
-cuota gratuita de 500 al día. Se puede interrumpir y reanudar: cada hexágono se
+`--maxim N`, por defecto 45; `--grup N`, puntos por petición, por defecto 5). Cada
+petición pide 5, 10 y 15 min a pie para hasta 5 hexágonos: 1.092 hexágonos (todos
+menos los de suelo no urbanizable). El panel de ORS indica 500 isócronas al día,
+pero en la práctica (22 y 23/11/2026) responde 403 tras unas 50 peticiones; con 5
+puntos por petición son unos 5 días. Si ORS rechaza un bloque, el script repite sus
+puntos uno a uno. Se puede interrumpir y reanudar: cada hexágono se
 guarda en `dades_intermedies/isocrones_hexagons.jsonl` y se salta al volver a
 ejecutarlo; si ORS responde 403/429, se detiene. Los hexágonos sin calles cerca
 (400/404) se guardan como error y en la web se descartan por regla previa
