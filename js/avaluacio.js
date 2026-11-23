@@ -539,7 +539,7 @@ function actualitzaMapaAvaluacio() {
       const dLon = mitja / (111320 * Math.cos((c.lat * Math.PI) / 180));
       L.rectangle([[c.lat - dLat, c.lon - dLon], [c.lat + dLat, c.lon + dLon]], {
         renderer: LLENC_CELLES, stroke: false, interactive: false,
-        fillColor: c.compartida ? NAVY : "#c8a96e", fillOpacity: c.compartida ? 0.16 : 0.5,
+        fillColor: c.compartida ? NAVY : "#c8a96e", fillOpacity: c.compartida ? 0.4 : 0.7,
       }).addTo(avaluacio.capa);
     }
     for (const x of centres) {
@@ -596,6 +596,8 @@ async function preparaDades() {
 function activaAvaluacio() {
   avaluacio.capa.addTo(mapa);
   comparador.capa?.addTo(mapa);
+  // Mapa base esvaït: les cel·les daurades i navy no es confonen amb el beix i el gris del fons
+  mapa.getContainer().classList.add("mapa-esvait");
   colocaControls("avaluacio");
   ajustaAreaAlMode(); // sense clau, l'avaluació només fa servir radi (js/isocrones.js)
   actualitzaControlsArea();
@@ -607,5 +609,6 @@ function activaAvaluacio() {
 function desactivaAvaluacio() {
   avaluacio.capa.remove();
   comparador.capa?.remove();
+  mapa.getContainer().classList.remove("mapa-esvait");
   actualitzaAtribucio(); // treu l'atribució d'ORS fora d'aquest mode
 }

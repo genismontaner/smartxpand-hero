@@ -278,6 +278,11 @@ body {
   font-size: 0.85rem;
 }
 
+/* «Evaluar un local»: mapa base sense color i més clar perquè les cel·les destaquin */
+.mapa-esvait .leaflet-tile-pane {
+  filter: grayscale(1) opacity(0.55);
+}
+
 /* Llegenda del solapament a «Evaluar un local» (cel·les del mapa) */
 .llegenda-solapament {
   display: flex;
@@ -295,10 +300,10 @@ body {
   vertical-align: -1px;
 }
 .mostra-cella.exclusiva {
-  background: rgba(200, 169, 110, 0.5);
+  background: rgba(200, 169, 110, 0.7);
 }
 .mostra-cella.compartida {
-  background: rgba(5, 28, 44, 0.16);
+  background: rgba(5, 28, 44, 0.4);
 }
 .subtitol-llista {
   margin: 10px 0 4px;
