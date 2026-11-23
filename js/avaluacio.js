@@ -140,6 +140,45 @@ function calculaArea(area, excloure = null) {
   return r;
 }
 
+// Solapament detallat d'una àrea amb els centres propis, per dibuixar-lo i explicar-lo:
+// - celles: cada cel·la de 100 m amb públic objectiu, i si també és dins d'algun centre propi
+// - centres: per a cada centre propi, quant públic objectiu comparteix amb l'àrea (de més a menys)
+// Una cel·la pot ser dins de diversos centres: la suma dels centres pot superar el total compartit.
+function solapamentDetallat(area) {
+  const iDes = avaluacio.trams.indexOf(avaluacio.edatDes);
+  const iFins = avaluacio.trams.indexOf(avaluacio.edatFins);
+  const arees = avaluacio.clubs.features
+    .filter((c) => c.properties.segment === "propia" && c.properties.estat === "obert")
+    .map((club) => ({ club, area: areaPropi(club), persones: 0 }))
+    .filter((x) => x.area && caixesEsToquen(x.area, area));
+
+  const celles = [];
+  for (const c of avaluacio.graella) {
+    if (!conte(area, c.lat, c.lon)) continue;
+    const objectiu = c.trams.slice(iDes, iFins + 1).reduce((a, b) => a + b, 0);
+    if (!objectiu) continue;
+    let compartida = false;
+    for (const x of arees) {
+      if (conte(x.area, c.lat, c.lon)) {
+        compartida = true;
+        x.persones += objectiu;
+      }
+    }
+    celles.push({ lat: c.lat, lon: c.lon, compartida });
+  }
+  const centres = arees.filter((x) => x.persones > 0).sort((a, b) => b.persones - a.persones);
+  return { celles, centres };
+}
+
+// Llegenda del mapa d'avaluació: quina part del públic és només d'aquest local
+function htmlLlegendaSolapament(r) {
+  const pctCompartida = r.pobObjectiu ? (r.compartida / r.pobObjectiu) * 100 : 0;
+  return `<p class="llegenda-solapament">
+    <span><i class="mostra-cella exclusiva"></i>Solo de este local: <strong>${decimal(100 - pctCompartida)} %</strong></span>
+    <span><i class="mostra-cella compartida"></i>Compartido con tus centros: <strong>${decimal(pctCompartida)} %</strong></span>
+  </p>`;
+}
+
 // Petit text de font sota cada xifra
 function font(text) {
   return `<span class="font-dada">${text}</span>`;
@@ -411,6 +450,10 @@ function mostraResultatsAvaluacio() {
 
   const marcaPropia = avaluacio.clubs.features.find((c) => c.properties.segment === "propia").properties.marca;
   const propis = (r.clubs.propia || []).map((c) => `${c.nom} (${numero(c.distancia)} m)`).join(", ");
+  // Amb quins centres comparteix públic, i quant (els 5 primers)
+  const { centres } = solapamentDetallat(area);
+  const comparteix = centres.slice(0, 5).map((x) => `<li>${x.club.properties.nom}: <strong>${numero(x.persones)}</strong>
+    (${decimal(r.pobObjectiu ? (x.persones / r.pobObjectiu) * 100 : 0)} %)</li>`).join("");
   const pctCompartida = r.pobObjectiu ? (r.compartida / r.pobObjectiu) * 100 : 0;
   const fora = !dinsDelLimit(lat, lng);
   // Numeració de seccions: 1 = desglossament; 2 = comparador (només si hi ha locals desats)
@@ -424,7 +467,9 @@ function mostraResultatsAvaluacio() {
     ${fora ? `<p class="avis">El punto está fuera de Barcelona: los centros municipales solo están
       recogidos dentro de la ciudad.</p>` : ""}
 
-    ${htmlMirroring(valorsCriteris(r), incomplet)}
+    ${htmlMirroring(valorsCriteris(r), incomplet, "Este local", incomplet ? ""
+      : `<strong>Por qué:</strong> ${notaDecisio(puntuaMirroring(valorsCriteris(r)), null, avaluacio.config)}`)}
+    ${htmlLlegendaSolapament(r)}
     ${htmlBotoGuardar()}
   `;
   // Sota els paràmetres plegats: comparador i dades detallades
@@ -457,6 +502,8 @@ function mostraResultatsAvaluacio() {
       <li>Público objetivo compartido con centros propios: <strong>${numero(r.compartida)}</strong>
         (${decimal(pctCompartida)} % del público objetivo del área)</li>
     </ul>
+    ${centres.length ? `<p class="subtitol-llista">Comparte público con ${centres.length} centro(s)${centres.length > 5 ? "; los 5 que más" : ""}:</p>
+    <ul class="dades">${comparteix}</ul>` : ""}
     ${font(`Personas del área que también viven dentro del área de algún centro propio
       (${avaluacio.tipusArea === "radi" ? "mismo radio" : "misma isócrona"})`)}
 
@@ -472,23 +519,35 @@ function capaArea(area, estil) {
     : L.geoJSON(area.geometria, { style: estil, interactive: false });
 }
 
-// Dibuixa el punt, l'àrea del candidat i les àrees dels centres propis amb què comparteix població
+// Un sol "llenç" (canvas) per a les cel·les: dibuixar-ne centenars com a elements SVG seria lent
+const LLENC_CELLES = L.canvas({ padding: 0.5 });
+
+// Dibuixa el punt i l'àrea del candidat, pintada per cel·les de 100 m: en daurat el públic que
+// només arriba a aquest local; en navy suau, el que ja és dins de l'àrea d'algun centre propi.
+// Els centres propis que comparteixen públic porten un anell (amb les persones compartides).
+// Abans es dibuixaven els cercles de tots aquests centres i el mapa quedava atapeït.
 function actualitzaMapaAvaluacio() {
   avaluacio.capa.clearLayers();
   if (!avaluacio.punt) return;
   const area = areaCandidat(avaluacio.punt.lat, avaluacio.punt.lng);
 
   if (area && !area.error) {
-    // Cel·les de població dins de l'àrea del candidat: un centre propi es dibuixa només si
-    // en comparteix alguna (el mateix criteri que el solapament de calculaArea)
-    const celles = avaluacio.graella.filter((c) => conte(area, c.lat, c.lon));
-    for (const c of avaluacio.clubs.features) {
-      if (c.properties.segment !== "propia" || c.properties.estat !== "obert") continue;
-      const a = areaPropi(c);
-      if (a && caixesEsToquen(a, area) && celles.some((cella) => conte(a, cella.lat, cella.lon))) {
-        // Només el contorn: amb farcit, les àrees superposades enfosquien el mapa
-        capaArea(a, { color: NAVY, weight: 1, opacity: 0.35, fill: false }).addTo(avaluacio.capa);
-      }
+    const { celles, centres } = solapamentDetallat(area);
+    const mitja = 50; // metres: mitja cel·la
+    for (const c of celles) {
+      const dLat = mitja / 111320;
+      const dLon = mitja / (111320 * Math.cos((c.lat * Math.PI) / 180));
+      L.rectangle([[c.lat - dLat, c.lon - dLon], [c.lat + dLat, c.lon + dLon]], {
+        renderer: LLENC_CELLES, stroke: false, interactive: false,
+        fillColor: c.compartida ? NAVY : "#c8a96e", fillOpacity: c.compartida ? 0.16 : 0.5,
+      }).addTo(avaluacio.capa);
+    }
+    for (const x of centres) {
+      const [lon, lat] = x.club.geometry.coordinates;
+      L.circleMarker([lat, lon], { radius: 11, color: NAVY, weight: 2, fill: false, pane: "superior" })
+        .bindTooltip(`${x.club.properties.nom}<br>comparte <strong>${numero(x.persones)}</strong> personas`,
+          { direction: "top", offset: [0, -10] })
+        .addTo(avaluacio.capa);
     }
     capaArea(area, { color: NAVY, weight: 2, dashArray: "6 6", fill: false, pane: "superior" })
       .addTo(avaluacio.capa);

@@ -278,6 +278,34 @@ body {
   font-size: 0.85rem;
 }
 
+/* Llegenda del solapament a «Evaluar un local» (cel·les del mapa) */
+.llegenda-solapament {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 8px 0 4px;
+  font-size: 0.78rem;
+}
+.mostra-cella {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  border-radius: 2px;
+  vertical-align: -1px;
+}
+.mostra-cella.exclusiva {
+  background: rgba(200, 169, 110, 0.5);
+}
+.mostra-cella.compartida {
+  background: rgba(5, 28, 44, 0.16);
+}
+.subtitol-llista {
+  margin: 10px 0 4px;
+  font-size: 0.8rem;
+  color: var(--gris-text);
+}
+
 /* Rànquing de les millors zones (panell inicial) */
 .millors-zones {
   margin: 0;

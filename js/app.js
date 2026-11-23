@@ -176,7 +176,12 @@ async function inicia() {
     // 'style' també pot ser una funció: Leaflet la crida per a cada hexàgon
     style: estilHexagon,
     // 'onEachFeature' s'executa per a cada hexàgon: hi afegim l'esdeveniment de clic
-    onEachFeature: (hex, capa) => capa.on("click", () => seleccionaHexagon(capa)),
+    onEachFeature: (hex, capa) => {
+      capa.on("click", () => seleccionaHexagon(capa));
+      // Rètol en passar el ratolí (només amb ratolí: al mòbil, tocar ja obre la zona).
+      // El contingut és una funció: es calcula en el moment, amb la puntuació actual
+      if (!L.Browser.mobile) capa.bindTooltip(() => textRetolHexagon(hex), { sticky: true, direction: "top", offset: [0, -8] });
+    },
   }).addTo(mapa);
 
   // Límit municipal: només la línia, sense farciment

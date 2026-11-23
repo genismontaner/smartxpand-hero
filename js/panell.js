@@ -43,7 +43,8 @@ function notaDecisio(p, classe, config) {
     .slice(0, nd.maxim_per_banda)
     .map((d) => frase(d, "frase_feble"));
 
-  const parts = [nd.classe[classe]];
+  // Sense classe (un local, no una zona) la nota comença directament pels arguments
+  const parts = classe ? [nd.classe[classe]] : [];
   // Els textos "sense..." porten els llindars reals ({nota_a_favor}, {nota_en_contra})
   const senseAFavor = nd.sense_a_favor.replace("{nota_a_favor}", nd.nota_a_favor);
   const senseEnContra = nd.sense_en_contra.replace("{nota_en_contra}", nd.nota_en_contra);

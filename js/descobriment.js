@@ -117,6 +117,15 @@ function resumParametres() {
     `umbral ${mirroring.llindar}.`;
 }
 
+// Rètol curt d'un hexàgon: barri, puntuació i classe
+function textRetolHexagon(hex) {
+  const c = hex.calcul;
+  const classe = descobriment.config.classes.find((x) => x.id === c.classe);
+  const valor = c.motiu ? "descartada por regla previa"
+    : `<strong>${Math.round(c.puntuacio.total)}</strong> · ${etiquetaClasse(classe)}`;
+  return `${hex.properties.barri}<br>${valor}`;
+}
+
 // --- Selecció d'un hexàgon ---
 
 function seleccionaHexagon(capa) {

@@ -114,7 +114,8 @@ function formatValor(id, valor) {
 // Bloc de resultat: puntuació, sí/no i desglossament.
 // 'incomplet': l'àrea surt de la zona amb dades; es mostra la puntuació però no el sí/no.
 // 'subjecte': com es diu el que es puntua ("Este local" o "Esta zona")
-function htmlMirroring(valors, incomplet = false, subjecte = "Este local") {
+// 'nota': frase opcional del perquè (a favor / en contra), just sota la puntuació
+function htmlMirroring(valors, incomplet = false, subjecte = "Este local", nota = "") {
   const p = puntuaMirroring(valors);
   const arriba = p.total >= mirroring.llindar;
   const etiqueta = incomplet
@@ -136,6 +137,7 @@ function htmlMirroring(valors, incomplet = false, subjecte = "Este local") {
       <span class="xifra">${p.total}<small> / 100</small></span>
       ${etiqueta}
     </div>
+    ${nota ? `<p class="nota-decisio">${nota}</p>` : ""}
     <p class="nota-relativa">Comparado con tus ${p.nCentres} centros con la misma área (${textArea()})
       y los mismos parámetros.
       50 = como la mediana de tus centros. Umbral fijado: ${mirroring.llindar}.
