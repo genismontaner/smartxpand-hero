@@ -163,20 +163,18 @@ function urlPlantilla() {
 // Apartat plegable amb el selector de fitxer (es dibuixa una sola vegada amb els controls)
 function htmlCalibratge() {
   return `
-    <details class="plegable" id="calibratge">
-      <summary>Calibración con tus centros</summary>
-      <p class="nota-relativa">Carga un CSV con el rendimiento real de tus centros (socios, facturación,
-        ocupación…). Solo se usa el orden, no la cifra. El fichero se lee en este navegador y no se
-        envía a ningún sitio.</p>
-      <p class="nota-relativa">Columnas: <strong>nombre; lat; lon; rendimiento</strong>, sin separador
-        de miles. <a href="${urlPlantilla()}" download="plantilla_calibracion.csv">Descargar plantilla</a>
-        (tus centros, con el rendimiento vacío).</p>
+    <div class="grup-parametres" id="calibratge">
+      <h4>Calibración con tus centros</h4>
+      <p class="nota-relativa">Sube el rendimiento real de tus centros (socios, facturación…) y compara
+        su orden con el de la puntuación. El fichero no sale de tu navegador.
+        <a href="${urlPlantilla()}" download="plantilla_calibracion.csv">Plantilla CSV</a>
+        (nombre; lat; lon; rendimiento).</p>
       <!-- El selector de fitxers del navegador surt en l'idioma del navegador: s'amaga i es fa servir
            una etiqueta (label) com a botó, que l'obre igualment -->
       <label class="boto-guardar boto-fitxer">Cargar CSV de rendimiento
         <input type="file" id="fitxer-calibratge" accept=".csv,text/csv" hidden></label>
       <div id="resultats-calibratge"></div>
-    </details>`;
+    </div>`;
 }
 
 function connectaCalibratge() {

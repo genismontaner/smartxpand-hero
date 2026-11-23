@@ -159,21 +159,17 @@ function htmlControlsMirroring() {
     <label class="casella"><input type="checkbox" data-msegment="${id}" ${compta ? "checked" : ""}>
       ${SEGMENTS[id].etiqueta}</label>`).join("");
 
-  // <details>: apartat que s'obre i es tanca sense JavaScript
+  // Tres grups seguits (grupParametres, js/avaluacio.js), sense desplegables
   return `
-    <details class="plegable">
-      <summary>Criterios, pesos y umbral</summary>
-      <p class="nota-relativa">Pesos (se ajustan solos para sumar 100 %)</p>
-      ${pesos}
-      <p class="nota-relativa">Cuentan como competencia</p>
-      ${segments}
+    ${grupParametres("Peso de cada criterio", pesos, "suman 100 %")}
+    ${grupParametres("Competencia que cuenta", `<div class="caselles-dues">${segments}</div>`)}
+    ${grupParametres("Umbral sí / no", `
       <div class="criteri">
-        <div class="linia"><label for="llindar">Umbral mínimo (sí / no)</label>
+        <div class="linia"><label for="llindar">Puntuación mínima</label>
           <span class="valor" id="valor-llindar">${mirroring.llindar}</span></div>
         <input type="range" id="llindar" min="0" max="100" step="5" value="${mirroring.llindar}">
       </div>
-      <button class="boto-restablir" id="restablir-mirroring">Restablecer valores</button>
-    </details>
+      <button class="boto-restablir" id="restablir-mirroring">Restablecer valores</button>`, "50 = como la mediana de tus centros")}
   `;
 }
 

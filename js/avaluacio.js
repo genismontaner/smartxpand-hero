@@ -191,7 +191,7 @@ function font(text) {
 function htmlControlsArea() {
   const radi = `
     <div class="criteri" id="control-radi">
-      <div class="linia"><label for="radi-km">Radio de captación</label>
+      <div class="linia"><label for="radi-km">Radio</label>
         <span class="valor" id="valor-radi"></span></div>
       <input type="range" id="radi-km" min="0.5" max="3" step="0.1" value="${avaluacio.radiKm}">
     </div>`;
@@ -203,7 +203,6 @@ function htmlControlsArea() {
     .map((m) => `<button type="button" class="pindola" data-minuts="${m}">${m} min</button>`).join("");
   return `
     <div class="criteri" id="grup-tipus-area">
-      <label>Área de captación</label>
       <div class="pindoles" role="group" aria-label="Tipo de área">
         <button type="button" class="pindola" data-tipus-area="radi">Radio (km)</button>
         <button type="button" class="pindola" data-tipus-area="isocrona">Isócrona (min)</button>
@@ -272,6 +271,14 @@ function connectaControlsArea() {
   actualitzaControlsArea();
 }
 
+// Un grup de paràmetres: títol curt (i una pista opcional, en gris) i els seus controls
+function grupParametres(titol, contingut, pista = "") {
+  return `<div class="grup-parametres">
+    <h4>${titol}${pista ? ` <span>${pista}</span>` : ""}</h4>
+    ${contingut}
+  </div>`;
+}
+
 // Controls comuns a les dues portes d'entrada (àrea, edat, pesos, segments, llindar i
 // calibratge). N'hi ha una sola còpia: es mou a la vista que es mostra (colocaControls)
 function dibuixaControlsComuns() {
@@ -286,16 +293,15 @@ function dibuixaControlsComuns() {
     .map((t) => `<option value="${t}"${t === seleccionat ? " selected" : ""}>${etiquetaTram(t)}</option>`)
     .join("");
 
+  // Un bloc continu, sense desplegables: un grup per tema, amb un títol curt cadascun
   caixa.innerHTML = `
-    ${htmlControlsArea()}
-    <div class="criteri">
-      <label for="edat-des">Público objetivo (edad, tramos de 5 años)</label>
+    ${grupParametres("Área de captación", htmlControlsArea())}
+    ${grupParametres("Público objetivo", `
       <div class="selector-edat">
         <select id="edat-des" aria-label="Edad desde">${opcions(avaluacio.edatDes)}</select>
         <span>a</span>
         <select id="edat-fins" aria-label="Edad hasta">${opcions(avaluacio.edatFins)}</select>
-      </div>
-    </div>
+      </div>`, "edad, en tramos de 5 años")}
     ${htmlControlsMirroring()}
     ${htmlCalibratge()}
   `;
@@ -346,10 +352,11 @@ function dibuixaVistaAvaluacio() {
     </form>
     <div id="resultats-cerca"></div>
     <div id="resultats-avaluacio"></div>
-    <details class="plegable plegable-parametres">
-      <summary>Ajustar parámetros <span class="resum-parametres"></span></summary>
+    <section class="bloc-parametres">
+      <h3 class="titol-parametres">Parámetros</h3>
+      <p class="nota-relativa">Valen también para el mapa de zonas.</p>
       <div class="ranura-controls"></div>
-    </details>
+    </section>
     <div id="detall-avaluacio"></div>
   `;
   // Cerca d'adreces: el formulari no recarrega la pàgina (preventDefault)
@@ -407,17 +414,11 @@ async function cercaAdreca(text) {
 }
 
 // Resultats de l'àrea del punt candidat (es redibuixen a cada canvi)
-// Paràmetres actuals en una línia, a la capçalera de "Ajustar parámetros"
-function resumCurtParametres() {
-  return `${textArea()} · ${textEdat()} · umbral ${mirroring.llindar}`;
-}
-
 function mostraResultatsAvaluacio() {
   mostraCalibratge(); // el calibratge també es recalcula amb els paràmetres nous
   const caixa = document.getElementById("resultats-avaluacio");
   if (!caixa) return;
   const detall = document.getElementById("detall-avaluacio");
-  document.querySelector(".resum-parametres").textContent = resumCurtParametres();
   detall.innerHTML = "";
 
   if (!avaluacio.punt) {

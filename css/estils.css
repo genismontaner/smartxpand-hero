@@ -971,13 +971,58 @@ input[type="range"] {
 .plegable[open] summary {
   margin-bottom: 8px;
 }
-/* "Ajustar parámetros" a «Evaluar un local»: els paràmetres actuals, en gris, a la capçalera */
-.plegable-parametres summary .resum-parametres {
-  display: block;
+/* --- Paràmetres: un bloc continu, sense desplegables, amb grups separats per una línia --- */
+.bloc-parametres {
+  margin: 28px 0 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--gris-linia);
+}
+.titol-parametres {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.bloc-parametres > .nota-relativa {
   margin-top: 2px;
-  font-weight: 400;
-  font-size: 0.75rem;
+}
+.grup-parametres {
+  padding: 20px 0 8px;
+  border-bottom: 1px solid var(--gris-linia);
+}
+.grup-parametres:last-child {
+  border-bottom: none;
+}
+/* Títol de cada grup: petit, en majúscules i gris (com a la llegenda); la pista, al costat */
+.grup-parametres h4 {
+  margin: 0 0 14px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--gris-text);
+}
+.grup-parametres h4 span {
+  margin-left: 6px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.grup-parametres .criteri {
+  margin-bottom: 18px;
+}
+.grup-parametres .nota-relativa {
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+/* Caselles de competència en dues columnes: la llista és la meitat de llarga */
+.caselles-dues {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+  margin-bottom: 12px;
+}
+.caselles-dues .casella {
+  margin-bottom: 4px;
 }
 
 /* --- Comparador de locals (pas 4) --- */
