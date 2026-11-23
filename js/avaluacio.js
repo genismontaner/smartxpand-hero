@@ -475,7 +475,7 @@ function actualitzaMapaAvaluacio() {
     capaArea(area, { color: NAVY, weight: 2, dashArray: "6 6", fill: false, pane: "superior" })
       .addTo(avaluacio.capa);
   }
-  L.circleMarker(avaluacio.punt, { radius: 8, color: "#ffffff", weight: 2, fillColor: "#2bb3c0",
+  L.circleMarker(avaluacio.punt, { radius: 8, color: "#ffffff", weight: 2, fillColor: "#c8a96e",
     fillOpacity: 1, interactive: false, pane: "superior" }).addTo(avaluacio.capa);
 }
 

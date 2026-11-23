@@ -32,8 +32,8 @@
 /* Colors i mides de marca: es defineixen un cop i es fan servir a tot arreu */
 :root {
   --navy: #051c2c;
-  --accent: #2bb3c0; /* únic color d'accent (turquesa) */
-  --accent-suau: rgba(43, 179, 192, 0.12);
+  --accent: #c8a96e; /* únic color d'accent: daurat de la marca SmartXpand (mai per a text: poc contrast sobre blanc) */
+  --accent-suau: rgba(200, 169, 110, 0.16);
   --gris-text: #6c757d;
   --gris-linia: #e9ecef;
   --gris-fons: #f5f6f7;
@@ -207,7 +207,7 @@ body {
   line-height: 1.5;
 }
 
-/* Títol de secció amb número en un cercle turquesa */
+/* Títol de secció amb número en un cercle daurat */
 .seccio {
   display: flex;
   align-items: center;
@@ -225,7 +225,7 @@ body {
   height: 24px;
   border-radius: 50%;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--navy); /* navy sobre daurat: blanc no tindria prou contrast */
   font-size: 0.8rem;
   font-weight: 700;
 }

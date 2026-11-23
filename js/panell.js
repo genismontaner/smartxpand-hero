@@ -52,7 +52,7 @@ function notaDecisio(p, classe, config) {
   return parts.join(" ");
 }
 
-// Títol de secció amb el número dins d'un cercle turquesa
+// Títol de secció amb el número dins d'un cercle daurat
 function titolSeccio(numero, text, id = "") {
   return `<h3 class="seccio"${id ? ` id="${id}"` : ""}><span class="num">${numero}</span>${text}</h3>`;
 }

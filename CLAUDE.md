@@ -248,7 +248,11 @@ Antes de un commit con el GeoPackage abierto en QGIS:
 ## Identidad visual
 
 - Tipografía Poppins.
-- Navy (#051C2C) y un solo acento: turquesa #2BB3C0.
+- Navy (#051C2C) para texto y fondos oscuros, y un solo acento: el dorado de la marca
+  SmartXpand #C8A96E (desde el 23/11/2026; antes turquesa). El dorado nunca como color
+  de texto sobre blanco (contraste insuficiente): rellenos, bordes y detalles.
+- Sin logotipo ni símbolo (ni cubo ni cuadrado): solo el nombre SmartXpand. Icono de la
+  pestaña: las iniciales «SX» en dorado.
 - Clases: verde (investigar), ámbar (esperar), gris (descartar).
 - Estética sobria, sin adornos.
 

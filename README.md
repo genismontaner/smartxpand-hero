@@ -122,7 +122,7 @@ fuente de cada precio están en [`preparacio/marques.csv`](preparacio/marques.cs
 
 ```
 index.html              Página
-css/estils.css          Estilos (Poppins, navy #051C2C, turquesa #2BB3C0)
+css/estils.css          Estilos (Poppins, navy #051C2C, dorado #C8A96E)
 js/app.js               Mapa Leaflet, capas, selección, móvil y modo captura
 js/panell.js            Panel de decisión
 js/descobriment.js      Mapa de zonas: cálculo, clases, selección y leyenda
