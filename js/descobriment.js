@@ -210,6 +210,14 @@ function afegeixLlegenda() {
     if (window.innerWidth >= 1280) div.classList.add("oberta");
     div.querySelector(".boto-llegenda").addEventListener("click", () => div.classList.toggle("oberta"));
     L.DomEvent.disableClickPropagation(div); // els clics a la llegenda no arriben al mapa
+    // Caselles dels clubs: un sol "escoltador" per a totes (delegació d'esdeveniments)
+    div.addEventListener("change", (e) => {
+      const segment = e.target.dataset.segment;
+      if (!segment) return;
+      if (e.target.checked) avaluacio.segmentsOcults.delete(segment);
+      else avaluacio.segmentsOcults.add(segment);
+      aplicaVisibilitatClubs(); // js/avaluacio.js
+    });
     return div;
   };
   llegenda.addTo(mapa);
@@ -220,16 +228,21 @@ function actualitzaLlegenda() {
   const classes = config.classes
     .map((c) => `<div><span class="mostra" style="background:${c.color}"></span>${etiquetaClasse(c)} ${rangClasse(c.id).split(" (")[0]}</div>`)
     .join("");
-  const punt = (estil, text) => `<div><span class="punt" style="background:${estil.fillColor};
-    border:${Math.max(1, estil.weight)}px solid ${estil.color === "#ffffff" ? estil.fillColor : estil.color}"></span>${text}</div>`;
-  const clubs = Object.values(SEGMENTS).map((s) => punt(s.estil, s.etiqueta)).join("");
+  // Cada tipus de club és una casella: desmarcada, aquell segment s'amaga del mapa
+  const casella = (segment, mostra, text) => `<label class="casella-capa">
+    <input type="checkbox" data-segment="${segment}" ${avaluacio.segmentsOcults.has(segment) ? "" : "checked"}>
+    ${mostra}${text}</label>`;
+  const punt = (estil) => `<span class="punt" style="background:${estil.fillColor};
+    border:${Math.max(1, estil.weight)}px solid ${estil.color === "#ffffff" ? estil.fillColor : estil.color}"></span>`;
+  const clubs = Object.entries(SEGMENTS).map(([id, s]) => casella(id, punt(s.estil), s.etiqueta)).join("");
   document.querySelector(".llegenda .contingut").innerHTML = `
     <strong>Clasificación</strong>
     ${classes}
     <div><span class="mostra" style="background:${config.classes.at(-1).color};opacity:0.3"></span>Descartado por regla previa</div>
     <strong>Clubes</strong>
-    <div><span class="punt" style="background:${NAVY};width:12px;height:12px"></span>${config.marca_propia}</div>
+    ${casella("propia", `<span class="punt" style="background:${NAVY};width:12px;height:12px"></span>`, config.marca_propia)}
     ${clubs}
+    <p class="nota-llegenda">Ocultar clubes solo cambia lo que se ve: la puntuación usa los segmentos elegidos en «Parámetros».</p>
     <div><span class="cercle"></span>Área: ${textArea()}</div>
   `;
 }

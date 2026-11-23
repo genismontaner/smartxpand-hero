@@ -21,6 +21,8 @@ const avaluacio = {
   limit: null, // contorn de Barcelona (per avisar si el punt hi és fora)
   capa: null, // grup de capes del mode (punt, cercles, clubs)
   capaClubs: null,
+  marcadorsClubs: [], // tots els punts de clubs, també els amagats des de la llegenda
+  segmentsOcults: new Set(), // segments que l'usuari ha amagat (només visual, no canvia el càlcul)
 };
 
 // Segments de competència: etiqueta i estil al mapa (sense colors nous: grisos i navy)
@@ -586,6 +588,7 @@ async function preparaDades() {
         pane: "superior", interactive: false });
     },
   });
+  avaluacio.marcadorsClubs = avaluacio.capaClubs.getLayers();
 
   // Clic al mapa: nou punt candidat (només en aquest mode)
   mapa.on("click", (e) => {
@@ -593,6 +596,17 @@ async function preparaDades() {
     situaPunt(e.latlng);
     if (esMobil()) lateral.classList.remove("desplegada");
   });
+}
+
+// Mostra o amaga els clubs de cada segment segons les caselles de la llegenda.
+// Es treuen del grup de capes (no s'esborren): tornar-los a mostrar és afegir-los de nou.
+function aplicaVisibilitatClubs() {
+  for (const marcador of avaluacio.marcadorsClubs) {
+    const ocult = avaluacio.segmentsOcults.has(marcador.feature.properties.segment);
+    const hiEs = avaluacio.capaClubs.hasLayer(marcador);
+    if (ocult && hiEs) avaluacio.capaClubs.removeLayer(marcador);
+    if (!ocult && !hiEs) avaluacio.capaClubs.addLayer(marcador);
+  }
 }
 
 // Entrar i sortir del mode (els clubs es veuen en tots dos modes)

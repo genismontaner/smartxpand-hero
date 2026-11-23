@@ -476,6 +476,32 @@ body {
   border-radius: 50%;
 }
 
+/* Caselles per mostrar o amagar cada tipus de club */
+.casella-capa {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.casella-capa input {
+  margin: 0 8px 0 0;
+  accent-color: var(--navy);
+}
+.nota-llegenda {
+  max-width: 190px;
+  margin: 4px 0 6px;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: var(--gris-text);
+}
+.mode-captura .casella-capa input,
+.mode-captura .nota-llegenda {
+  display: none;
+}
+/* En una captura, els tipus amagats tampoc surten a la llegenda */
+.mode-captura .casella-capa:has(input:not(:checked)) {
+  display: none;
+}
+
 /* --- Fonts i mètode --- */
 .fonts {
   margin: 0;
