@@ -52,8 +52,19 @@ def isocrones(lon, lat):
         data=cos,
         headers={"Authorization": CLAU, "Content-Type": "application/json"},
     )
-    with urllib.request.urlopen(peticio, timeout=60) as resposta:
-        return json.load(resposta)
+    # Si ORS triga massa o la connexió falla, es torna a provar fins a 3 vegades
+    # (el 23/11/2026 un temps d'espera va aturar la primera execució)
+    for intent in range(1, 4):
+        try:
+            with urllib.request.urlopen(peticio, timeout=90) as resposta:
+                return json.load(resposta)
+        except urllib.error.HTTPError:
+            raise  # resposta d'ORS (quota, sense carrers...): es tracta a fora
+        except (urllib.error.URLError, TimeoutError, OSError) as error:
+            if intent == 3:
+                raise SystemExit(f"ORS no respon després de 3 intents ({error}). Torna-ho a provar més tard.")
+            print(f"  ORS no respon ({error}); nou intent en {30 * intent} s")
+            time.sleep(30 * intent)
 
 
 def arrodoneix(coordenades):
