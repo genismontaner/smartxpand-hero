@@ -202,7 +202,8 @@ function rangClasse(id) {
 // --- Llegenda ---
 // Un "control" de Leaflet és un element HTML col·locat damunt del mapa, en una cantonada
 function afegeixLlegenda() {
-  const llegenda = L.control({ position: "bottomleft" });
+  // A dalt a l'esquerra, sota la capçalera: es llegeix just després del títol
+  const llegenda = L.control({ position: "topleft" });
   llegenda.onAdd = () => {
     const div = L.DomUtil.create("div", "llegenda");
     div.innerHTML = `<button class="boto-llegenda">Leyenda</button><div class="contingut"></div>`;

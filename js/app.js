@@ -56,8 +56,10 @@ function margesMapa() {
   if (esMobil()) {
     return { paddingTopLeft: [10, 68], paddingBottomRight: [10, ALCADA_FITXA + 10] };
   }
-  // Amplada real del panell (canvia segons la pantalla) + marges
-  return { paddingTopLeft: [16, 92], paddingBottomRight: [lateral.offsetWidth + 32 + 16, 16] };
+  // Amplada real del panell (canvia segons la pantalla) + marges; a l'esquerra, la llegenda si és oberta
+  const llegenda = document.querySelector(".llegenda.oberta");
+  const esquerra = llegenda ? llegenda.offsetWidth + 32 : 16;
+  return { paddingTopLeft: [esquerra, 92], paddingBottomRight: [lateral.offsetWidth + 32 + 16, 16] };
 }
 
 // La nansa plega i desplega la fitxa
