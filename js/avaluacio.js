@@ -520,7 +520,8 @@ function capaArea(area, estil) {
 }
 
 // Un sol "llenç" (canvas) per a les cel·les: dibuixar-ne centenars com a elements SVG seria lent
-const LLENC_CELLES = L.canvas({ padding: 0.5 });
+// Les cel·les es pinten opaques i el panell "celles" les fa transparents totes alhora (CSS)
+let llencCelles = null;
 
 // Dibuixa el punt i l'àrea del candidat, pintada per cel·les de 100 m: en daurat el públic que
 // només arriba a aquest local; en navy suau, el que ja és dins de l'àrea d'algun centre propi.
@@ -533,13 +534,15 @@ function actualitzaMapaAvaluacio() {
 
   if (area && !area.error) {
     const { celles, centres } = solapamentDetallat(area);
-    const mitja = 50; // metres: mitja cel·la
+    llencCelles ??= L.canvas({ padding: 0.5, pane: "celles" });
+    const mitja = 51; // metres: mitja cel·la i una mica més, perquè les veïnes es toquin sense escletxes
     for (const c of celles) {
       const dLat = mitja / 111320;
       const dLon = mitja / (111320 * Math.cos((c.lat * Math.PI) / 180));
       L.rectangle([[c.lat - dLat, c.lon - dLon], [c.lat + dLat, c.lon + dLon]], {
-        renderer: LLENC_CELLES, stroke: false, interactive: false,
-        fillColor: c.compartida ? NAVY : "#c8a96e", fillOpacity: c.compartida ? 0.4 : 0.7,
+        renderer: llencCelles, stroke: false, interactive: false, fillOpacity: 1,
+        // Compartida: navy aclarit (el panell ja és al 70 %, així queda com el navy al 40 %)
+        fillColor: c.compartida ? "#707e87" : "#c8a96e",
       }).addTo(avaluacio.capa);
     }
     for (const x of centres) {

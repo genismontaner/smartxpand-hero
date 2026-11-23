@@ -24,6 +24,9 @@ L.tileLayer(
 
 // Panell (capa de dibuix) per sobre dels hexàgons: clubs i àrees dibuixades
 mapa.createPane("superior");
+// Panell de les cel·les del solapament («Evaluar un local»): la transparència s'aplica a tot el
+// panell (CSS), no a cada cel·la, perquè les cel·les veïnes no deixin línies blanques entre elles
+mapa.createPane("celles").style.zIndex = 395;
 mapa.getPane("superior").style.zIndex = 450;
 
 const NAVY = "#051C2C";
