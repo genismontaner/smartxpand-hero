@@ -209,6 +209,7 @@ smartxpand-hero/
 │   ├── scripts/         → scripts numerados por paso
 │   ├── dades_intermedies/ → resultados intermedios (CSV, GeoPackage)
 │   └── dades_brutes/    → descargas originales (fuera de git)
+├── validacio/          → pruebas con usuarios (guion y hojas de observación)
 ├── smartxpand-hero.qgz  → proyecto QGIS (EPSG:25831)
 ├── CLAUDE.md
 └── README.md
