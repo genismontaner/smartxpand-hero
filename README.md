@@ -92,8 +92,10 @@ iniciales, en [`js/mirroring.js`](js/mirroring.js).
 - En el mapa de zonas el área es un radio en línea recta; las isócronas solo están
   en «Evaluar un local» (las de las zonas están pendientes de calcular).
 - La población se reparte de forma uniforme dentro de cada sección censal.
-- La competencia low cost y los centros municipales solo se recogieron en Barcelona
-  y una franja de 800 m; en los bordes del municipio puede estar subestimada.
+- Los centros municipales solo se recogieron en Barcelona (Open Data BCN): en los
+  bordes del municipio la competencia municipal puede estar subestimada. Low cost,
+  gama media y premium cubren Barcelona y una franja de 3 km (low cost, desde el
+  23/11/2026).
 - El aviso urbanístico solo distingue suelo urbano/urbanizable de no urbanizable.
   **No verifica si el uso deportivo está admitido**: requiere confirmación profesional.
 - El mapa señala zonas donde buscar locales; no evalúa locales concretos.
@@ -105,8 +107,7 @@ iniciales, en [`js/mirroring.js`](js/mirroring.js).
 | Población y renta por sección censal | INE, Atlas de Distribución de Renta de los Hogares | 2024 |
 | Secciones censales | INE, cartografía de secciones censales | 2024 |
 | Clubes VivaGym | Web oficial de VivaGym | 25/10/2026 |
-| Clubes Basic-Fit y Fitness Park | Webs oficiales de las marcas | 25/10/2026 |
-| Clubes Synergym | Time Out Barcelona (fuente secundaria) | 25/10/2026 |
+| Clubes low cost (Basic-Fit, Fitness Park, Synergym) | Webs oficiales de las marcas | 23/11/2026 |
 | Centros deportivos municipales | Open Data BCN (Ajuntament de Barcelona, CC BY 4.0) | 25/10/2026 |
 | Barrios y distritos | Open Data BCN (Ajuntament de Barcelona, CC BY 4.0) | 26/10/2026 |
 | Clasificación del suelo | Mapa urbanístic de Catalunya (Generalitat), servido por la Diputació de Barcelona | enero 2023 |

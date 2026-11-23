@@ -78,6 +78,17 @@ SSL y falla al conectar con el geocodificador). Geocodifica con el ICGC y genera
 `dades_intermedies/clubs_<fecha>.csv`. Revisar a mano la columna
 `adreca_trobada` frente a `adreca`.
 
+**2.3b · Low cost en toda la provincia** — `scripts/14_clubs_low_cost.py`
+Desde el 23/11/2026 sustituye a 2.3 para Basic-Fit, Fitness Park y Synergym. Lee el
+sitemap oficial de clubes de Basic-Fit y de Fitness Park, guarda cada página en
+`dades_brutes/clubs_low_cost_<fecha>/` y saca nombre, dirección y coordenadas del
+JSON-LD (Fitness Park: «Próxima apertura» → `previst`). Se queda con los de código
+postal 08. Synergym exige superar un CAPTCHA (no se automatiza): la lista oficial se
+lee en el navegador y se copia a `synergym_adreces_<fecha>.csv`; sus páginas no dan
+coordenadas y se geocodifica con el ICGC. McFit España redirige a Basic-Fit.
+`11_exportar_clubs_segments.py` toma estas marcas solo de este fichero y filtra
+Barcelona + 3 km.
+
 **2.4 · Capa de clubes en QGIS** *(manual)*
 Cargar el CSV como puntos (`lon`, `lat`, EPSG:4326), reproyectar a EPSG:25831,
 quedarse con los que caen dentro de `area_estudi_800m` y guardar como

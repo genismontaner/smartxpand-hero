@@ -150,8 +150,13 @@ En cada paso:
 - Ubicaciones de gama media y premium: `dades_intermedies/clubs_segments_<fecha>.csv`
   (script 10). Anytime Fitness y Àccura salen de OSM (no verificados en web
   oficial: la de Anytime exige verificación humana).
-- Limitación: los clubes low cost solo se recogieron en Barcelona + 800 m; en
-  la franja de 3 km la competencia low cost está incompleta.
+- Low cost (Basic-Fit, Fitness Park, Synergym): toda la provincia desde las webs
+  oficiales (script 14, 23/11/2026); la web usa Barcelona + 3 km. McFit España
+  redirige a Basic-Fit. Synergym: precio oficial 30,99 €/mes; sus páginas no dan
+  coordenadas (ICGC) y la web exige CAPTCHA (lista leída en el navegador).
+- Limitación: los centros municipales solo están en Barcelona (Open Data BCN).
+- Con los clubes del 23/11/2026, la referencia por defecto pasa a **249 / 262 / 113**
+  (+ 682 por regla previa).
 - Población: las dos puertas usan el Censo Anual 2024 (rejilla de 100 m) desde el
   paso 8. En algunos barrios el Censo da un 10–11 % más que el ADRH (verificado en
   QGIS con cálculo exacto). Causa de la diferencia entre fuentes: sin investigar.
@@ -170,8 +175,8 @@ umbral) y puntuados con mirroring. Clases: INVESTIGAR ≥ umbral, ESPERAR a meno
 de 10 puntos (`marge_esperar`), DESCARTAR por debajo. Reglas previas: suelo no
 urbanizable; menos público objetivo que el centro propio con menos. Con los
 valores por defecto (1,5 km, 20–64 años, 35/25/25/15, low cost + municipal,
-umbral 50) salen **259 / 252 / 113** zonas y 682 por regla previa: es la nueva
-referencia. Paso 8.2: la web ya ofrece isócrona a pie (5/10/15) en el mapa de zonas
+umbral 50) salían **259 / 252 / 113** zonas y 682 por regla previa; con la competencia
+low cost completa (23/11/2026), **249 / 262 / 113** y 682: es la referencia actual. Paso 8.2: la web ya ofrece isócrona a pie (5/10/15) en el mapa de zonas
 si existe `data/isocrones_hexagons.geojson` (script 13: 1.092 zonas, 5 por petición; ORS solo deja
 unas 50 peticiones de isócronas al día aunque su panel diga 500; tarea programada diaria
 a las 10 h desde el 22/11/2026; 49 zonas hechas el 23/11/2026). No necesita
@@ -223,7 +228,6 @@ Antes de un commit con el GeoPackage abierto en QGIS:
 ## Pendientes fuera del plan
 
 - Automatizar los pasos manuales de QGIS (ver `preparacio/PROTOCOL.md`).
-- Confirmar Synergym en su web oficial (hoy: fuente secundaria).
 - Comprobar la tarjeta de LinkedIn con el Post Inspector.
 - Probar con un director de expansión real.
 - Decidir la licencia del código del repositorio (hoy: sin licencia).

@@ -87,7 +87,7 @@
     "La puntuación es relativa: cada zona se compara con tus centros (50 = como la mediana de tus centros). No mide la viabilidad absoluta de un club ni prevé socios.",
     "En el mapa de zonas, el área de cada hexágono es un radio en línea recta desde su centro. Las isócronas solo están disponibles en «Evaluar un local».",
     "La población se reparte de forma uniforme dentro de cada sección censal (rejilla de 100 m).",
-    "La competencia low cost y los centros municipales solo están recogidos en Barcelona y una franja de 800 m; en los bordes del municipio puede estar subestimada.",
+    "Los centros municipales solo están recogidos en Barcelona (Open Data BCN): en los bordes del municipio la competencia municipal puede estar subestimada. Low cost, gama media y premium cubren Barcelona y una franja de 3 km.",
     "El mapa señala zonas donde buscar locales; para un local concreto, usa «Evaluar un local»."
   ],
   "nota_relativa": "Puntuación relativa: cada zona se compara con tus centros con los mismos parámetros. No mide la viabilidad de un club ni prevé socios.",
@@ -130,16 +130,10 @@
       "url": "https://www.vivagym.com/es-es/gimnasios/"
     },
     {
-      "dada": "Clubes Basic-Fit y Fitness Park",
-      "font": "Webs oficiales de las marcas",
-      "any": "consulta 25/10/2026",
-      "url": "https://www.basic-fit.com/es-es/gimnasios/barcelona"
-    },
-    {
-      "dada": "Clubes Synergym",
-      "font": "Time Out Barcelona (fuente secundaria)",
-      "any": "consulta 25/10/2026",
-      "url": "https://www.timeout.es/barcelona/es/deportes/gimnasios-baratos-y-otros-deportes-low-cost-en-barcelona"
+      "dada": "Clubes low cost (Basic-Fit, Fitness Park y Synergym)",
+      "font": "Webs oficiales de las marcas; Synergym geocodificado con el ICGC",
+      "any": "consulta 23/11/2026",
+      "url": "https://github.com/genismontaner/smartxpand-hero/blob/main/preparacio/marques.csv"
     },
     {
       "dada": "Clubes de gama media y premium",

@@ -4,6 +4,9 @@ Pas 1 (v1) · Exporta tots els clubs amb el seu segment per a la web.
 S'executa DINS de QGIS. Ajunta:
 - dades_intermedies/clubs_2026-10-25.csv  (VivaGym, low cost i CEM)
 - dades_intermedies/clubs_segments_2026-11-21.csv (gamma mitjana i premium)
+- dades_intermedies/clubs_low_cost_2026-11-23.csv (Basic-Fit, Fitness Park i Synergym a tota
+  la província, webs oficials): substitueix les files d'aquestes marques del primer fitxer,
+  que només cobria Barcelona + 800 m i tenia Synergym de font secundària
 i en guarda els que cauen dins de Barcelona + FRANJA a data/clubs_segments.geojson,
 amb el camp 'segment' tret de preparacio/marques.csv.
 """
@@ -17,7 +20,10 @@ FRANJA = 3000  # metres, igual que la graella de població
 ARREL = "/Users/genismontaner/Projectes/smartxpand-hero"
 GPKG = f"{ARREL}/preparacio/dades_intermedies/area_estudi.gpkg"
 ENTRADES = [f"{ARREL}/preparacio/dades_intermedies/clubs_2026-10-25.csv",
-            f"{ARREL}/preparacio/dades_intermedies/clubs_segments_2026-11-21.csv"]
+            f"{ARREL}/preparacio/dades_intermedies/clubs_segments_2026-11-21.csv",
+            f"{ARREL}/preparacio/dades_intermedies/clubs_low_cost_2026-11-23.csv"]
+# Marques que es llegeixen només de l'últim fitxer (consulta més recent i completa)
+SUBSTITUIDES = {"Basic-Fit", "Fitness Park", "Synergym", "McFit"}
 MARQUES = f"{ARREL}/preparacio/marques.csv"
 SORTIDA = f"{ARREL}/data/clubs_segments.geojson"
 CAMPS = ["marca", "segment", "nom", "adreca", "estat", "tipus_font", "font_url", "data_consulta", "notes"]
@@ -45,6 +51,8 @@ noves, fora, sense_segment = [], 0, set()
 for ruta in ENTRADES:
     with open(ruta, encoding="utf-8") as f:
         for c in csv.DictReader(f):
+            if c["marca"] in SUBSTITUIDES and ruta != ENTRADES[-1]:
+                continue
             if c["estat"] == "exclos" or not c["lat"]:
                 continue
             punt = QgsPointXY(float(c["lon"]), float(c["lat"]))
