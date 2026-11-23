@@ -138,10 +138,18 @@ fonts/                  Poppins (licencia OFL)
 preparacio/             Protocolo de preparación de datos (QGIS + Python)
 ```
 
-## Enlace directo a una zona
+## Enlace para compartir
 
-- `?zona=H0913` abre la aplicación con esa zona seleccionada (útil para enviar
-  una zona concreta en una llamada).
+El botón «Copiar enlace» genera una dirección que abre la misma vista con los
+mismos parámetros (`js/enllac.js`). El rendimiento cargado con el CSV de
+calibración no se incluye: son datos privados.
+
+- `?zona=H0913` abre el mapa de zonas con esa zona seleccionada.
+- `?mode=avaluar&punt=41.39200,2.16400` abre «Evaluar un local» en ese punto
+  (`&nom=` opcional: la dirección).
+- `area=radi&radi=1.5` o `area=isocrona&iso=a_pie-10`; `edat=e20_24-e60_64`;
+  `pesos=35-25-25-15` (población, competencia, solapamiento, renta);
+  `seg=low cost,municipal`; `llindar=50`. Un valor no válido se ignora.
 - `&captura=1` la abre directamente en modo captura (controles ocultos, leyenda
   y fuentes visibles).
 
