@@ -173,4 +173,22 @@ Ver [`preparacio/PROTOCOL.md`](preparacio/PROTOCOL.md).
   License 1.1), alojada en `fonts/` con su licencia.
 - Sin frameworks ni backend. Publicado con GitHub Pages.
 
-Los datos de terceros mantienen sus licencias de origen (ver tabla de fuentes).
+## Licencia
+
+**Código y textos propios: © 2026 Genís Montaner. Todos los derechos reservados.**
+El repositorio es público para poder consultarlo, pero no se concede permiso para
+copiar, modificar, redistribuir ni usar el código con fines comerciales sin
+autorización escrita. Ver [`LICENSE`](LICENSE).
+
+Los datos de terceros mantienen sus licencias de origen, y no las cambia la del código:
+
+| Datos | Licencia o condición |
+|---|---|
+| Open Data BCN (centros municipales, barrios y distritos) | CC BY 4.0: citar la fuente |
+| Mapa base del IGN | CC BY 4.0: citar la fuente |
+| INE (población, renta, secciones censales) | Reutilización permitida citando la fuente |
+| OpenStreetMap (ubicaciones de Anytime Fitness y Àccura; red viaria de las isócronas) | ODbL: atribución; una base de datos derivada que se publique debe compartirse con la misma licencia |
+| openrouteservice (isócronas) | Atribución «© openrouteservice.org by HeiGIT» |
+| ICGC (geocodificación) y Mapa urbanístic de Catalunya | Citar la fuente |
+| Ubicaciones y precios de las marcas | Datos de hecho consultados en sus webs (fecha en `preparacio/marques.csv`) |
+| Poppins | SIL Open Font License 1.1 (`fonts/OFL-Poppins.txt`) |

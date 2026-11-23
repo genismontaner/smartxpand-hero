@@ -132,6 +132,7 @@ En cada paso:
 | Isócronas | OpenRouteService con clave en el navegador (500/día en el plan gratuito). A pie 5/10/15 min y coche 5 min (decidido el 22/11/2026): en coche, 10 min sale de la zona con datos (Barcelona + 3 km) en 6 de los 24 centros y 15 min en 22; se muestran como "fuera de la zona con datos". Isócronas de los centros propios precalculadas (script 12, `data/isocrones_propis.geojson`). |
 | Mapa | Leaflet. HTML/CSS/JS sin frameworks. |
 | Publicación | GitHub Pages, web independiente. |
+| Licencia | Código y textos propios: todos los derechos reservados (decidido el 23/11/2026; `LICENSE`). Los datos de terceros conservan su licencia (tabla en el README). Se puede abrir más adelante; al revés, no. |
 
 ## Datos
 
@@ -230,7 +231,6 @@ Antes de un commit con el GeoPackage abierto en QGIS:
 - Automatizar los pasos manuales de QGIS (ver `preparacio/PROTOCOL.md`).
 - Comprobar la tarjeta de LinkedIn con el Post Inspector.
 - Probar con un director de expansión real.
-- Decidir la licencia del código del repositorio (hoy: sin licencia).
 
 ## Principios de honestidad
 
