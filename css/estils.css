@@ -91,7 +91,7 @@ body {
   flex: 1;
   font-weight: 500;
 }
-.titol span {
+.titol span:not(.nom-vista) {
   font-weight: 400;
   color: var(--gris-text);
 }
@@ -510,7 +510,7 @@ body {
   :root {
     --amplada-panell: 340px;
   }
-  .titol span {
+  .titol span:not(.nom-vista) {
     display: none; /* "Gimnasio low cost · Barcelona" ja surt al panell */
   }
 }

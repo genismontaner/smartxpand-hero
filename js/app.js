@@ -118,6 +118,10 @@ document.querySelectorAll(".pestanya").forEach((boto) => {
 async function canviaMode(mode) {
   const avaluar = mode === "avaluar";
   document.body.classList.toggle("mode-avaluar", avaluar);
+  // Capçalera i títol de la pestanya del navegador: diuen en quina porta d'entrada som
+  const nom = avaluar ? "Evaluar un local" : "Mapa de oportunidad";
+  document.querySelector(".nom-vista").textContent = nom;
+  document.title = `SmartXpand · ${nom}`;
   document.querySelectorAll(".mode").forEach((boto) => {
     boto.classList.toggle("activa", boto.dataset.mode === mode);
   });
