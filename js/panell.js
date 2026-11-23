@@ -109,7 +109,7 @@ function mostraPanellInicial(config) {
     ${htmlMillorsZones(config)}
     ${titolSeccio(2, "Clasificación")}
     <ul class="llista-classes">${classes}</ul>
-    <p class="nota-relativa">${recompte.regla} zonas más, descartadas por una regla previa (suelo no
+    <p class="nota-relativa">${recompte.regla} zonas más, excluidas por un requisito previo (suelo no
       urbanizable${avaluacio.tipusArea === "isocrona" ? ", sin isócrona a pie" : ""} o menos público
       objetivo que tu centro con menos). Los parámetros se cambian en la
       pestaña «Parámetros» y valen también para «Evaluar un local».</p>
@@ -162,10 +162,10 @@ function mostraPanellHexagon(hex, config) {
   `;
 
   if (c.motiu) {
-    // Descartat per una regla prèvia: no té puntuació
+    // Exclosa per una regla prèvia: no té puntuació (etiqueta pròpia, en gris clar)
     html += `
       <div class="puntuacio">
-        <span class="etiqueta-classe" style="background:${classe.color}">${classe.etiqueta}</span>
+        <span class="etiqueta-classe exclosa">${config.etiqueta_excloses}</span>
       </div>
       ${titolSeccio(++n, "Motivo")}
       <p class="nota-decisio">${c.motiu}</p>

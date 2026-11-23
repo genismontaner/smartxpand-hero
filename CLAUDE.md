@@ -172,9 +172,12 @@ En cada paso:
 Desde el paso 8 (22/11/2026, cambio de método decidido a propósito): hexágonos de
 300 m calculados en el navegador como si fueran locales (`calculaArea`, misma
 rejilla, mismos parámetros que «Evaluar un local»: radio, edad, segmentos, pesos,
-umbral) y puntuados con mirroring. Clases: INVESTIGAR ≥ umbral, ESPERAR a menos
-de 10 puntos (`marge_esperar`), DESCARTAR por debajo. Reglas previas: suelo no
-urbanizable; menos público objetivo que el centro propio con menos. Con los
+umbral) y puntuados con mirroring. Clases (nombres desde el 23/11/2026; antes
+INVESTIGAR / ESPERAR / DESCARTAR, que siguen como id interno): PRIORITARIA ≥ umbral,
+CERCA DEL UMBRAL a menos de 10 puntos (`marge_esperar`), NO PRIORITARIA por debajo y
+EXCLUIDA por requisito previo. Requisitos previos: suelo no urbanizable; menos público
+objetivo que el centro propio con menos. Se evita «zona óptima»: sonaría a veredicto
+absoluto (principio 3). Con los
 valores por defecto (1,5 km, 20–64 años, 35/25/25/15, low cost + municipal,
 umbral 50) salían **259 / 252 / 113** zonas y 682 por regla previa; con la competencia
 low cost completa (23/11/2026), **249 / 262 / 113** y 682: es la referencia actual. Paso 8.2: la web ya ofrece isócrona a pie (5/10/15) en el mapa de zonas
@@ -253,7 +256,7 @@ Antes de un commit con el GeoPackage abierto en QGIS:
   de texto sobre blanco (contraste insuficiente): rellenos, bordes y detalles.
 - Sin logotipo ni símbolo (ni cubo ni cuadrado): solo el nombre SmartXpand. Icono de la
   pestaña: las iniciales «SX» en dorado.
-- Clases: verde (investigar), ámbar (esperar), gris (descartar).
+- Clases: verde (prioritaria), ámbar (cerca del umbral), gris (no prioritaria); gris pálido (excluida).
 - Estética sobria, sin adornos.
 
 ## Criterio de éxito

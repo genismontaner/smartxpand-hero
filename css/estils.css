@@ -940,6 +940,11 @@ input[type="range"] {
 .etiqueta-classe.no {
   background: #868e96;
 }
+/* Zona exclosa per un requisit previ: el mateix gris que al mapa (hexàgon pàl·lid) */
+.etiqueta-classe.exclosa {
+  background: rgba(173, 181, 189, 0.3);
+  border: 1px solid #adb5bd;
+}
 /* Àrea fora de la zona amb dades: no hi ha sí/no (pas 6) */
 .etiqueta-classe.incomplet {
   background: #ffffff;

@@ -50,11 +50,11 @@ Abre la web y déjale mirarla **10 segundos** sin tocar nada. Luego pregunta:
 - «¿Qué crees que significan los colores?»
 - «¿Respecto a qué está comparando?»
 
-*Éxito:* señala las zonas verdes y entiende que se comparan con sus propios
+*Éxito:* señala las zonas prioritarias (verdes) y entiende que se comparan con sus propios
 centros (no es una nota absoluta).
 
 ### T2 · Por qué una zona
-«Elige una zona verde que te llame la atención y explícame por qué es verde.»
+«Elige una zona prioritaria que te llame la atención y explícame por qué lo es.»
 
 *Éxito:* lee el desglose y nombra al menos un criterio a favor y uno en contra.
 

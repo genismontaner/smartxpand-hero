@@ -5,7 +5,8 @@
 Mapa interactivo que criba las zonas de una ciudad para abrir un gimnasio
 **low cost**. La ciudad se divide en hexágonos de 300 m; cada uno recibe una
 puntuación sobre 100 (comparada con los centros propios) y una clase:
-**INVESTIGAR**, **ESPERAR** o **DESCARTAR**.
+**PRIORITARIA**, **CERCA DEL UMBRAL** o **NO PRIORITARIA** (o **EXCLUIDA** si no
+cumple un requisito previo).
 Al hacer clic en un hexágono se explica el porqué: desglose por criterio, pesos,
 datos del entorno y aviso urbanístico.
 
@@ -67,16 +68,17 @@ mediana de tus centros). La puntuación es la suma ponderada.
 
 | Clase | Puntuación |
 |---|---|
-| INVESTIGAR | ≥ umbral (por defecto 50: llega al mínimo) |
-| ESPERAR | a menos de 10 puntos del umbral |
-| DESCARTAR | por debajo |
+| Prioritaria | ≥ umbral (por defecto 50: llega al mínimo) |
+| Cerca del umbral | a menos de 10 puntos del umbral |
+| No prioritaria | por debajo |
 
-**Reglas previas** (pasan directamente a DESCARTAR): más de la mitad del
-hexágono es suelo no urbanizable, o menos público objetivo que el centro propio
-que tiene menos.
+**Requisitos previos** (si no se cumplen, la zona queda EXCLUIDA y no se puntúa):
+más de la mitad del hexágono es suelo no urbanizable, o menos público objetivo que
+el centro propio que tiene menos.
 
-Con los valores por defecto salen 259 / 252 / 113 zonas y 682 descartadas por
-regla previa (22/11/2026).
+Con los valores por defecto salen 249 / 262 / 113 zonas y 682 excluidas
+(23/11/2026). Las clases dicen cómo queda la zona frente a tu umbral, comparada con
+tus centros: no son una previsión de viabilidad.
 
 La pestaña **Parámetros** tiene los mismos controles que «Evaluar un local»
 (son los mismos: cambiarlos en una puerta los cambia en la otra). El mapa se

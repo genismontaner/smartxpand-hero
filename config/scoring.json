@@ -29,20 +29,21 @@
   "classes": [
     {
       "id": "investigar",
-      "etiqueta": "INVESTIGAR",
+      "etiqueta": "PRIORITARIA",
       "color": "#2f9e44"
     },
     {
       "id": "esperar",
-      "etiqueta": "ESPERAR",
+      "etiqueta": "CERCA DEL UMBRAL",
       "color": "#f08c00"
     },
     {
       "id": "descartar",
-      "etiqueta": "DESCARTAR",
+      "etiqueta": "NO PRIORITARIA",
       "color": "#adb5bd"
     }
   ],
+  "etiqueta_excloses": "EXCLUIDA",
   "regles_previes": [
     {
       "id": "sol_no_urbanitzable",
@@ -67,9 +68,9 @@
     "nota_en_contra": 40,
     "maxim_per_banda": 2,
     "classe": {
-      "investigar": "Investigar.",
-      "esperar": "Esperar.",
-      "descartar": "Descartar."
+      "investigar": "Zona prioritaria.",
+      "esperar": "Cerca del umbral.",
+      "descartar": "No prioritaria."
     },
     "a_favor": "A favor: {llista}.",
     "en_contra": "En contra: {llista}.",

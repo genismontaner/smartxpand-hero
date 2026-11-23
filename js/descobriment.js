@@ -121,7 +121,7 @@ function resumParametres() {
 function textRetolHexagon(hex) {
   const c = hex.calcul;
   const classe = descobriment.config.classes.find((x) => x.id === c.classe);
-  const valor = c.motiu ? "descartada por regla previa"
+  const valor = c.motiu ? "excluida (requisito previo)"
     : `<strong>${Math.round(c.puntuacio.total)}</strong> · ${etiquetaClasse(classe)}`;
   return `${hex.properties.barri}<br>${valor}`;
 }
@@ -244,7 +244,7 @@ function actualitzaLlegenda() {
   document.querySelector(".llegenda .contingut").innerHTML = `
     <strong>Clasificación</strong>
     ${classes}
-    <div><span class="mostra" style="background:${config.classes.at(-1).color};opacity:0.3"></span>Descartado por regla previa</div>
+    <div><span class="mostra" style="background:${config.classes.at(-1).color};opacity:0.3"></span>Excluida (requisito previo)</div>
     <strong>Clubes</strong>
     ${casella("propia", `<span class="punt" style="background:${NAVY};width:12px;height:12px"></span>`, config.marca_propia)}
     ${clubs}
