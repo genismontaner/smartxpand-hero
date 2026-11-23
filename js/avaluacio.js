@@ -337,9 +337,9 @@ function dibuixaVistaAvaluacio() {
   const vista = document.getElementById("avaluacio");
   vista.innerHTML = `
     <h2>Evaluar un local</h2>
-    <p class="subtitol">Busca una dirección o haz clic en el mapa</p>
+    <p class="subtitol">Busca una dirección (calle, número y municipio) o haz clic en el mapa</p>
     <form class="cercador" id="cercador-adreca">
-      <input type="search" id="text-adreca" placeholder="Calle, número y municipio" aria-label="Dirección del local">
+      <input type="search" id="text-adreca" placeholder="Calle y número" aria-label="Dirección del local: calle, número y municipio">
       <button type="submit">Buscar</button>
     </form>
     <div id="resultats-cerca"></div>
